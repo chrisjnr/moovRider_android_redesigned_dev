@@ -3,19 +3,37 @@
     package="com.moovapp.rider">
 
     <application
-        android:allowBackup="true"
+        android:name=".Application"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".SplashScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".preLogin.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".preLogin.signUp.SignUpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.HomeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.profile.ProfileActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.previousRides.rateDriver.RateDriverActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main.wallet.WalletActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
