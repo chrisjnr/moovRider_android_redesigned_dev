@@ -1,5 +1,6 @@
 package com.moovapp.rider.main.moov;
 
+import android.content.Intent;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,12 +15,25 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.SimpleAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.moovapp.rider.R;
+import com.moovapp.rider.main.wallet.WalletActivity;
+import com.moovapp.rider.utils.AppPreferences;
+import com.moovapp.rider.utils.ConnectionDetector;
+import com.moovapp.rider.utils.Constants;
 import com.moovapp.rider.utils.LMTFragmentHelper;
 import com.moovapp.rider.utils.placesAutocomplete.CustomAutoCompleteTextView;
 import com.moovapp.rider.utils.placesAutocomplete.PlaceJSONParser;
+import com.moovapp.rider.utils.progress.MyProgressDialog;
+import com.moovapp.rider.utils.retrofit.ApiClient;
+import com.moovapp.rider.utils.retrofit.ApiInterface;
+import com.moovapp.rider.utils.retrofit.responseModels.RideSearchResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewCollegesResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
+import com.moovapp.rider.utils.spinnerAdapter.WhiteSpinnerAdapter;
 
 import org.json.JSONObject;
 
@@ -39,6 +53,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Response;
 
 import static com.google.android.gms.internal.zzs.TAG;
 
@@ -49,6 +65,9 @@ import static com.google.android.gms.internal.zzs.TAG;
 public class MoovFragment extends LMTFragmentHelper {
 
     private static final String GOOGLE_PLACES_KEY = "key=AIzaSyCUhREpmSKJMyF0ZS6EjP2FC1uhwf8dsek";
+    private final int LIST_COLLEGES_API = 1;
+    private final int VIEW_RIDE_AMOUNT_API = 2;
+    private final int VIEW_WALLET_BALANCE_API = 3;
 
     @BindView(R.id.autoCompleteDestination)
     CustomAutoCompleteTextView autoCompleteDestination;
@@ -64,41 +83,92 @@ public class MoovFragment extends LMTFragmentHelper {
     CheckBox cbPool;
     @BindView(R.id.layoutCurrentRider)
     View layoutCurrentRider;
+    @BindView(R.id.spinnerUniversity)
+    Spinner spinnerUniversity;
+    @BindView(R.id.spinnerSeats)
+    Spinner spinnerSeats;
+    @BindView(R.id.tvAmount)
+    TextView tvAmount;
 
     private PlacesTask placesTask;
     private ParserTask parserTask;
     private Geocoder mGeocoder;
 
+    private MyProgressDialog myProgressDialog;
+    public ConnectionDetector cd;
+    public AppPreferences appPrefes;
+
     private boolean isDropDownSelected = false;
     private boolean isDropDownSelectedLocation = false;
     private boolean isTypingOnDestination = true;
-    private int currentStep=1;
+    private boolean isNotEnoughBalance = false;
+    private int currentStep = 1;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.moov_fragment, container, false);
         ButterKnife.bind(this, view);
+        myProgressDialog = new MyProgressDialog(getActivity());
+        cd = new ConnectionDetector(getContext());
+        appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
         inItAutoCompleteLocation();
         setAutoCompleteTextViewListners();
+        callViewCollegeListApi();
+        callViewWalletBalanceApi();
         return view;
     }
 
+    private void setSeatSpinner() {
+        List<String> seats = new ArrayList<>();
+        seats.add("1");
+        seats.add("2");
+        seats.add("3");
+        seats.add("4");
+        seats.add("5");
+        seats.add("6");
+        seats.add("7");
+        seats.add("8");
+        WhiteSpinnerAdapter seatAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, seats);
+        spinnerSeats.setAdapter(seatAdapter);
+        spinnerSeats.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                callViewRideCostApi();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
     @OnClick(R.id.cardViewNext)
-    public void cardViewNextClick(){
-        currentStep=2;
-        cardViewNext.setVisibility(View.GONE);
-        cbPool.setVisibility(View.GONE);
-        cardViewRideDetails.setVisibility(View.VISIBLE);
-        cardViewMove.setVisibility(View.VISIBLE);
+    public void cardViewNextClick() {
+        if (isDropDownSelected && isDropDownSelectedLocation) {
+            currentStep = 2;
+            cardViewNext.setVisibility(View.GONE);
+            cbPool.setVisibility(View.GONE);
+            cardViewRideDetails.setVisibility(View.VISIBLE);
+            cardViewMove.setVisibility(View.VISIBLE);
+            setSeatSpinner();
+        } else {
+            Toast.makeText(getContext(), "Please choose locations", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @OnClick(R.id.cardViewMove)
-    public void cardViewMoveClick(){
-        currentStep=3;
-        cardViewMove.setVisibility(View.GONE);
-        cardViewRideDetails.setVisibility(View.GONE);
-        layoutCurrentRider.setVisibility(View.VISIBLE);
+    public void cardViewMoveClick() {
+        if (isNotEnoughBalance) {
+            Intent intent = new Intent(getContext(), WalletActivity.class);
+            startActivity(intent);
+        } else {
+            currentStep = 3;
+            cardViewMove.setVisibility(View.GONE);
+            cardViewRideDetails.setVisibility(View.GONE);
+            layoutCurrentRider.setVisibility(View.VISIBLE);
+        }
     }
 
     public void inItAutoCompleteLocation() {
@@ -154,18 +224,29 @@ public class MoovFragment extends LMTFragmentHelper {
         autoCompleteDestination.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                if (count > after) {
+                    isDropDownSelected = false;
+                    currentStep = 1;
+                    cardViewNext.setVisibility(View.VISIBLE);
+                    cbPool.setVisibility(View.VISIBLE);
+                    cardViewRideDetails.setVisibility(View.GONE);
+                    cardViewMove.setVisibility(View.GONE);
+                }
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
                 if (s.length() < 1) {
                     isDropDownSelected = false;
+                    currentStep = 1;
+                    cardViewNext.setVisibility(View.VISIBLE);
+                    cbPool.setVisibility(View.VISIBLE);
+                    cardViewRideDetails.setVisibility(View.GONE);
+                    cardViewMove.setVisibility(View.GONE);
                 }
             }
         });
@@ -186,7 +267,14 @@ public class MoovFragment extends LMTFragmentHelper {
         autoCompleteLocation.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                if (count > after) {
+                    isDropDownSelectedLocation = false;
+                    currentStep = 1;
+                    cardViewNext.setVisibility(View.VISIBLE);
+                    cbPool.setVisibility(View.VISIBLE);
+                    cardViewRideDetails.setVisibility(View.GONE);
+                    cardViewMove.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -198,6 +286,11 @@ public class MoovFragment extends LMTFragmentHelper {
             public void afterTextChanged(Editable s) {
                 if (s.length() < 1) {
                     isDropDownSelectedLocation = false;
+                    currentStep = 1;
+                    cardViewNext.setVisibility(View.VISIBLE);
+                    cbPool.setVisibility(View.VISIBLE);
+                    cardViewRideDetails.setVisibility(View.GONE);
+                    cardViewMove.setVisibility(View.GONE);
                 }
             }
         });
@@ -402,5 +495,165 @@ public class MoovFragment extends LMTFragmentHelper {
 //        }
 //        return null;
 //    }
+    private void callViewCollegeListApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<ViewCollegesResponseModel> call = apiService.viewColleges("ride/view_colleges/" + appPrefes.getData(Constants.USER_ID));
+                call.enqueue(new retrofit2.Callback<ViewCollegesResponseModel>() {
+                    @Override
+                    public void onResponse(Call<ViewCollegesResponseModel> call, Response<ViewCollegesResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (!response.body().isStatus()) {
+                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                List<String> collegeList = new ArrayList<>();
+                                List<String> collegeIdList = new ArrayList<>();
+                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
+                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
+                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
+                                }
+                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, collegeList);
+                                spinnerUniversity.setAdapter(collegeAdapter);
+                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                        callViewRideCostApi();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), LIST_COLLEGES_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ViewCollegesResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), LIST_COLLEGES_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), LIST_COLLEGES_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), LIST_COLLEGES_API);
+        }
+    }
+
+    private void callViewRideCostApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                String poolRiding = "yes";
+                if (cbPool.isChecked()) {
+                    poolRiding = "yes";
+                } else {
+                    poolRiding = "no";
+                }
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<RideSearchResponseModel> call = apiService.rideSearch("ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + spinnerSeats.getSelectedItem() + "/" + poolRiding);
+                call.enqueue(new retrofit2.Callback<RideSearchResponseModel>() {
+                    @Override
+                    public void onResponse(Call<RideSearchResponseModel> call, Response<RideSearchResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (!response.body().isStatus()) {
+                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                tvAmount.setText(response.body().getData().getAmount() + "");
+                                if (Double.parseDouble(response.body().getData().getAmount() + "") > Double.parseDouble(appPrefes.getData(Constants.WALLET_BALANCE))) {
+                                    tvAmount.setError("Not enough balance!");
+                                    isNotEnoughBalance = true;
+                                } else {
+                                    isNotEnoughBalance = false;
+                                    tvAmount.setError(null);
+                                }
+
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), VIEW_RIDE_AMOUNT_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RideSearchResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), VIEW_RIDE_AMOUNT_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), VIEW_RIDE_AMOUNT_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), VIEW_RIDE_AMOUNT_API);
+        }
+    }
+
+    private void callViewWalletBalanceApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<ViewWalletBalanceResponseModel> call = apiService.viewWalletBalance("wallet/balance/" + appPrefes.getData(Constants.USER_ID));
+                call.enqueue(new retrofit2.Callback<ViewWalletBalanceResponseModel>() {
+                    @Override
+                    public void onResponse(Call<ViewWalletBalanceResponseModel> call, Response<ViewWalletBalanceResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            appPrefes.SaveData(Constants.WALLET_BALANCE, response.body().getWallet_balance() + "");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), VIEW_WALLET_BALANCE_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ViewWalletBalanceResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), VIEW_WALLET_BALANCE_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), VIEW_WALLET_BALANCE_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), VIEW_WALLET_BALANCE_API);
+        }
+    }
+
+    @Override
+    public void retryApiCall(int apiCode) {
+        super.retryApiCall(apiCode);
+        switch (apiCode) {
+            case LIST_COLLEGES_API:
+                callViewCollegeListApi();
+                break;
+            case VIEW_RIDE_AMOUNT_API:
+                callViewRideCostApi();
+                break;
+            case VIEW_WALLET_BALANCE_API:
+                callViewWalletBalanceApi();
+                break;
+        }
+    }
 
 }

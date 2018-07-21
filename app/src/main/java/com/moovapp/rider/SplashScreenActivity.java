@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.moovapp.rider.main.HomeActivity;
 import com.moovapp.rider.preLogin.LoginActivity;
+import com.moovapp.rider.utils.Constants;
 import com.moovapp.rider.utils.LMTBaseActivity;
 
 import butterknife.ButterKnife;
@@ -29,9 +31,15 @@ public class SplashScreenActivity extends LMTBaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                if(appPrefes.getDataBoolean(Constants.USER_LOGGED_IN_STATUS)){
+                    Intent intent = new Intent(SplashScreenActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                }else {
+                    Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
         }, SPLASH_SCREEN_TIME);
     }

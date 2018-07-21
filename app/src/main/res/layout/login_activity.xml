@@ -64,6 +64,7 @@
                         android:src="@mipmap/email_icon" />
 
                     <EditText
+                        android:id="@+id/edEmail"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/transparent"
@@ -97,6 +98,7 @@
                         android:src="@mipmap/password_icon" />
 
                     <EditText
+                        android:id="@+id/edPassword"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@color/transparent"
@@ -204,6 +206,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/tvForgotPassword"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:gravity="center_horizontal|bottom"

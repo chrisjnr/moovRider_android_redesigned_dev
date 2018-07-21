@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.moovapp.rider"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -44,5 +44,22 @@ dependencies {
     compile 'com.android.support:multidex:1.0.0'
     //Rating bar
     compile 'com.github.ornolfr:rating-view:0.1.1@aar'
+    // retrofit, gson
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+    compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    //Edittext validator
+    compile 'com.mobsandgeeks:android-saripaar:2.0.2'
+    //Paystack
+    compile 'co.paystack.android:paystack:3.0.10'
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    //Image Picker
+    compile 'com.github.myinnos:AwesomeImagePicker:1.0.2'
+    //Image Crop
+    compile 'com.github.yalantis:ucrop:2.2.1-native'
+    //compressor
+    compile 'id.zelory:compressor:2.1.0'
 
 }

@@ -21,11 +21,16 @@ import com.moovapp.rider.main.moov.MoovFragment;
 import com.moovapp.rider.main.paymentHistory.PaymentHistoryFragment;
 import com.moovapp.rider.main.previousRides.PreviousRidesFragment;
 import com.moovapp.rider.main.profile.ProfileActivity;
+import com.moovapp.rider.main.settings.SettingsFragment;
+import com.moovapp.rider.main.talkToUs.TalkToUsFragment;
 import com.moovapp.rider.main.upcomingRides.UpcomingRidesFragment;
 import com.moovapp.rider.main.wallet.WalletActivity;
+import com.moovapp.rider.preLogin.LoginActivity;
+import com.moovapp.rider.utils.Constants;
 import com.moovapp.rider.utils.LMTBaseActivity;
 import com.moovapp.rider.utils.myGlobalFunctions.DpToPx;
 import com.moovapp.rider.utils.myGlobalFunctions.ExpandOrCollapseViews;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +42,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  * Created by Lijo Mathew Theckanal on 18-Jul-18.
  */
 
-public class HomeActivity extends LMTBaseActivity {
+public class HomeActivity extends LMTBaseActivity implements HomeActivityActions {
+
+    private static final int DIALOG_LOGOUT = 1;
 
     @BindView(R.id.navigationView)
     NavigationView navigationView;
@@ -58,16 +65,19 @@ public class HomeActivity extends LMTBaseActivity {
     private LinearLayout llSettingsNav;
     private LinearLayout llLogoutNav;
     private ImageView imgRidesArrow;
+    private TextView tvUserName;
     private CircleImageView profileImage;
 
     private boolean isExpandedViewRidesVisible = false;
     private String currentFragment = "MoovFragment";
+    public static HomeActivityActions homeActivityActions;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.home_activity);
         ButterKnife.bind(this);
+        homeActivityActions = this;
         setNavigationMenus();
         replaceFragment(new MoovFragment(), false, FragmentTransaction.TRANSIT_ENTER_MASK, "MoovFragment");
     }
@@ -75,6 +85,19 @@ public class HomeActivity extends LMTBaseActivity {
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            if (appPrefes.getData(Constants.USER_PROFILE_PIC).length() > 3) {
+                Picasso.get().load(appPrefes.getData(Constants.USER_PROFILE_PIC)).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(profileImage);
+            }
+            tvUserName.setText(appPrefes.getData(Constants.USER_FIRST_NAME));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClick(R.id.cardViewWallet)
@@ -95,6 +118,7 @@ public class HomeActivity extends LMTBaseActivity {
     private void setupNavigationMenu() {
         View headerView = navigationView.getHeaderView(0);
         profileImage = (CircleImageView) headerView.findViewById(R.id.profileImage);
+        tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
         llMoovNav = (LinearLayout) headerView.findViewById(R.id.llMoovNav);
         llRidesNav = (RelativeLayout) headerView.findViewById(R.id.llRidesNav);
         imgRidesArrow = (ImageView) headerView.findViewById(R.id.imgRidesArrow);
@@ -165,6 +189,31 @@ public class HomeActivity extends LMTBaseActivity {
                 changeMenuBackgroundColor();
             }
         });
+        llTalkToUsNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.closeDrawers();
+                currentFragment = "TalkToUsFragment";
+                delayFlow(new TalkToUsFragment(), "TalkToUsFragment");
+                changeMenuBackgroundColor();
+            }
+        });
+        llSettingsNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.closeDrawers();
+                currentFragment = "SettingsFragment";
+                delayFlow(new SettingsFragment(), "SettingsFragment");
+                changeMenuBackgroundColor();
+            }
+        });
+        llLogoutNav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.closeDrawers();
+                showAlertDialog("Logout", "Do you really want log out?", "Logout", "Cancel", DIALOG_LOGOUT);
+            }
+        });
 
     }
 
@@ -192,6 +241,14 @@ public class HomeActivity extends LMTBaseActivity {
                 tvTitle.setText("Payment History");
                 llPaymentHistoryNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
+            case "TalkToUsFragment":
+                tvTitle.setText("Talk To Us");
+                llTalkToUsNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
+                break;
+            case "SettingsFragment":
+                tvTitle.setText("Settings");
+                llSettingsNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
+                break;
         }
     }
 
@@ -216,4 +273,28 @@ public class HomeActivity extends LMTBaseActivity {
         fragmentTransaction.commit();
     }
 
+    @Override
+    public void onClickAlertOkButton(int apiCode) {
+        super.onClickAlertOkButton(apiCode);
+        switch (apiCode) {
+            case DIALOG_LOGOUT:
+                appPrefes.clearData();
+                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+    }
+
+    @Override
+    public void onProfileUpdate() {
+        try {
+            if (appPrefes.getData(Constants.USER_PROFILE_PIC).length() > 3) {
+                Picasso.get().load(appPrefes.getData(Constants.USER_PROFILE_PIC)).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(profileImage);
+            }
+            tvUserName.setText(appPrefes.getData(Constants.USER_FIRST_NAME));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
