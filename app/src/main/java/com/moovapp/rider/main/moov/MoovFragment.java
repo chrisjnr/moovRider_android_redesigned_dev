@@ -14,26 +14,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.ornolfr.ratingview.RatingView;
 import com.moovapp.rider.R;
 import com.moovapp.rider.main.wallet.WalletActivity;
 import com.moovapp.rider.utils.AppPreferences;
 import com.moovapp.rider.utils.ConnectionDetector;
 import com.moovapp.rider.utils.Constants;
+import com.moovapp.rider.utils.GPSTracker;
 import com.moovapp.rider.utils.LMTFragmentHelper;
 import com.moovapp.rider.utils.placesAutocomplete.CustomAutoCompleteTextView;
 import com.moovapp.rider.utils.placesAutocomplete.PlaceJSONParser;
 import com.moovapp.rider.utils.progress.MyProgressDialog;
 import com.moovapp.rider.utils.retrofit.ApiClient;
 import com.moovapp.rider.utils.retrofit.ApiInterface;
+import com.moovapp.rider.utils.retrofit.responseModels.BookRideResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RideSearchResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewCollegesResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
 import com.moovapp.rider.utils.spinnerAdapter.WhiteSpinnerAdapter;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -68,6 +73,7 @@ public class MoovFragment extends LMTFragmentHelper {
     private final int LIST_COLLEGES_API = 1;
     private final int VIEW_RIDE_AMOUNT_API = 2;
     private final int VIEW_WALLET_BALANCE_API = 3;
+    private final int BOOK_RIDE_API = 4;
 
     @BindView(R.id.autoCompleteDestination)
     CustomAutoCompleteTextView autoCompleteDestination;
@@ -90,6 +96,23 @@ public class MoovFragment extends LMTFragmentHelper {
     @BindView(R.id.tvAmount)
     TextView tvAmount;
 
+    @BindView(R.id.tvRiderName)
+    TextView tvRiderName;
+    @BindView(R.id.imgRiderImage)
+    ImageView imgRiderImage;
+    @BindView(R.id.tvCarModel)
+    TextView tvCarModel;
+    @BindView(R.id.rating1)
+    RatingView rating1;
+    @BindView(R.id.tvRiderPhone)
+    TextView tvRiderPhone;
+    @BindView(R.id.tvDistance)
+    TextView tvDistance;
+    @BindView(R.id.tvCarNumber)
+    TextView tvCarNumber;
+    @BindView(R.id.tvEta)
+    TextView tvEta;
+
     private PlacesTask placesTask;
     private ParserTask parserTask;
     private Geocoder mGeocoder;
@@ -97,12 +120,14 @@ public class MoovFragment extends LMTFragmentHelper {
     private MyProgressDialog myProgressDialog;
     public ConnectionDetector cd;
     public AppPreferences appPrefes;
+    public GPSTracker gpsTracker;
 
     private boolean isDropDownSelected = false;
     private boolean isDropDownSelectedLocation = false;
     private boolean isTypingOnDestination = true;
     private boolean isNotEnoughBalance = false;
     private int currentStep = 1;
+    private String selectedCollegeId = "";
 
     @Nullable
     @Override
@@ -112,6 +137,7 @@ public class MoovFragment extends LMTFragmentHelper {
         myProgressDialog = new MyProgressDialog(getActivity());
         cd = new ConnectionDetector(getContext());
         appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
+        gpsTracker = new GPSTracker(getContext());
         inItAutoCompleteLocation();
         setAutoCompleteTextViewListners();
         callViewCollegeListApi();
@@ -163,11 +189,16 @@ public class MoovFragment extends LMTFragmentHelper {
         if (isNotEnoughBalance) {
             Intent intent = new Intent(getContext(), WalletActivity.class);
             startActivity(intent);
+            currentStep = 1;
+            cardViewNext.setVisibility(View.VISIBLE);
+            cbPool.setVisibility(View.VISIBLE);
+            cardViewRideDetails.setVisibility(View.GONE);
+            cardViewMove.setVisibility(View.GONE);
         } else {
             currentStep = 3;
-            cardViewMove.setVisibility(View.GONE);
-            cardViewRideDetails.setVisibility(View.GONE);
-            layoutCurrentRider.setVisibility(View.VISIBLE);
+//            cardViewMove.setVisibility(View.GONE);
+//            cardViewRideDetails.setVisibility(View.GONE);
+            callBookRideApi();
         }
     }
 
@@ -464,6 +495,8 @@ public class MoovFragment extends LMTFragmentHelper {
 
     /**
      * Get Location details
+     *
+     * @param data
      */
 //    private String getCityNameByCoordinates(double lat, double lon) throws IOException {
 //        mGeocoder = new Geocoder(this, Locale.getDefault());
@@ -495,6 +528,25 @@ public class MoovFragment extends LMTFragmentHelper {
 //        }
 //        return null;
 //    }
+    private void setRiderDetails(BookRideResponseModel.DataEntity data) {
+        layoutCurrentRider.setVisibility(View.VISIBLE);
+        tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
+        tvCarModel.setText(data.getDriver_details().getCar_model());
+        rating1.setRating(data.getDriver_details().getRatings());
+        tvRiderPhone.setText(data.getDriver_details().getPhone());
+        tvDistance.setText(data.getDrive_details().getDistance());
+        tvCarNumber.setText(data.getDriver_details().getLicense_no());
+        tvEta.setText(data.getDrive_details().getTime());
+        try {
+            if (data.getDriver_details().getImage().length() > 3) {
+                Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     private void callViewCollegeListApi() {
         if (cd.isConnectingToInternet()) {
             try {
@@ -510,7 +562,7 @@ public class MoovFragment extends LMTFragmentHelper {
                                 Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 List<String> collegeList = new ArrayList<>();
-                                List<String> collegeIdList = new ArrayList<>();
+                                final List<String> collegeIdList = new ArrayList<>();
                                 for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
                                     collegeList.add(response.body().getData().getDetails().get(i).getName());
                                     collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
@@ -520,6 +572,7 @@ public class MoovFragment extends LMTFragmentHelper {
                                 spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     @Override
                                     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                                        selectedCollegeId = collegeIdList.get(i);
                                         callViewRideCostApi();
                                     }
 
@@ -640,6 +693,48 @@ public class MoovFragment extends LMTFragmentHelper {
         }
     }
 
+    private void callBookRideApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                String poolRiding = "yes";
+                if (cbPool.isChecked()) {
+                    poolRiding = "yes";
+                } else {
+                    poolRiding = "no";
+                }
+                gpsTracker = new GPSTracker(getContext());
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"), autoCompleteDestination.getText().toString().replaceAll(" ", "+"), poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                call.enqueue(new retrofit2.Callback<BookRideResponseModel>() {
+                    @Override
+                    public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            setRiderDetails(response.body().getData());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), BOOK_RIDE_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<BookRideResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), BOOK_RIDE_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), BOOK_RIDE_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), BOOK_RIDE_API);
+        }
+    }
+
     @Override
     public void retryApiCall(int apiCode) {
         super.retryApiCall(apiCode);
@@ -652,6 +747,9 @@ public class MoovFragment extends LMTFragmentHelper {
                 break;
             case VIEW_WALLET_BALANCE_API:
                 callViewWalletBalanceApi();
+                break;
+            case BOOK_RIDE_API:
+                callBookRideApi();
                 break;
         }
     }

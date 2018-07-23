@@ -33,10 +33,11 @@
                     app:cardElevation="7dp">
 
                     <ImageView
+                        android:id="@+id/imgRiderImage"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@mipmap/sample_image2" />
+                        android:src="@mipmap/user_placeholder" />
 
                 </android.support.v7.widget.CardView>
 
@@ -49,6 +50,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tvRiderName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Femi Kelechi"
@@ -57,6 +59,7 @@
                         android:textSize="15dp" />
 
                     <TextView
+                        android:id="@+id/tvCarModel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Toyota Corolla"
@@ -125,6 +128,7 @@
                         android:textColor="@color/grayDark"/>
 
                     <TextView
+                        android:id="@+id/tvRiderPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="081 2347 8900"
@@ -148,9 +152,10 @@
                         android:textColor="@color/grayDark"/>
 
                     <TextView
+                        android:id="@+id/tvDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="15 Minutes"
+                        android:text="15 Km"
                         android:textSize="11dp"
                         android:textStyle="bold"
                         android:textColor="@color/colorPrimary"/>
@@ -171,6 +176,7 @@
                         android:textColor="@color/grayDark"/>
 
                     <TextView
+                        android:id="@+id/tvCarNumber"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ABJ 93CL"
@@ -194,6 +200,7 @@
                         android:textColor="@color/grayDark"/>
 
                     <TextView
+                        android:id="@+id/tvEta"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="5 Minutes"

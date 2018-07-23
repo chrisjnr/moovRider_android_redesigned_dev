@@ -1,6 +1,7 @@
 package com.moovapp.rider.utils.retrofit;
 
 
+import com.moovapp.rider.utils.retrofit.responseModels.BookRideResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ForgotPasswordResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.InitPaymentResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.LoginEmailResponseModel;
@@ -113,4 +114,15 @@ public interface ApiInterface {
     Call<UpdatePasswordResponseModel> updatePassword(@Field("userid") String userid,
                                                      @Field("old_password") String old_password,
                                                      @Field("new_password") String new_password);
+    @FormUrlEncoded
+    @POST("ride/book_now")
+    Call<BookRideResponseModel> bookRide(@Field("userid") String userid,
+                                         @Field("from") String from,
+                                         @Field("to") String to,
+                                         @Field("pooling") String pooling,
+                                         @Field("seats") String seats,
+                                         @Field("collegeid") String collegeid,
+                                         @Field("amount") String amount,
+                                         @Field("current_lat") String current_lat,
+                                         @Field("current_long") String current_long);
 }

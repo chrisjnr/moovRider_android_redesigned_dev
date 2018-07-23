@@ -6,9 +6,10 @@ package com.moovapp.rider.utils.retrofit.responseModels;
 
 public class LoginEmailResponseModel {
 
+
     /**
      * status : true
-     * data : {"user_details":{"u_id":43,"u_first_name":"test2","u_image":"male.png","wallet_balance":{"balance":"0"}},"access_token":"WjhPQzZIUE1XbkJsSjJQSDJhOVU3UVJSbnc1U1BGUE56OUNTTFFzZGFncz0=","user_pic_url":"http://themoovapp.com/manage/uploads/userpic/male.png","user_pic_url_100":"http://themoovapp.com/manage/uploads/userpic/croped/100/male.png","user_pic_url_200":"http://themoovapp.com/manage/uploads/userpic/croped/200/male.png"}
+     * data : {"user_details":{"u_id":2,"u_first_name":"Lijo","u_image":".png","wallet_balance":0},"access_token":"T0pMWmFLT0dJbjdmRlNQRUlMTHRYSndheWNvVWtzZHdLVVNSekdyQWdGTT0=","user_pic_url":"http://themoovapp.com/manage/uploads/userpic/.png","user_pic_url_100":"http://themoovapp.com/manage/uploads/userpic/croped/100/.png","user_pic_url_200":"http://themoovapp.com/manage/uploads/userpic/croped/200/.png"}
      * message : login success
      * links : {"self":"http://themoovapp.com/api/v1/api/v1/auth/login/email","forgot_password":"http://themoovapp.com/api/v1/auth/forgot","register":"http://themoovapp.com/api/v1/auth/register"}
      */
@@ -52,11 +53,11 @@ public class LoginEmailResponseModel {
 
     public static class DataEntity {
         /**
-         * user_details : {"u_id":43,"u_first_name":"test2","u_image":"male.png","wallet_balance":{"balance":"0"}}
-         * access_token : WjhPQzZIUE1XbkJsSjJQSDJhOVU3UVJSbnc1U1BGUE56OUNTTFFzZGFncz0=
-         * user_pic_url : http://themoovapp.com/manage/uploads/userpic/male.png
-         * user_pic_url_100 : http://themoovapp.com/manage/uploads/userpic/croped/100/male.png
-         * user_pic_url_200 : http://themoovapp.com/manage/uploads/userpic/croped/200/male.png
+         * user_details : {"u_id":2,"u_first_name":"Lijo","u_image":".png","wallet_balance":0}
+         * access_token : T0pMWmFLT0dJbjdmRlNQRUlMTHRYSndheWNvVWtzZHdLVVNSekdyQWdGTT0=
+         * user_pic_url : http://themoovapp.com/manage/uploads/userpic/.png
+         * user_pic_url_100 : http://themoovapp.com/manage/uploads/userpic/croped/100/.png
+         * user_pic_url_200 : http://themoovapp.com/manage/uploads/userpic/croped/200/.png
          */
 
         private UserDetailsEntity user_details;
@@ -107,16 +108,16 @@ public class LoginEmailResponseModel {
 
         public static class UserDetailsEntity {
             /**
-             * u_id : 43
-             * u_first_name : test2
-             * u_image : male.png
-             * wallet_balance : {"balance":"0"}
+             * u_id : 2
+             * u_first_name : Lijo
+             * u_image : .png
+             * wallet_balance : 0
              */
 
             private int u_id;
             private String u_first_name;
             private String u_image;
-            private WalletBalanceEntity wallet_balance;
+//            private int wallet_balance;
 
             public int getU_id() {
                 return u_id;
@@ -142,29 +143,13 @@ public class LoginEmailResponseModel {
                 this.u_image = u_image;
             }
 
-            public WalletBalanceEntity getWallet_balance() {
-                return wallet_balance;
-            }
-
-            public void setWallet_balance(WalletBalanceEntity wallet_balance) {
-                this.wallet_balance = wallet_balance;
-            }
-
-            public static class WalletBalanceEntity {
-                /**
-                 * balance : 0
-                 */
-
-                private String balance;
-
-                public String getBalance() {
-                    return balance;
-                }
-
-                public void setBalance(String balance) {
-                    this.balance = balance;
-                }
-            }
+//            public int getWallet_balance() {
+//                return wallet_balance;
+//            }
+//
+//            public void setWallet_balance(int wallet_balance) {
+//                this.wallet_balance = wallet_balance;
+//            }
         }
     }
 
