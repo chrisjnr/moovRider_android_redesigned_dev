@@ -17,5 +17,6 @@ public class Constants {
     public static String ACCESS_TOKEN = "accessToken";
     public static String WALLET_BALANCE = "walletBalance";
     public static String USER_PROFILE_PIC = "userProfilePic";
+    public static String DEVICE_TOKEN = "deviceToken";
 
 }

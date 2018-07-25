@@ -454,7 +454,6 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
         }
     }
 
-
     private void callViewProfileApi() {
         if (cd.isConnectingToInternet()) {
             try {

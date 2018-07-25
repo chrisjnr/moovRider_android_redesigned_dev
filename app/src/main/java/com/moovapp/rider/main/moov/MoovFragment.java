@@ -1,6 +1,8 @@
 package com.moovapp.rider.main.moov;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ornolfr.ratingview.RatingView;
+import com.google.android.gms.maps.model.LatLng;
 import com.moovapp.rider.R;
 import com.moovapp.rider.main.wallet.WalletActivity;
 import com.moovapp.rider.utils.AppPreferences;
@@ -34,6 +37,7 @@ import com.moovapp.rider.utils.progress.MyProgressDialog;
 import com.moovapp.rider.utils.retrofit.ApiClient;
 import com.moovapp.rider.utils.retrofit.ApiInterface;
 import com.moovapp.rider.utils.retrofit.responseModels.BookRideResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.CancelRideResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RideSearchResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewCollegesResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
@@ -61,7 +65,6 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 
-import static com.google.android.gms.internal.zzs.TAG;
 
 /**
  * Created by Lijo Mathew Theckanal on 18-Jul-18.
@@ -74,6 +77,9 @@ public class MoovFragment extends LMTFragmentHelper {
     private final int VIEW_RIDE_AMOUNT_API = 2;
     private final int VIEW_WALLET_BALANCE_API = 3;
     private final int BOOK_RIDE_API = 4;
+    private final int SEARCH_FAILED_DAILOG = 5;
+    private final int CANCEL_TRIP_API = 6;
+    private final int CANCEL_TRIP_DIALOG = 7;
 
     @BindView(R.id.autoCompleteDestination)
     CustomAutoCompleteTextView autoCompleteDestination;
@@ -128,6 +134,12 @@ public class MoovFragment extends LMTFragmentHelper {
     private boolean isNotEnoughBalance = false;
     private int currentStep = 1;
     private String selectedCollegeId = "";
+    private String currentRideId = "";
+
+    private Double fromLat = 0.0;
+    private Double fromLong = 0.0;
+    private Double toLat = 0.0;
+    private Double toLong = 0.0;
 
     @Nullable
     @Override
@@ -200,6 +212,11 @@ public class MoovFragment extends LMTFragmentHelper {
 //            cardViewRideDetails.setVisibility(View.GONE);
             callBookRideApi();
         }
+    }
+
+    @OnClick(R.id.tvCancelRide)
+    public void tvCancelRideClick() {
+        showAlertDialog(getContext(), "Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
     }
 
     public void inItAutoCompleteLocation() {
@@ -408,10 +425,12 @@ public class MoovFragment extends LMTFragmentHelper {
                     autoCompleteDestination.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     System.out.println("atvvv" + autoCompleteDestination.getText().toString());
+                    getLatLng(autoCompleteDestination.getText().toString());
                 } else {
                     autoCompleteLocation.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                     System.out.println("atvvv" + autoCompleteLocation.getText().toString());
+                    getLatLng(autoCompleteLocation.getText().toString());
                 }
 
             } catch (Exception e) {
@@ -459,39 +478,31 @@ public class MoovFragment extends LMTFragmentHelper {
 
     /**
      * Get Location lat & long
-     *
-     * @param location is the location name
      */
-//    public void getLatLng(String location, String firstAddress) {
-//        if (Geocoder.isPresent()) {
-//            try {
-//                Geocoder gc = new Geocoder(this);
-//                List<Address> addresses = gc.getFromLocationName(firstAddress + location, 5); // get the found Address Objects
-//                List<LatLng> ll = new ArrayList<LatLng>(addresses.size()); // A list to save the coordinates if they are available
-//                for (Address a : addresses) {
-//                    if (a.hasLatitude() && a.hasLongitude()) {
-//                        ll.add(new LatLng(a.getLatitude(), a.getLongitude()));
-//                        System.out.println("HAHAHA  loc lat: " + a.getLatitude() + " " + a.getLongitude());
-//                        latitudeStr = a.getLatitude() + "";
-//                        longitudeStr = a.getLongitude() + "";
-////                        latitudeStrImmediate = a.getLatitude() + "";
-////                        longitudeStrImmediate = a.getLongitude() + "";
-//                        try {
-//                            getCityNameByCoordinates(a.getLatitude(), a.getLongitude());
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                            getLatLng(location, "");
-//                        }
-//                    }
-//                }
-//                if (addresses.size() < 1) {
-//                    getLatLng(location, "");
-//                }
-//            } catch (Exception e) {
-//                getLatLng(location, "");
-//            }
-//        }
-//    }
+    public LatLng getLatLng(String strAddress) {
+        Geocoder coder = new Geocoder(getContext());
+        List<Address> address;
+        LatLng p1 = null;
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude());
+            if (isTypingOnDestination) {
+                toLat = location.getLatitude();
+                toLong = location.getLongitude();
+            } else {
+                fromLat = location.getLatitude();
+                fromLong = location.getLongitude();
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return p1;
+    }
 
     /**
      * Get Location details
@@ -534,9 +545,9 @@ public class MoovFragment extends LMTFragmentHelper {
         tvCarModel.setText(data.getDriver_details().getCar_model());
         rating1.setRating(data.getDriver_details().getRatings());
         tvRiderPhone.setText(data.getDriver_details().getPhone());
-        tvDistance.setText(data.getDrive_details().getDistance());
+        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
         tvCarNumber.setText(data.getDriver_details().getLicense_no());
-        tvEta.setText(data.getDrive_details().getTime());
+        tvEta.setText(data.getDistance_to_drive_details().getTime());
         try {
             if (data.getDriver_details().getImage().length() > 3) {
                 Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
@@ -544,7 +555,6 @@ public class MoovFragment extends LMTFragmentHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private void callViewCollegeListApi() {
@@ -705,13 +715,27 @@ public class MoovFragment extends LMTFragmentHelper {
                 gpsTracker = new GPSTracker(getContext());
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"), autoCompleteDestination.getText().toString().replaceAll(" ", "+"), poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
+                        fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
+                        toLat + "", toLong + "", poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
                 call.enqueue(new retrofit2.Callback<BookRideResponseModel>() {
                     @Override
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
                         myProgressDialog.dismissProgress();
                         try {
-                            setRiderDetails(response.body().getData());
+                            if (response.body().isStatus()) {
+                                setRiderDetails(response.body().getData());
+                                currentRideId = response.body().getData().getRide_id() + "";
+                                cardViewMove.setVisibility(View.GONE);
+                                cardViewRideDetails.setVisibility(View.GONE);
+                            } else {
+                                showRequestSuccessDialog(getContext(), "Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
+                                currentStep = 1;
+                                cardViewNext.setVisibility(View.VISIBLE);
+                                cbPool.setVisibility(View.VISIBLE);
+                                cardViewRideDetails.setVisibility(View.GONE);
+                                cardViewMove.setVisibility(View.GONE);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                             showServerErrorAlert(getContext(), BOOK_RIDE_API);
@@ -735,6 +759,51 @@ public class MoovFragment extends LMTFragmentHelper {
         }
     }
 
+    private void callCancelRideApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + currentRideId);
+                call.enqueue(new retrofit2.Callback<CancelRideResponseModel>() {
+                    @Override
+                    public void onResponse(Call<CancelRideResponseModel> call, Response<CancelRideResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (response.body().isStatus()) {
+                                showRequestSuccessDialog(getContext(), "Success", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
+                                currentRideId = "";
+                                currentStep = 1;
+                                cardViewNext.setVisibility(View.VISIBLE);
+                                cbPool.setVisibility(View.VISIBLE);
+                                layoutCurrentRider.setVisibility(View.GONE);
+                                cbPool.setChecked(true);
+                            } else {
+                                showServerErrorAlert(getContext(), CANCEL_TRIP_API);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), CANCEL_TRIP_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CancelRideResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), CANCEL_TRIP_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), CANCEL_TRIP_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), CANCEL_TRIP_API);
+        }
+    }
+
     @Override
     public void retryApiCall(int apiCode) {
         super.retryApiCall(apiCode);
@@ -751,7 +820,19 @@ public class MoovFragment extends LMTFragmentHelper {
             case BOOK_RIDE_API:
                 callBookRideApi();
                 break;
+            case CANCEL_TRIP_API:
+                callCancelRideApi();
+                break;
         }
     }
 
+    @Override
+    public void onClickAlertOkButton(int apiCode) {
+        super.onClickAlertOkButton(apiCode);
+        switch (apiCode) {
+            case CANCEL_TRIP_DIALOG:
+                callCancelRideApi();
+                break;
+        }
+    }
 }

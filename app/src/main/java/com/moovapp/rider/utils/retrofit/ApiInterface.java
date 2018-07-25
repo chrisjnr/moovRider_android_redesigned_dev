@@ -2,16 +2,20 @@ package com.moovapp.rider.utils.retrofit;
 
 
 import com.moovapp.rider.utils.retrofit.responseModels.BookRideResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.CancelRideResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ForgotPasswordResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.InitPaymentResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.LoginEmailResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RegistartionResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.RequestOtpResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RideSearchResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.SelectCollegeResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.SelectUserTypeResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.SocialLoginResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.TalkToUsResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.UpdateEmailResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.UpdatePasswordResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.UpdatePhoneResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.UpdateProfilePicResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.UpdateProfileResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.VerifyPaymentResponseModel;
@@ -57,6 +61,13 @@ public interface ApiInterface {
                                              @Field("device_id") String device_id,
                                              @Field("push_token") String push_token,
                                              @Field("app_version") String app_version);
+
+    @FormUrlEncoded
+    @POST("auth/social_login")
+    Call<SocialLoginResponseModel> socialLogin(@Field("provider") String provider,
+                                               @Field("uid") String uid,
+                                               @Field("device_type") String device_type,
+                                               @Field("device_id") String device_id);
 
     @FormUrlEncoded
     @POST("auth/forgot")
@@ -114,15 +125,36 @@ public interface ApiInterface {
     Call<UpdatePasswordResponseModel> updatePassword(@Field("userid") String userid,
                                                      @Field("old_password") String old_password,
                                                      @Field("new_password") String new_password);
+
     @FormUrlEncoded
     @POST("ride/book_now")
     Call<BookRideResponseModel> bookRide(@Field("userid") String userid,
                                          @Field("from") String from,
+                                         @Field("from_lat") String from_lat,
+                                         @Field("from_long") String from_long,
                                          @Field("to") String to,
+                                         @Field("to_lat") String to_lat,
+                                         @Field("to_long") String to_long,
                                          @Field("pooling") String pooling,
                                          @Field("seats") String seats,
                                          @Field("collegeid") String collegeid,
                                          @Field("amount") String amount,
                                          @Field("current_lat") String current_lat,
                                          @Field("current_long") String current_long);
+
+    @FormUrlEncoded
+    @POST("update/phone/otp")
+    Call<RequestOtpResponseModel> requestOtp(@Field("userid") String userid,
+                                             @Field("phone_country") String phone_country,
+                                             @Field("phone") String phone);
+
+    @FormUrlEncoded
+    @POST("update/phone")
+    Call<UpdatePhoneResponseModel> updatePhone(@Field("userid") String userid,
+                                               @Field("phone_country") String phone_country,
+                                               @Field("phone") String phone,
+                                               @Field("otp") String otp);
+
+    @GET
+    Call<CancelRideResponseModel> cancelRide(@Url String url);
 }

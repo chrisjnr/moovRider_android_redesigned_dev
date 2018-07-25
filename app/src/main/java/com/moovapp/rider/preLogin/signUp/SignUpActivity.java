@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.hbb20.CountryCodePicker;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -113,8 +114,12 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
     private String selectedCollegeId = "";
     private String selectedUserId = "";
     private String authModeStr = "email";
-    private String authProviderStr = "email";
-    private String authUId = "";
+    private String registrationType = "Normal";
+    private String socialLoginType = "";
+    private String socialLoginId = "";
+    private String socialEmail = "";
+    private String socialName = "";
+    private String profilePic = "";
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -123,8 +128,24 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
         ButterKnife.bind(this);
         validator = new Validator(this);
         validator.setValidationListener(this);
+        registrationType = getIntent().getStringExtra("RegistrationType");
+        if (registrationType.equals("Social")) {
+            setSocialRegistration();
+            authModeStr = "social";
+        }
         callListCollegesApi();
         keyboardListener();
+    }
+
+    private void setSocialRegistration() {
+        socialLoginType = registrationType = getIntent().getStringExtra("loginType");
+        socialLoginId = registrationType = getIntent().getStringExtra("id");
+        socialEmail = registrationType = getIntent().getStringExtra("email");
+        socialName = registrationType = getIntent().getStringExtra("name");
+        profilePic = registrationType = getIntent().getStringExtra("profilePic");
+        edFirstName.setText(socialName);
+        edEmail.setText(socialEmail);
+        changePage();
     }
 
     private void keyboardListener() {
@@ -306,11 +327,15 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
                 map.put("gender", gender);
                 RequestBody auth_mode = RequestBody.create(MediaType.parse("text/plain"), authModeStr);
                 map.put("auth_mode", auth_mode);
-                RequestBody auth_provider = RequestBody.create(MediaType.parse("text/plain"), authProviderStr);
+                RequestBody auth_provider = RequestBody.create(MediaType.parse("text/plain"), socialLoginType);
                 map.put("auth_provider", auth_provider);
-                RequestBody auth_uid = RequestBody.create(MediaType.parse("text/plain"), authUId);
+                RequestBody auth_uid = RequestBody.create(MediaType.parse("text/plain"), socialLoginId);
                 map.put("auth_uid", auth_uid);
 
+                if (registrationType.equals("Social")) {
+                    RequestBody image = RequestBody.create(MediaType.parse("text/plain"), profilePic);
+                    map.put("image", image);
+                }
 
                 Call<RegistartionResponseModel> call = apiService.register(map);
                 call.enqueue(new Callback<RegistartionResponseModel>() {

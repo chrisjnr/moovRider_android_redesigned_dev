@@ -1,7 +1,10 @@
 package com.moovapp.rider.main;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -15,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.moovapp.rider.R;
 import com.moovapp.rider.main.moov.MoovFragment;
@@ -27,6 +31,7 @@ import com.moovapp.rider.main.upcomingRides.UpcomingRidesFragment;
 import com.moovapp.rider.main.wallet.WalletActivity;
 import com.moovapp.rider.preLogin.LoginActivity;
 import com.moovapp.rider.utils.Constants;
+import com.moovapp.rider.utils.GPSTracker;
 import com.moovapp.rider.utils.LMTBaseActivity;
 import com.moovapp.rider.utils.myGlobalFunctions.DpToPx;
 import com.moovapp.rider.utils.myGlobalFunctions.ExpandOrCollapseViews;
@@ -45,6 +50,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class HomeActivity extends LMTBaseActivity implements HomeActivityActions {
 
     private static final int DIALOG_LOGOUT = 1;
+    private static final int ACCESS_FINE_LOCATION = 7;
 
     @BindView(R.id.navigationView)
     NavigationView navigationView;
@@ -80,6 +86,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         homeActivityActions = this;
         setNavigationMenus();
         replaceFragment(new MoovFragment(), false, FragmentTransaction.TRANSIT_ENTER_MASK, "MoovFragment");
+        if (shouldAskPermission()) {
+            askPermissionLocation();
+        }
     }
 
     @Override
@@ -295,6 +304,33 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             tvUserName.setText(appPrefes.getData(Constants.USER_FIRST_NAME));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    private boolean shouldAskPermission() {
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
+    }
+
+    @TargetApi(23)
+    private void askPermissionLocation() {
+        String[] perms = {"android.permission.ACCESS_FINE_LOCATION"};
+        requestPermissions(perms, ACCESS_FINE_LOCATION);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
+        switch (permsRequestCode) {
+            case ACCESS_FINE_LOCATION:
+                boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (locationAccepted) {
+                    GPSTracker gpsTracker = new GPSTracker(getApplicationContext());
+                    gpsTracker.getLongitude();
+                } else {
+                    Toast.makeText(getBaseContext(), "Permission denied. You must allow location sharing permission to use this app!", Toast.LENGTH_SHORT).show();
+                    askPermissionLocation();
+                }
+                break;
         }
     }
 }

@@ -23,7 +23,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-    compile 'com.google.android.gms:play-services-places:9.4.0'
+    compile 'com.google.android.gms:play-services-auth:15.0.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -61,5 +61,14 @@ dependencies {
     compile 'com.github.yalantis:ucrop:2.2.1-native'
     //compressor
     compile 'id.zelory:compressor:2.1.0'
+    //Facebook Sdk
+    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
+    /*Google play*/
+    compile 'com.google.android.gms:play-services-auth:9.0.0'
+    compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+    //FCM
+    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+    //Google Map
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
 
 }

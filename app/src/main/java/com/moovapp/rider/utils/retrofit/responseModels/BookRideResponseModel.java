@@ -6,11 +6,12 @@ package com.moovapp.rider.utils.retrofit.responseModels;
 
 public class BookRideResponseModel {
 
+
     /**
      * status : true
-     * data : {"driver_details":{"first_name":null,"last_name":null,"phone":null,"phone_country":null,"gender":null,"vehicle_no":null,"car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":0,"image":null},"distance_to_ride":1.47,"drive_details":{"distance":"20,8 km","time":"41 min"}}
+     * data : {"driver_details":{"driver_id":31,"first_name":"sics","last_name":"tvm","email":"remya@gmail.com","institution_id":0,"institution_name":null,"phone":"9446172550","phone_country":"+91","gender":"female","vehicle_no":"KL 123456","verified":0,"u_device_id":"di8g823msyU:APA91bFV6Ta0MS-T7iIHbOe0m5R-6yD4xNSJ0irRWnym5fPthofT3z9iI-FzgCEl9HRP0W2iwNjKJhEPiBPIE4IH48TMLsXBMrzEi1Lp9wdgHgeoqfKdzgJCOTIxFYXf_E0ScMI9wUbcju-9ZU7HWf7yI7DNmVLxow","car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":0,"wallet_balance":"0","image":"female.nopng"},"distance_to_drive_details":{"distance":"0,6 km","time":"2 min"},"trip_id":18,"ride_id":18}
      * message : Ride booked
-     * links : {"self":"http://localhost/moov/api/v1/moov/api/v1/ride/book_now"}
+     * links : {"self":"http://themoovapp.com/api/v1/api/v1/ride/book_now"}
      */
 
     private boolean status;
@@ -52,14 +53,16 @@ public class BookRideResponseModel {
 
     public static class DataEntity {
         /**
-         * driver_details : {"first_name":null,"last_name":null,"phone":null,"phone_country":null,"gender":null,"vehicle_no":null,"car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":0,"image":null}
-         * distance_to_ride : 1.47
-         * drive_details : {"distance":"20,8 km","time":"41 min"}
+         * driver_details : {"driver_id":31,"first_name":"sics","last_name":"tvm","email":"remya@gmail.com","institution_id":0,"institution_name":null,"phone":"9446172550","phone_country":"+91","gender":"female","vehicle_no":"KL 123456","verified":0,"u_device_id":"di8g823msyU:APA91bFV6Ta0MS-T7iIHbOe0m5R-6yD4xNSJ0irRWnym5fPthofT3z9iI-FzgCEl9HRP0W2iwNjKJhEPiBPIE4IH48TMLsXBMrzEi1Lp9wdgHgeoqfKdzgJCOTIxFYXf_E0ScMI9wUbcju-9ZU7HWf7yI7DNmVLxow","car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":0,"wallet_balance":"0","image":"female.nopng"}
+         * distance_to_drive_details : {"distance":"0,6 km","time":"2 min"}
+         * trip_id : 18
+         * ride_id : 18
          */
 
         private DriverDetailsEntity driver_details;
-        private double distance_to_ride;
-        private DriveDetailsEntity drive_details;
+        private DistanceToDriveDetailsEntity distance_to_drive_details;
+        private int trip_id;
+        private int ride_id;
 
         public DriverDetailsEntity getDriver_details() {
             return driver_details;
@@ -69,52 +72,82 @@ public class BookRideResponseModel {
             this.driver_details = driver_details;
         }
 
-        public double getDistance_to_ride() {
-            return distance_to_ride;
+        public DistanceToDriveDetailsEntity getDistance_to_drive_details() {
+            return distance_to_drive_details;
         }
 
-        public void setDistance_to_ride(double distance_to_ride) {
-            this.distance_to_ride = distance_to_ride;
+        public void setDistance_to_drive_details(DistanceToDriveDetailsEntity distance_to_drive_details) {
+            this.distance_to_drive_details = distance_to_drive_details;
         }
 
-        public DriveDetailsEntity getDrive_details() {
-            return drive_details;
+        public int getTrip_id() {
+            return trip_id;
         }
 
-        public void setDrive_details(DriveDetailsEntity drive_details) {
-            this.drive_details = drive_details;
+        public void setTrip_id(int trip_id) {
+            this.trip_id = trip_id;
+        }
+
+        public int getRide_id() {
+            return ride_id;
+        }
+
+        public void setRide_id(int ride_id) {
+            this.ride_id = ride_id;
         }
 
         public static class DriverDetailsEntity {
             /**
-             * first_name : null
-             * last_name : null
-             * phone : null
-             * phone_country : null
-             * gender : null
-             * vehicle_no : null
+             * driver_id : 31
+             * first_name : sics
+             * last_name : tvm
+             * email : remya@gmail.com
+             * institution_id : 0
+             * institution_name : null
+             * phone : 9446172550
+             * phone_country : +91
+             * gender : female
+             * vehicle_no : KL 123456
+             * verified : 0
+             * u_device_id : di8g823msyU:APA91bFV6Ta0MS-T7iIHbOe0m5R-6yD4xNSJ0irRWnym5fPthofT3z9iI-FzgCEl9HRP0W2iwNjKJhEPiBPIE4IH48TMLsXBMrzEi1Lp9wdgHgeoqfKdzgJCOTIxFYXf_E0ScMI9wUbcju-9ZU7HWf7yI7DNmVLxow
              * car_model : abc
              * car_capacity : abc
              * license_no : abc
              * license_expiry : abc
              * dob : abc
              * ratings : 0
-             * image : null
+             * wallet_balance : 0
+             * image : female.nopng
              */
 
+            private int driver_id;
             private String first_name;
             private String last_name;
+            private String email;
+            private int institution_id;
+            private String institution_name;
             private String phone;
             private String phone_country;
             private String gender;
             private String vehicle_no;
+            private int verified;
+            private String u_device_id;
             private String car_model;
             private String car_capacity;
             private String license_no;
             private String license_expiry;
             private String dob;
             private int ratings;
+            private String wallet_balance;
             private String image;
+
+            public int getDriver_id() {
+                return driver_id;
+            }
+
+            public void setDriver_id(int driver_id) {
+                this.driver_id = driver_id;
+            }
 
             public String getFirst_name() {
                 return first_name;
@@ -130,6 +163,30 @@ public class BookRideResponseModel {
 
             public void setLast_name(String last_name) {
                 this.last_name = last_name;
+            }
+
+            public String getEmail() {
+                return email;
+            }
+
+            public void setEmail(String email) {
+                this.email = email;
+            }
+
+            public int getInstitution_id() {
+                return institution_id;
+            }
+
+            public void setInstitution_id(int institution_id) {
+                this.institution_id = institution_id;
+            }
+
+            public String getInstitution_name() {
+                return institution_name;
+            }
+
+            public void setInstitution_name(String institution_name) {
+                this.institution_name = institution_name;
             }
 
             public String getPhone() {
@@ -162,6 +219,22 @@ public class BookRideResponseModel {
 
             public void setVehicle_no(String vehicle_no) {
                 this.vehicle_no = vehicle_no;
+            }
+
+            public int getVerified() {
+                return verified;
+            }
+
+            public void setVerified(int verified) {
+                this.verified = verified;
+            }
+
+            public String getU_device_id() {
+                return u_device_id;
+            }
+
+            public void setU_device_id(String u_device_id) {
+                this.u_device_id = u_device_id;
             }
 
             public String getCar_model() {
@@ -212,6 +285,14 @@ public class BookRideResponseModel {
                 this.ratings = ratings;
             }
 
+            public String getWallet_balance() {
+                return wallet_balance;
+            }
+
+            public void setWallet_balance(String wallet_balance) {
+                this.wallet_balance = wallet_balance;
+            }
+
             public String getImage() {
                 return image;
             }
@@ -221,10 +302,10 @@ public class BookRideResponseModel {
             }
         }
 
-        public static class DriveDetailsEntity {
+        public static class DistanceToDriveDetailsEntity {
             /**
-             * distance : 20,8 km
-             * time : 41 min
+             * distance : 0,6 km
+             * time : 2 min
              */
 
             private String distance;
@@ -250,7 +331,7 @@ public class BookRideResponseModel {
 
     public static class LinksEntity {
         /**
-         * self : http://localhost/moov/api/v1/moov/api/v1/ride/book_now
+         * self : http://themoovapp.com/api/v1/api/v1/ride/book_now
          */
 
         private String self;

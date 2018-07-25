@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="300dp"
+    android:layout_width="280dp"
     android:layout_height="wrap_content"
     android:background="@drawable/layout_white_rounded_bg"
     android:orientation="vertical">
@@ -12,7 +12,7 @@
         android:layout_height="35dp"
         android:background="@drawable/layout_primary_top_border_rounded_bg"
         android:gravity="center"
-        android:text="Reset Number"
+        android:text="Enter OTP"
         android:textColor="@color/white"
         android:textSize="16dp"
         android:textStyle="bold" />
@@ -24,49 +24,18 @@
         android:background="@drawable/layout_gray_little_rounded_white_bg"
         android:orientation="vertical">
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/edOtp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:orientation="horizontal">
+            android:background="@color/transparent"
+            android:hint="OTP"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" />
 
-            <com.hbb20.CountryCodePicker
-                android:id="@+id/codePicker"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                app:ccpDialog_keyboardAutoPopup="false"
-                app:ccpDialog_showCloseIcon="true"
-                app:ccpDialog_showFastScroller="false"
-                app:ccpDialog_showPhoneCode="true"
-                app:ccp_arrowSize="30dp"
-                app:ccp_autoDetectCountry="true"
-                app:ccp_autoDetectLanguage="true"
-                app:ccp_clickable="true"
-                app:ccp_showArrow="true"
-                app:ccp_showPhoneCode="true"
-                app:ccp_textGravity="RIGHT"
-                app:ccp_textSize="11sp" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/gray" />
-
-            <EditText
-                android:id="@+id/edPhoneNumber"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/transparent"
-                android:hint="00 0000 0000"
-                android:imeOptions="actionDone"
-                android:inputType="number"
-                android:maxLines="1"
-                android:maxLength="12"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:textColor="@color/black"
-                android:textSize="14dp" />
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

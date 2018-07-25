@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hbb20.CountryCodePicker;
 import com.moovapp.rider.R;
 import com.moovapp.rider.main.HomeActivity;
 import com.moovapp.rider.utils.AppPreferences;
@@ -22,8 +23,10 @@ import com.moovapp.rider.utils.LMTFragmentHelper;
 import com.moovapp.rider.utils.progress.MyProgressDialog;
 import com.moovapp.rider.utils.retrofit.ApiClient;
 import com.moovapp.rider.utils.retrofit.ApiInterface;
+import com.moovapp.rider.utils.retrofit.responseModels.RequestOtpResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.UpdateEmailResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.UpdatePasswordResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.UpdatePhoneResponseModel;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,6 +43,9 @@ public class SettingsFragment extends LMTFragmentHelper {
     private final int EMAIL_EDIT_SUCCESS_DIALOG = 2;
     private final int EDIT_PASSWORD_API = 3;
     private final int EMAIL_PASSWORD_SUCCESS_DIALOG = 4;
+    private final int PHONE_SUCCESS_DIALOG = 5;
+    private final int REQUEST_OTP_API = 6;
+    private final int UPDATE_PHONE_API = 7;
 
     private MyProgressDialog myProgressDialog;
     public ConnectionDetector cd;
@@ -49,6 +55,9 @@ public class SettingsFragment extends LMTFragmentHelper {
     private String newPassword = "";
     private String oldEmail = "";
     private String newEmail = "";
+    private String phoneNumber = "";
+    private String countryCode = "";
+    private String otp = "";
 
     @Nullable
     @Override
@@ -120,10 +129,23 @@ public class SettingsFragment extends LMTFragmentHelper {
         dialog.setContentView(R.layout.dialog_reset_number);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final EditText edNewNumber = (EditText) dialog.findViewById(R.id.edNewNumber);
-        final EditText edOtp = (EditText) dialog.findViewById(R.id.edOtp);
+        final EditText edPhoneNumber = (EditText) dialog.findViewById(R.id.edPhoneNumber);
+        final CountryCodePicker codePicker = (CountryCodePicker) dialog.findViewById(R.id.codePicker);
         final TextView tvCancel = (TextView) dialog.findViewById(R.id.tvCancel);
         final TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
+        tvOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (edPhoneNumber.getText().toString().trim().length() > 0) {
+                    phoneNumber = edPhoneNumber.getText().toString();
+                    countryCode = codePicker.getSelectedCountryCode();
+                    callRequestOtpApi();
+                    dialog.dismiss();
+                } else {
+                    edPhoneNumber.setError("This field is required!");
+                }
+            }
+        });
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +153,38 @@ public class SettingsFragment extends LMTFragmentHelper {
             }
         });
         dialog.show();
+    }
+
+    private void showEnterOtpDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_enter_otp);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final EditText edOtp = (EditText) dialog.findViewById(R.id.edOtp);
+        final TextView tvCancel = (TextView) dialog.findViewById(R.id.tvCancel);
+        final TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
+        tvOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (edOtp.getText().toString().trim().length() > 0) {
+                    otp = edOtp.getText().toString();
+                    callVerifyOtpApi();
+                    dialog.dismiss();
+                } else {
+                    edOtp.setError("This field is required!");
+                }
+            }
+        });
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
     }
 
     @OnClick(R.id.tvResetEmail)
@@ -252,6 +306,84 @@ public class SettingsFragment extends LMTFragmentHelper {
         }
     }
 
+    private void callRequestOtpApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<RequestOtpResponseModel> call = apiService.requestOtp(appPrefes.getData(Constants.USER_ID), countryCode, phoneNumber);
+                call.enqueue(new retrofit2.Callback<RequestOtpResponseModel>() {
+                    @Override
+                    public void onResponse(Call<RequestOtpResponseModel> call, Response<RequestOtpResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (!response.body().isStatus()) {
+                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                showEnterOtpDialog();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), REQUEST_OTP_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<RequestOtpResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), REQUEST_OTP_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), REQUEST_OTP_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), REQUEST_OTP_API);
+        }
+    }
+
+    private void callVerifyOtpApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<UpdatePhoneResponseModel> call = apiService.updatePhone(appPrefes.getData(Constants.USER_ID), countryCode, phoneNumber, otp);
+                call.enqueue(new retrofit2.Callback<UpdatePhoneResponseModel>() {
+                    @Override
+                    public void onResponse(Call<UpdatePhoneResponseModel> call, Response<UpdatePhoneResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (!response.body().isStatus()) {
+                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                            } else {
+                                showRequestSuccessDialog(getContext(), "Success", "Phone number changed successfully", "Ok", PHONE_SUCCESS_DIALOG);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), UPDATE_PHONE_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<UpdatePhoneResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), UPDATE_PHONE_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), UPDATE_PHONE_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), UPDATE_PHONE_API);
+        }
+    }
+
     @Override
     public void retryApiCall(int apiCode) {
         super.retryApiCall(apiCode);
@@ -261,6 +393,12 @@ public class SettingsFragment extends LMTFragmentHelper {
                 break;
             case EDIT_PASSWORD_API:
                 callEditPasswordApi();
+                break;
+            case REQUEST_OTP_API:
+                callRequestOtpApi();
+                break;
+            case UPDATE_PHONE_API:
+                callVerifyOtpApi();
                 break;
         }
     }
