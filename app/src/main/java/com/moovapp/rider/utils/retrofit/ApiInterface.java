@@ -20,6 +20,7 @@ import com.moovapp.rider.utils.retrofit.responseModels.UpdateProfilePicResponseM
 import com.moovapp.rider.utils.retrofit.responseModels.UpdateProfileResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.VerifyPaymentResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewCollegesResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewPreviousRidesResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewProfileResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
 
@@ -157,4 +158,7 @@ public interface ApiInterface {
 
     @GET
     Call<CancelRideResponseModel> cancelRide(@Url String url);
+
+    @GET
+    Call<ViewPreviousRidesResponseModel> viewPreviousRide(@Url String url);
 }

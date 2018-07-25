@@ -19,4 +19,15 @@ public class Constants {
     public static String USER_PROFILE_PIC = "userProfilePic";
     public static String DEVICE_TOKEN = "deviceToken";
 
+    //To be deleted
+    public static String TEMP_DRIVER_NAME = "tempDriverName";
+    public static String TEMP_CAR_MODEL = "tempCarModel";
+    public static String TEMP_RATING = "tempRating";
+    public static String TEMP_PHONE = "tempPhone";
+    public static String TEMP_DISTANCE = "tempDistance";
+    public static String TEMP_CAR_NUMBER= "tempCarNumber";
+    public static String TEMP_ETA= "tempEta";
+    public static String TEMP_PHOTO= "tempPhoto";
+    public static String TEMP_RIDE_ID= "tempRideId";
+
 }
