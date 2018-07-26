@@ -95,7 +95,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/location_transperant" />
+                        android:src="@mipmap/cal" />
 
                     <TextView
                         android:id="@+id/tvDate"
@@ -116,7 +116,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/location_transperant" />
+                        android:src="@mipmap/time" />
 
                     <TextView
                         android:id="@+id/tvTime"
@@ -137,7 +137,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/location_transperant" />
+                        android:src="@mipmap/seat" />
 
                     <TextView
                         android:id="@+id/tvSeats"
@@ -167,8 +167,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="DONE"
+            android:text="COMPLETED"
             android:textColor="@color/colorPrimary"
-            android:textSize="17dp" />
+            android:textSize="13dp" />
     </LinearLayout>
 </LinearLayout>

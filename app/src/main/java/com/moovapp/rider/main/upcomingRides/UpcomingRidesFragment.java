@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.ornolfr.ratingview.RatingView;
 import com.moovapp.rider.R;
@@ -18,7 +19,10 @@ import com.moovapp.rider.utils.progress.MyProgressDialog;
 import com.moovapp.rider.utils.retrofit.ApiClient;
 import com.moovapp.rider.utils.retrofit.ApiInterface;
 import com.moovapp.rider.utils.retrofit.responseModels.CancelRideResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewCurrentRideResponseModel;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +36,7 @@ import retrofit2.Response;
 
 public class UpcomingRidesFragment extends LMTFragmentHelper {
 
+    private final int VIEW_CURRENT_RIDE_API = 1;
     private final int CANCEL_TRIP_API = 6;
     private final int SEARCH_FAILED_DIALOG = 5;
     private final int CANCEL_TRIP_DIALOG = 7;
@@ -62,6 +67,8 @@ public class UpcomingRidesFragment extends LMTFragmentHelper {
     public ConnectionDetector cd;
     public AppPreferences appPrefes;
 
+    private String currentRideId = "";
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -70,31 +77,28 @@ public class UpcomingRidesFragment extends LMTFragmentHelper {
         myProgressDialog = new MyProgressDialog(getActivity());
         cd = new ConnectionDetector(getContext());
         appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
-        setValues();
+        callViewCurrentRideApi();
         return view;
     }
 
-    private void setValues() {
-        if (appPrefes.getData(Constants.TEMP_DRIVER_NAME).equals("")) {
-            tvNoRides.setVisibility(View.VISIBLE);
-            layoutRide.setVisibility(View.GONE);
-        } else {
-            tvNoRides.setVisibility(View.GONE);
-            layoutRide.setVisibility(View.VISIBLE);
-            tvRiderName.setText(appPrefes.getData(Constants.TEMP_DRIVER_NAME));
-            tvCarModel.setText(appPrefes.getData(Constants.TEMP_CAR_MODEL));
-            rating1.setRating(Integer.parseInt(appPrefes.getData(Constants.TEMP_RATING)));
-            tvRiderPhone.setText(appPrefes.getData(Constants.TEMP_PHONE));
-            tvDistance.setText(appPrefes.getData(Constants.TEMP_DISTANCE));
-            tvCarNumber.setText(appPrefes.getData(Constants.TEMP_CAR_NUMBER));
-            tvEta.setText(appPrefes.getData(Constants.TEMP_ETA));
-            try {
-                if (appPrefes.getData(Constants.TEMP_PHOTO).length() > 3) {
-                    Picasso.get().load(appPrefes.getData(Constants.TEMP_PHOTO)).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+    private void setValues(ViewCurrentRideResponseModel.DataEntity data) {
+        tvNoRides.setVisibility(View.GONE);
+        layoutRide.setVisibility(View.VISIBLE);
+        tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
+        tvCarModel.setText(data.getDriver_details().getCar_model());
+        rating1.setRating(data.getDriver_details().getRatings());
+        tvRiderPhone.setText(data.getDriver_details().getPhone());
+//        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
+        tvDistance.setText("15 Km");
+        tvCarNumber.setText(data.getDriver_details().getLicense_no());
+//        tvEta.setText(data.getDistance_to_drive_details().getTime());
+        tvEta.setText("15 Minutes");
+        try {
+            if (data.getDriver_details().getImage().length() > 3) {
+                Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -103,12 +107,53 @@ public class UpcomingRidesFragment extends LMTFragmentHelper {
         showAlertDialog(getContext(), "Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
     }
 
+    private void callViewCurrentRideApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<ViewCurrentRideResponseModel> call = apiService.viewCurrentRide("view/rides/current/user/" + appPrefes.getData(Constants.USER_ID));
+                call.enqueue(new retrofit2.Callback<ViewCurrentRideResponseModel>() {
+                    @Override
+                    public void onResponse(Call<ViewCurrentRideResponseModel> call, Response<ViewCurrentRideResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (response.body().isStatus()) {
+                                currentRideId = response.body().getData().get(0).getRide_id() + "";
+                                setValues(response.body().getData().get(0));
+                            } else {
+                                tvNoRides.setVisibility(View.VISIBLE);
+                                layoutRide.setVisibility(View.GONE);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(getContext(), VIEW_CURRENT_RIDE_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ViewCurrentRideResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(getContext(), VIEW_CURRENT_RIDE_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(getContext(), VIEW_CURRENT_RIDE_API);
+            }
+        } else {
+            showNoInternetAlert(getContext(), VIEW_CURRENT_RIDE_API);
+        }
+    }
+
     private void callCancelRideApi() {
         if (cd.isConnectingToInternet()) {
             try {
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + appPrefes.getData(Constants.TEMP_RIDE_ID));
+                Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + currentRideId);
                 call.enqueue(new retrofit2.Callback<CancelRideResponseModel>() {
                     @Override
                     public void onResponse(Call<CancelRideResponseModel> call, Response<CancelRideResponseModel> response) {
@@ -116,19 +161,10 @@ public class UpcomingRidesFragment extends LMTFragmentHelper {
                         try {
                             if (response.body().isStatus()) {
                                 showRequestSuccessDialog(getContext(), "Success", response.body().getMessage(), "Okay", SEARCH_FAILED_DIALOG);
-                                appPrefes.SaveData(Constants.TEMP_DRIVER_NAME, "");
-                                appPrefes.SaveData(Constants.TEMP_CAR_MODEL, "");
-                                appPrefes.SaveData(Constants.TEMP_RATING, "");
-                                appPrefes.SaveData(Constants.TEMP_PHONE, "");
-                                appPrefes.SaveData(Constants.TEMP_DISTANCE, "");
-                                appPrefes.SaveData(Constants.TEMP_CAR_NUMBER, "");
-                                appPrefes.SaveData(Constants.TEMP_ETA, "");
-                                appPrefes.SaveData(Constants.TEMP_PHOTO, "");
-                                appPrefes.SaveData(Constants.TEMP_RIDE_ID, "");
                                 tvNoRides.setVisibility(View.VISIBLE);
                                 layoutRide.setVisibility(View.GONE);
                             } else {
-                                showServerErrorAlert(getContext(), CANCEL_TRIP_API);
+                                Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -157,6 +193,9 @@ public class UpcomingRidesFragment extends LMTFragmentHelper {
     public void retryApiCall(int apiCode) {
         super.retryApiCall(apiCode);
         switch (apiCode) {
+            case VIEW_CURRENT_RIDE_API:
+                callViewCurrentRideApi();
+                break;
             case CANCEL_TRIP_API:
                 callCancelRideApi();
                 break;

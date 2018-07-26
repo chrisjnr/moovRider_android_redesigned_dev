@@ -555,17 +555,6 @@ public class MoovFragment extends LMTFragmentHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //To be deleted
-        appPrefes.SaveData(Constants.TEMP_DRIVER_NAME, data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
-        appPrefes.SaveData(Constants.TEMP_CAR_MODEL, data.getDriver_details().getCar_model());
-        appPrefes.SaveData(Constants.TEMP_RATING, data.getDriver_details().getRatings() + "");
-        appPrefes.SaveData(Constants.TEMP_PHONE, data.getDriver_details().getPhone());
-        appPrefes.SaveData(Constants.TEMP_DISTANCE, data.getDistance_to_drive_details().getDistance());
-        appPrefes.SaveData(Constants.TEMP_CAR_NUMBER, data.getDriver_details().getLicense_no());
-        appPrefes.SaveData(Constants.TEMP_ETA, data.getDistance_to_drive_details().getTime());
-        appPrefes.SaveData(Constants.TEMP_PHOTO, data.getDriver_details().getImage());
-        appPrefes.SaveData(Constants.TEMP_RIDE_ID, currentRideId);
     }
 
     private void callViewCollegeListApi() {
@@ -789,16 +778,6 @@ public class MoovFragment extends LMTFragmentHelper {
                                 cbPool.setVisibility(View.VISIBLE);
                                 layoutCurrentRider.setVisibility(View.GONE);
                                 cbPool.setChecked(true);
-//To be deleted
-                                appPrefes.SaveData(Constants.TEMP_DRIVER_NAME, "");
-                                appPrefes.SaveData(Constants.TEMP_CAR_MODEL, "");
-                                appPrefes.SaveData(Constants.TEMP_RATING, "");
-                                appPrefes.SaveData(Constants.TEMP_PHONE, "");
-                                appPrefes.SaveData(Constants.TEMP_DISTANCE, "");
-                                appPrefes.SaveData(Constants.TEMP_CAR_NUMBER, "");
-                                appPrefes.SaveData(Constants.TEMP_ETA, "");
-                                appPrefes.SaveData(Constants.TEMP_PHOTO, "");
-                                appPrefes.SaveData(Constants.TEMP_RIDE_ID, "");
                             } else {
                                 showServerErrorAlert(getContext(), CANCEL_TRIP_API);
                             }

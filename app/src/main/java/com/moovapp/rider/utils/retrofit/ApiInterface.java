@@ -1,11 +1,13 @@
 package com.moovapp.rider.utils.retrofit;
 
 
+import com.moovapp.rider.utils.placesAutocomplete.AddDriverRatingResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.BookRideResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.CancelRideResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ForgotPasswordResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.InitPaymentResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.LoginEmailResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.PaymentResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RegistartionResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RequestOtpResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.RideSearchResponseModel;
@@ -20,6 +22,8 @@ import com.moovapp.rider.utils.retrofit.responseModels.UpdateProfilePicResponseM
 import com.moovapp.rider.utils.retrofit.responseModels.UpdateProfileResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.VerifyPaymentResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewCollegesResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewCurrentRideResponseModel;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewDriverDetailsResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewPreviousRidesResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewProfileResponseModel;
 import com.moovapp.rider.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
@@ -156,9 +160,29 @@ public interface ApiInterface {
                                                @Field("phone") String phone,
                                                @Field("otp") String otp);
 
+    @FormUrlEncoded
+    @POST("ride/add_rating")
+    Call<AddDriverRatingResponseModel> addDriverRating(@Field("driver_id") String driver_id,
+                                                       @Field("trip_id") String trip_id,
+                                                       @Field("user_id") String user_id,
+                                                       @Field("rating_score") String rating_score,
+                                                       @Field("review") String review);
+
+    @FormUrlEncoded
+    @POST("rides/pay")
+    Call<PaymentResponseModel> pay(@Field("userid") String userid,
+                                   @Field("ride_id") String ride_id,
+                                   @Field("amount") String amount);
+
     @GET
     Call<CancelRideResponseModel> cancelRide(@Url String url);
 
     @GET
     Call<ViewPreviousRidesResponseModel> viewPreviousRide(@Url String url);
+
+    @GET
+    Call<ViewCurrentRideResponseModel> viewCurrentRide(@Url String url);
+
+    @GET
+    Call<ViewDriverDetailsResponseModel> viewDriverDetails(@Url String url);
 }

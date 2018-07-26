@@ -6,6 +6,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/llMain"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginLeft="7dp"
@@ -95,7 +96,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/location_transperant" />
+                        android:src="@mipmap/cal" />
 
                     <TextView
                         android:id="@+id/tvDate"
@@ -116,7 +117,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/location_transperant" />
+                        android:src="@mipmap/time" />
 
                     <TextView
                         android:id="@+id/tvTime"
@@ -137,7 +138,7 @@
                     <ImageView
                         android:layout_width="12dp"
                         android:layout_height="match_parent"
-                        android:src="@mipmap/location_transperant" />
+                        android:src="@mipmap/seat" />
 
                     <TextView
                         android:id="@+id/tvSeats"

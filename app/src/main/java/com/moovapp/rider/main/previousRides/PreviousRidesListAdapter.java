@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 
 import com.moovapp.rider.R;
+import com.moovapp.rider.utils.retrofit.responseModels.ViewPreviousRidesResponseModel;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by Lijo Mathew Theckanal on 18-Jul-18.
  */
-public class PreviousRidesListAdapter extends ArrayAdapter<String> {
+public class PreviousRidesListAdapter extends ArrayAdapter<ViewPreviousRidesResponseModel.DataEntity> {
 
     private static class ViewHolder {
         public final LinearLayout mainLayout;
@@ -64,7 +65,7 @@ public class PreviousRidesListAdapter extends ArrayAdapter<String> {
             vh = (ViewHolder) convertView.getTag();
         }
 
-        final String item = getItem(position);
+        final ViewPreviousRidesResponseModel.DataEntity item = getItem(position);
 
         vh.tvFrom.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Bold.ttf"));
         vh.tvTo.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Bold.ttf"));
@@ -74,6 +75,25 @@ public class PreviousRidesListAdapter extends ArrayAdapter<String> {
         vh.tvAmount.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Bold.ttf"));
         vh.tvStatus.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Lato-Bold.ttf"));
 
+        try {
+            vh.tvFrom.setText(item.getRide_from().split(",")[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            vh.tvFrom.setText(item.getRide_from());
+        }
+        try {
+            vh.tvTo.setText(item.getRide_to().split(",")[0]);
+        } catch (Exception e) {
+            e.printStackTrace();
+            vh.tvTo.setText(item.getRide_to());
+        }
+        vh.tvDate.setText(item.getRide_booked_on_date());
+        vh.tvTime.setText(item.getRide_booked_on_time());
+        vh.tvSeats.setText(item.getRide_seats()+" Seats");
+        vh.tvAmount.setText("$ "+ item.getRide_amount());
+        vh.tvStatus.setText(item.getRide_status().toUpperCase());
+
+
         return vh.mainLayout;
     }
 
@@ -81,13 +101,13 @@ public class PreviousRidesListAdapter extends ArrayAdapter<String> {
     private Context context;
 
     // Constructors
-    public PreviousRidesListAdapter(Context context, List<String> objects) {
+    public PreviousRidesListAdapter(Context context, List<ViewPreviousRidesResponseModel.DataEntity> objects) {
         super(context, 0, objects);
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
     }
 
-    public PreviousRidesListAdapter(Context context, String[] objects) {
+    public PreviousRidesListAdapter(Context context, ViewPreviousRidesResponseModel.DataEntity[] objects) {
         super(context, 0, objects);
         this.context = context;
         this.mInflater = LayoutInflater.from(context);

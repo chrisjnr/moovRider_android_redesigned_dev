@@ -4,14 +4,14 @@ package com.moovapp.rider.utils.retrofit.responseModels;
  * Created by Lijo Mathew Theckanal on 21-Jul-18.
  */
 
-public class BookRideResponseModel {
+public class BookRideResponseModelOld {
 
 
     /**
      * status : true
-     * data : {"driver_details":{"driver_id":17,"first_name":"test2","last_name":"user","email":"test17@test.com","institution_id":1,"institution_name":"sample school 1","phone":null,"phone_country":null,"gender":"male","vehicle_no":"KL 123456","verified":0,"u_device_id":"ab123456","car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":5,"wallet_balance":null,"image":"male.png"},"distance_to_drive_details":{"distance":"32,9 km","time":"1 godz. 3 min"},"trip_id":62,"ride_id":66}
+     * data : {"driver_details":{"driver_id":31,"first_name":"sics","last_name":"tvm","email":"remya@gmail.com","institution_id":0,"institution_name":null,"phone":"9446172550","phone_country":"+91","gender":"female","vehicle_no":"KL 123456","verified":0,"u_device_id":"di8g823msyU:APA91bFV6Ta0MS-T7iIHbOe0m5R-6yD4xNSJ0irRWnym5fPthofT3z9iI-FzgCEl9HRP0W2iwNjKJhEPiBPIE4IH48TMLsXBMrzEi1Lp9wdgHgeoqfKdzgJCOTIxFYXf_E0ScMI9wUbcju-9ZU7HWf7yI7DNmVLxow","car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":0,"wallet_balance":"0","image":"female.nopng"},"distance_to_drive_details":{"distance":"0,6 km","time":"2 min"},"trip_id":18,"ride_id":18}
      * message : Ride booked
-     * links : {"self":"http://localhost/moov/api/v1/moov/api/v1/ride/book_now"}
+     * links : {"self":"http://themoovapp.com/api/v1/api/v1/ride/book_now"}
      */
 
     private boolean status;
@@ -53,10 +53,10 @@ public class BookRideResponseModel {
 
     public static class DataEntity {
         /**
-         * driver_details : {"driver_id":17,"first_name":"test2","last_name":"user","email":"test17@test.com","institution_id":1,"institution_name":"sample school 1","phone":null,"phone_country":null,"gender":"male","vehicle_no":"KL 123456","verified":0,"u_device_id":"ab123456","car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":5,"wallet_balance":null,"image":"male.png"}
-         * distance_to_drive_details : {"distance":"32,9 km","time":"1 godz. 3 min"}
-         * trip_id : 62
-         * ride_id : 66
+         * driver_details : {"driver_id":31,"first_name":"sics","last_name":"tvm","email":"remya@gmail.com","institution_id":0,"institution_name":null,"phone":"9446172550","phone_country":"+91","gender":"female","vehicle_no":"KL 123456","verified":0,"u_device_id":"di8g823msyU:APA91bFV6Ta0MS-T7iIHbOe0m5R-6yD4xNSJ0irRWnym5fPthofT3z9iI-FzgCEl9HRP0W2iwNjKJhEPiBPIE4IH48TMLsXBMrzEi1Lp9wdgHgeoqfKdzgJCOTIxFYXf_E0ScMI9wUbcju-9ZU7HWf7yI7DNmVLxow","car_model":"abc","car_capacity":"abc","license_no":"abc","license_expiry":"abc","dob":"abc","ratings":0,"wallet_balance":"0","image":"female.nopng"}
+         * distance_to_drive_details : {"distance":"0,6 km","time":"2 min"}
+         * trip_id : 18
+         * ride_id : 18
          */
 
         private DriverDetailsEntity driver_details;
@@ -98,26 +98,26 @@ public class BookRideResponseModel {
 
         public static class DriverDetailsEntity {
             /**
-             * driver_id : 17
-             * first_name : test2
-             * last_name : user
-             * email : test17@test.com
-             * institution_id : 1
-             * institution_name : sample school 1
-             * phone : null
-             * phone_country : null
-             * gender : male
+             * driver_id : 31
+             * first_name : sics
+             * last_name : tvm
+             * email : remya@gmail.com
+             * institution_id : 0
+             * institution_name : null
+             * phone : 9446172550
+             * phone_country : +91
+             * gender : female
              * vehicle_no : KL 123456
              * verified : 0
-             * u_device_id : ab123456
+             * u_device_id : di8g823msyU:APA91bFV6Ta0MS-T7iIHbOe0m5R-6yD4xNSJ0irRWnym5fPthofT3z9iI-FzgCEl9HRP0W2iwNjKJhEPiBPIE4IH48TMLsXBMrzEi1Lp9wdgHgeoqfKdzgJCOTIxFYXf_E0ScMI9wUbcju-9ZU7HWf7yI7DNmVLxow
              * car_model : abc
              * car_capacity : abc
              * license_no : abc
              * license_expiry : abc
              * dob : abc
-             * ratings : 5
-             * wallet_balance : null
-             * image : male.png
+             * ratings : 0
+             * wallet_balance : 0
+             * image : female.nopng
              */
 
             private int driver_id;
@@ -304,8 +304,8 @@ public class BookRideResponseModel {
 
         public static class DistanceToDriveDetailsEntity {
             /**
-             * distance : 32,9 km
-             * time : 1 godz. 3 min
+             * distance : 0,6 km
+             * time : 2 min
              */
 
             private String distance;
@@ -331,7 +331,7 @@ public class BookRideResponseModel {
 
     public static class LinksEntity {
         /**
-         * self : http://localhost/moov/api/v1/moov/api/v1/ride/book_now
+         * self : http://themoovapp.com/api/v1/api/v1/ride/book_now
          */
 
         private String self;
