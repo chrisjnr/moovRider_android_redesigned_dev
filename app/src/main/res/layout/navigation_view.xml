@@ -225,6 +225,7 @@
                 android:id="@+id/llLogoutNav"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <TextView
@@ -240,6 +241,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:visibility="gone"
                 android:background="@color/grayLitest" />
 
         </LinearLayout>

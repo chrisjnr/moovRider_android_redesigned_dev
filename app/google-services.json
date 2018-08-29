@@ -1,1 +1,99 @@
-{"web":{"client_id":"984571131691-g8el08q7ai21u3chip4fuskoe28ltqqs.apps.googleusercontent.com","project_id":"themoovapp-1531140574217","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://accounts.google.com/o/oauth2/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs"}}
+{
+  "project_info": {
+    "project_number": "322370672203",
+    "firebase_url": "https://moovdriver.firebaseio.com",
+    "project_id": "moovdriver",
+    "storage_bucket": "moovdriver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322370672203:android:9bced9b2d0b227c2",
+        "android_client_info": {
+          "package_name": "com.moovapp.android.moovapp_driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322370672203-quqf919vdond3obahbk45ofn9k04jhoj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moovapp.android.moovapp_driver",
+            "certificate_hash": "4d98d58b81fecf43411e6d77e2029bd6447744b5"
+          }
+        },
+        {
+          "client_id": "322370672203-ir7ut949dd1a466cv64rc7ol1hh8d23q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QxvC4u_0_FzJZupabb4n4NRWDr6ULYU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322370672203-ir7ut949dd1a466cv64rc7ol1hh8d23q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322370672203:android:bac8dee7f120aa82",
+        "android_client_info": {
+          "package_name": "com.moovapp.riderapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322370672203-963nhketppdbolmbv0r9ufl3dmudfiu3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.moovapp.riderapp",
+            "certificate_hash": "906290c05de37f7484750d9d0d63f5b8bc311be3"
+          }
+        },
+        {
+          "client_id": "322370672203-ir7ut949dd1a466cv64rc7ol1hh8d23q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1QxvC4u_0_FzJZupabb4n4NRWDr6ULYU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322370672203-ir7ut949dd1a466cv64rc7ol1hh8d23q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
