@@ -5,6 +5,7 @@ android {
         config {
             keyAlias 'moov'
             keyPassword 'sics123'
+//            storeFile file('C:/Users/sics/Desktop/New folder (4)/MoovAppRider/keystore.jks')
             storeFile file('./keystore.jks')
             storePassword 'sics123'
         }
