@@ -1,8 +1,11 @@
 package com.moovapp.riderapp.preLogin.signUp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -22,10 +25,12 @@ import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Password;
 import com.moovapp.riderapp.R;
+import com.moovapp.riderapp.main.HomeActivity;
 import com.moovapp.riderapp.utils.Constants;
 import com.moovapp.riderapp.utils.LMTBaseActivity;
 import com.moovapp.riderapp.utils.retrofit.ApiClient;
 import com.moovapp.riderapp.utils.retrofit.ApiInterface;
+import com.moovapp.riderapp.utils.retrofit.responseModels.CheckEmailResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.RegistartionResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.SelectCollegeResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.SelectUserTypeResponseModel;
@@ -55,8 +60,9 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
     private final int LIST_COLLEGES_API = 1;
     private final int LIST_USERS_API = 2;
     private final int REGISTER_API = 3;
-    private final int EXIT_DIALOG = 4;
-    private final int REGISTRATION_SUCCESS_DIALOG = 5;
+    private final int CHECK_EMAIL_API = 4;
+    private final int EXIT_DIALOG = 5;
+    private final int REGISTRATION_SUCCESS_DIALOG = 6;
 
     @BindView(R.id.imgSeekBar)
     ImageView imgSeekBar;
@@ -115,6 +121,8 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
     private String socialEmail = "";
     private String socialName = "";
     private String profilePic = "";
+    private boolean isEmailOk = true;
+    private boolean isNextClick = false;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -130,6 +138,35 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
         }
         callListCollegesApi();
         keyboardListener();
+        setEmailListener();
+    }
+
+    private void setEmailListener() {
+        edEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b) {
+                    isNextClick = false;
+                    callCheckEmailApi();
+                }
+            }
+        });
+        edEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                isEmailOk = false;
+            }
+        });
     }
 
     private void setSocialRegistration() {
@@ -181,13 +218,32 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
 
     @Override
     public void onBackPressed() {
-        showAlertDialog("Exit", "Are you sure you want to exit from registration?", "Yes", "Cancel", EXIT_DIALOG);
+        if (currentPage == 1) {
+            showAlertDialog("Exit", "Are you sure you want to exit from registration?", "Yes", "Cancel", EXIT_DIALOG);
+        } else if (currentPage == 2) {
+            llAlreadyHaveAccount.setVisibility(View.VISIBLE);
+            layoutOne.setVisibility(View.VISIBLE);
+            layoutTwo.setVisibility(View.GONE);
+            imgSeekBar.setImageResource(R.mipmap.slide_bar_one);
+            currentPage = 1;
+        } else if (currentPage == 3) {
+            llAlreadyHaveAccount.setVisibility(View.INVISIBLE);
+            layoutThree.setVisibility(View.GONE);
+            layoutTwo.setVisibility(View.VISIBLE);
+            imgSeekBar.setImageResource(R.mipmap.slide_bar_two);
+            currentPage = 2;
+        }
     }
 
     @OnClick(R.id.tvNext)
     public void tvNextClick() {
         if (currentPage == 1) {
-            validator.validate();
+            if (isEmailOk) {
+                validator.validate();
+            } else {
+                isNextClick = true;
+                callCheckEmailApi();
+            }
         } else if (currentPage == 2) {
             if (!selectedCollegeId.equals("")) {
                 if (!selectedUserId.equals("")) {
@@ -313,9 +369,9 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
                 RequestBody user_type = RequestBody.create(MediaType.parse("text/plain"), selectedUserId);
                 map.put("user_type", user_type);
 
-                String cCode=codePicker.getSelectedCountryCode();
-                if(!cCode.contains("+")){
-                    cCode="+"+cCode;
+                String cCode = codePicker.getSelectedCountryCode();
+                if (!cCode.contains("+")) {
+                    cCode = "+" + cCode;
                 }
                 RequestBody phone_country = RequestBody.create(MediaType.parse("text/plain"), cCode);
                 map.put("phone_country", phone_country);
@@ -331,6 +387,15 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
                 RequestBody auth_uid = RequestBody.create(MediaType.parse("text/plain"), socialLoginId);
                 map.put("auth_uid", auth_uid);
 
+                RequestBody device_type = RequestBody.create(MediaType.parse("text/plain"), "android");
+                map.put("device_type", device_type);
+                RequestBody device_id = RequestBody.create(MediaType.parse("text/plain"), appPrefes.getData(Constants.DEVICE_TOKEN));
+                map.put("device_id", device_id);
+                RequestBody push_token = RequestBody.create(MediaType.parse("text/plain"), appPrefes.getData(Constants.DEVICE_TOKEN));
+                map.put("push_token", push_token);
+                RequestBody app_version = RequestBody.create(MediaType.parse("text/plain"), "2.0");
+                map.put("app_version", app_version);
+
                 if (registrationType.equals("Social")) {
                     RequestBody image = RequestBody.create(MediaType.parse("text/plain"), profilePic);
                     map.put("image", image);
@@ -345,7 +410,11 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
                             if (!response.body().isStatus()) {
                                 Toast.makeText(getBaseContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                appPrefes.SaveData(Constants.USER_ID, response.body().getData().getUser_details().getUser_id() + "");
+                                appPrefes.SaveData(Constants.USER_ID, response.body().getData().getUser_details().getU_id() + "");
+                                appPrefes.SaveData(Constants.USER_FIRST_NAME, response.body().getData().getUser_details().getU_first_name() + "");
+                                appPrefes.SaveData(Constants.ACCESS_TOKEN, response.body().getData().getAccess_token());
+                                appPrefes.SaveData(Constants.USER_PROFILE_PIC, response.body().getData().getUser_pic_url());
+                                appPrefes.SaveDataBoolean(Constants.USER_LOGGED_IN_STATUS, true);
                                 showRequestSuccessDialog("Success", "You are successfully registered! Please login to access your account", "Okay", REGISTRATION_SUCCESS_DIALOG);
                             }
                         } catch (Exception e) {
@@ -424,7 +493,15 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
-                                Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                if (response.body().getMessage().contains("Email")) {
+                                    llAlreadyHaveAccount.setVisibility(View.VISIBLE);
+                                    layoutOne.setVisibility(View.VISIBLE);
+                                    layoutTwo.setVisibility(View.GONE);
+                                    imgSeekBar.setImageResource(R.mipmap.slide_bar_one);
+                                    currentPage = 1;
+                                    edEmail.setError(response.body().getMessage());
+                                }
+//                                Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 selectUserTypeDataEntity = response.body().getData();
                                 setUserTypeSpinner();
@@ -437,6 +514,48 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
 
                     @Override
                     public void onFailure(Call<SelectUserTypeResponseModel> call, Throwable t) {
+                        myProgressDialog.dismissProgress();
+                        System.out.println("t.toString : " + t.toString());
+                        showServerErrorAlert(LIST_COLLEGES_API);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                myProgressDialog.dismissProgress();
+                showServerErrorAlert(LIST_COLLEGES_API);
+            }
+        } else {
+            showNoInternetAlert(LIST_COLLEGES_API);
+        }
+    }
+
+    private void callCheckEmailApi() {
+        if (cd.isConnectingToInternet()) {
+            try {
+                myProgressDialog.setProgress(false);
+                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Call<CheckEmailResponseModel> call = apiService.checkEmail(edEmail.getText().toString());
+                call.enqueue(new retrofit2.Callback<CheckEmailResponseModel>() {
+                    @Override
+                    public void onResponse(Call<CheckEmailResponseModel> call, Response<CheckEmailResponseModel> response) {
+                        myProgressDialog.dismissProgress();
+                        try {
+                            if (!response.body().isStatus()) {
+                                isEmailOk = true;
+                                if (isNextClick) {
+                                    validator.validate();
+                                }
+                            } else {
+                                edEmail.setError("Email already exist!");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            showServerErrorAlert(LIST_COLLEGES_API);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<CheckEmailResponseModel> call, Throwable t) {
                         myProgressDialog.dismissProgress();
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(LIST_COLLEGES_API);
@@ -465,6 +584,9 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
             case REGISTER_API:
                 callRegisterApi();
                 break;
+            case CHECK_EMAIL_API:
+                callCheckEmailApi();
+                break;
         }
     }
 
@@ -483,6 +605,9 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
         super.onClickAlertOkButton(apiCode);
         switch (apiCode) {
             case REGISTRATION_SUCCESS_DIALOG:
+                Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
                 finish();
                 break;
         }

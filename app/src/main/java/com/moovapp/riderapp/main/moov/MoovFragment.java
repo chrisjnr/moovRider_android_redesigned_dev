@@ -380,6 +380,11 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
         });
     }
 
+    @Override
+    public void onRefresh() {
+
+    }
+
     /**
      * Fetches all places from GooglePlaces AutoComplete Web Service
      */

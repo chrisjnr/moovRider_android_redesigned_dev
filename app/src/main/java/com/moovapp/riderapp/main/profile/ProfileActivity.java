@@ -462,6 +462,8 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
                         try {
                             if (response.body().isStatus()) {
                                 appPrefes.SaveData(Constants.USER_PROFILE_PIC, response.body().getData().getUser_pic_url());
+                                appPrefes.SaveData(Constants.USER_UNIVERSITY, response.body().getData().getUser_details().getInstitution_name());
+                                appPrefes.SaveData(Constants.USER_UNIVERSITY_ID, response.body().getData().getUser_details().getInstitution_id()+"");
                                 setValues(response.body().getData());
                                 callListCollegesApi();
                             } else {

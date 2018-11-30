@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.moovapp.riderapp.main.HomeActivity;
 import com.moovapp.riderapp.main.moov.MoovFragment;
 import com.moovapp.riderapp.main.upcomingRides.UpcomingRidesFragment;
 import com.moovapp.riderapp.utils.AppPreferences;
@@ -40,13 +41,33 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         try {
-            MoovFragment.notificationAction.onReceveNotification(remoteMessage.getData().get("ride_id"), remoteMessage.getData().get("title"));
+            if (!remoteMessage.getData().get("title").equals("New booking")) {
+                MoovFragment.notificationAction.onReceveNotification(remoteMessage.getData().get("ride_id"), remoteMessage.getData().get("title"));
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            UpcomingRidesFragment.notificationAction.onReceveNotification(remoteMessage.getData().get("ride_id"), remoteMessage.getData().get("title"));
+            if (!remoteMessage.getData().get("title").equals("New booking")) {
+                HomeActivity.notificationAction.onReceveNotification(remoteMessage.getData().get("ride_id"), remoteMessage.getData().get("title"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (!remoteMessage.getData().get("title").equals("New booking")) {
+                UpcomingRidesFragment.notificationAction.onReceveNotification(remoteMessage.getData().get("ride_id"), remoteMessage.getData().get("title"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (remoteMessage.getData().get("title").equals("Ride booked")) {
+                HomeActivity.notificationAction.onRefresh();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

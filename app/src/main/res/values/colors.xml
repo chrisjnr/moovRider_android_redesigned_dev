@@ -27,4 +27,6 @@
     <color name="green">#20b137</color>
     <color name="colorPrimaryLite">#77ee3469</color>
     <color name="pink">#ef466e</color>
+
+    <color name="colorRouteLine">#2162fc</color>
 </resources>

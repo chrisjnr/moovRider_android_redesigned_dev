@@ -8,9 +8,9 @@ public class RegistartionResponseModel {
 
     /**
      * status : true
-     * data : {"user_details":{"user_id":43}}
-     * message : Registration success
-     * links : {"self":"http://themoovapp.com/api/v1/api/v1/auth/register","login":"http://themoovapp.com/api/v1/auth/login/email","forgot_password":"http://themoovapp.com/api/v1/auth/forgot"}
+     * data : {"user_details":{"u_id":62,"u_first_name":"test2","u_image":"uwy26yaOlN.png","wallet_balance":{"balance":"0"}},"access_token":"eDA5Y2NTZGpLTzIwWHJHQ2MvekMwSkJPdWloS2FIOGJLODYwdjJvV0t1OD0=","user_pic_url":"http://themoovapp.com/manage/uploads/userpic/uwy26yaOlN.png","user_pic_url_100":"http://themoovapp.com/manage/uploads/userpic/croped/100/uwy26yaOlN.png","user_pic_url_200":"http://themoovapp.com/manage/uploads/userpic/croped/200/uwy26yaOlN.png"}
+     * message : login success
+     * links : {"self":"http://themoovapp.com/api/v1/api/v1/auth/register","forgot_password":"http://themoovapp.com/api/v1/auth/forgot","register":"http://themoovapp.com/api/v1/auth/register"}
      */
 
     private boolean status;
@@ -52,10 +52,18 @@ public class RegistartionResponseModel {
 
     public static class DataEntity {
         /**
-         * user_details : {"user_id":43}
+         * user_details : {"u_id":62,"u_first_name":"test2","u_image":"uwy26yaOlN.png","wallet_balance":{"balance":"0"}}
+         * access_token : eDA5Y2NTZGpLTzIwWHJHQ2MvekMwSkJPdWloS2FIOGJLODYwdjJvV0t1OD0=
+         * user_pic_url : http://themoovapp.com/manage/uploads/userpic/uwy26yaOlN.png
+         * user_pic_url_100 : http://themoovapp.com/manage/uploads/userpic/croped/100/uwy26yaOlN.png
+         * user_pic_url_200 : http://themoovapp.com/manage/uploads/userpic/croped/200/uwy26yaOlN.png
          */
 
         private UserDetailsEntity user_details;
+        private String access_token;
+        private String user_pic_url;
+        private String user_pic_url_100;
+        private String user_pic_url_200;
 
         public UserDetailsEntity getUser_details() {
             return user_details;
@@ -65,19 +73,97 @@ public class RegistartionResponseModel {
             this.user_details = user_details;
         }
 
+        public String getAccess_token() {
+            return access_token;
+        }
+
+        public void setAccess_token(String access_token) {
+            this.access_token = access_token;
+        }
+
+        public String getUser_pic_url() {
+            return user_pic_url;
+        }
+
+        public void setUser_pic_url(String user_pic_url) {
+            this.user_pic_url = user_pic_url;
+        }
+
+        public String getUser_pic_url_100() {
+            return user_pic_url_100;
+        }
+
+        public void setUser_pic_url_100(String user_pic_url_100) {
+            this.user_pic_url_100 = user_pic_url_100;
+        }
+
+        public String getUser_pic_url_200() {
+            return user_pic_url_200;
+        }
+
+        public void setUser_pic_url_200(String user_pic_url_200) {
+            this.user_pic_url_200 = user_pic_url_200;
+        }
+
         public static class UserDetailsEntity {
             /**
-             * user_id : 43
+             * u_id : 62
+             * u_first_name : test2
+             * u_image : uwy26yaOlN.png
+             * wallet_balance : {"balance":"0"}
              */
 
-            private int user_id;
+            private int u_id;
+            private String u_first_name;
+            private String u_image;
+            private WalletBalanceEntity wallet_balance;
 
-            public int getUser_id() {
-                return user_id;
+            public int getU_id() {
+                return u_id;
             }
 
-            public void setUser_id(int user_id) {
-                this.user_id = user_id;
+            public void setU_id(int u_id) {
+                this.u_id = u_id;
+            }
+
+            public String getU_first_name() {
+                return u_first_name;
+            }
+
+            public void setU_first_name(String u_first_name) {
+                this.u_first_name = u_first_name;
+            }
+
+            public String getU_image() {
+                return u_image;
+            }
+
+            public void setU_image(String u_image) {
+                this.u_image = u_image;
+            }
+
+            public WalletBalanceEntity getWallet_balance() {
+                return wallet_balance;
+            }
+
+            public void setWallet_balance(WalletBalanceEntity wallet_balance) {
+                this.wallet_balance = wallet_balance;
+            }
+
+            public static class WalletBalanceEntity {
+                /**
+                 * balance : 0
+                 */
+
+                private String balance;
+
+                public String getBalance() {
+                    return balance;
+                }
+
+                public void setBalance(String balance) {
+                    this.balance = balance;
+                }
             }
         }
     }
@@ -85,13 +171,13 @@ public class RegistartionResponseModel {
     public static class LinksEntity {
         /**
          * self : http://themoovapp.com/api/v1/api/v1/auth/register
-         * login : http://themoovapp.com/api/v1/auth/login/email
          * forgot_password : http://themoovapp.com/api/v1/auth/forgot
+         * register : http://themoovapp.com/api/v1/auth/register
          */
 
         private String self;
-        private String login;
         private String forgot_password;
+        private String register;
 
         public String getSelf() {
             return self;
@@ -101,20 +187,20 @@ public class RegistartionResponseModel {
             this.self = self;
         }
 
-        public String getLogin() {
-            return login;
-        }
-
-        public void setLogin(String login) {
-            this.login = login;
-        }
-
         public String getForgot_password() {
             return forgot_password;
         }
 
         public void setForgot_password(String forgot_password) {
             this.forgot_password = forgot_password;
+        }
+
+        public String getRegister() {
+            return register;
+        }
+
+        public void setRegister(String register) {
+            this.register = register;
         }
     }
 }

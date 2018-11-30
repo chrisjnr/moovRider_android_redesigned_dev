@@ -14,13 +14,14 @@ android {
         applicationId "com.moovapp.riderapp"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
     buildTypes {
         release {
+//            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
@@ -81,5 +82,14 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:17.1.0'
     //Google Map
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    //DatePicker
+    compile 'com.wdullaer:materialdatetimepicker:3.6.3'
+    //Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
+    //Draw On Map
+    compile 'com.github.ar-android:DrawRouteMaps:1.0.0'
+
+    compile 'com.google.maps.android:android-maps-utils:0.5'
 }
 apply plugin: 'com.google.gms.google-services'

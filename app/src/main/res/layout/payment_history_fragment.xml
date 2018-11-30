@@ -17,6 +17,6 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:visibility="gone"
-        android:text="No rides found!" />
+        android:text="No history!" />
 
 </LinearLayout>

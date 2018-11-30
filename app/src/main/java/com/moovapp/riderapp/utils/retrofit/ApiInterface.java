@@ -2,10 +2,14 @@ package com.moovapp.riderapp.utils.retrofit;
 
 
 import com.moovapp.riderapp.utils.placesAutocomplete.AddDriverRatingResponseModel;
+import com.moovapp.riderapp.utils.retrofit.responseModels.BookFutureRideResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.BookRideResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.CancelRideResponseModel;
+import com.moovapp.riderapp.utils.retrofit.responseModels.CheckEmailResponseModel;
+import com.moovapp.riderapp.utils.retrofit.responseModels.CheckPhoneNumberResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ForgotPasswordResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.InitPaymentResponseModel;
+import com.moovapp.riderapp.utils.retrofit.responseModels.ListBanksResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.LoginEmailResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.PaymentResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.RegistartionResponseModel;
@@ -15,6 +19,8 @@ import com.moovapp.riderapp.utils.retrofit.responseModels.SelectCollegeResponseM
 import com.moovapp.riderapp.utils.retrofit.responseModels.SelectUserTypeResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.SocialLoginResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.TalkToUsResponseModel;
+import com.moovapp.riderapp.utils.retrofit.responseModels.TransferAmountToBankResponseModel;
+import com.moovapp.riderapp.utils.retrofit.responseModels.TransferAmountToWalletResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.UpdateEmailResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.UpdatePasswordResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.UpdatePhoneResponseModel;
@@ -57,6 +63,10 @@ public interface ApiInterface {
     Call<SelectUserTypeResponseModel> selectUserType(@Query("dummy") String dummy);
 
     @FormUrlEncoded
+    @POST("auth/check/email")
+    Call<CheckEmailResponseModel> checkEmail(@Field("email") String email);
+
+    @FormUrlEncoded
     @POST("auth/login/email")
     Call<LoginEmailResponseModel> loginEmail(@Field("email") String email,
                                              @Field("password") String password,
@@ -92,6 +102,25 @@ public interface ApiInterface {
 
     @GET
     Call<ViewWalletBalanceResponseModel> viewWalletBalance(@Url String url);
+
+    @FormUrlEncoded
+    @POST("wallet/transfer/user")
+    Call<TransferAmountToWalletResponseModel> transferAmountToWallet(@Field("from") String from,
+                                                                     @Field("to") String to,
+                                                                     @Field("amount") String amount);
+    @GET
+    Call<CheckPhoneNumberResponseModel> checkPhoneNumber(@Url String url);
+
+    @FormUrlEncoded
+    @POST("wallet/transfer/bank")
+    Call<TransferAmountToBankResponseModel> transferAmountToBank(@Field("name") String name,
+                                                                 @Field("account_number") String account_number,
+                                                                 @Field("bank_code") String bank_code,
+                                                                 @Field("amount") String amount,
+                                                                 @Field("userid") String userid);
+
+    @GET("wallet/banks")
+    Call<ListBanksResponseModel> listBanks(@Query("dummy") String dummy);
 
     @FormUrlEncoded
     @POST("wallet/init_payment")
@@ -145,6 +174,24 @@ public interface ApiInterface {
                                          @Field("amount") String amount,
                                          @Field("current_lat") String current_lat,
                                          @Field("current_long") String current_long);
+
+    @FormUrlEncoded
+    @POST("ride/book_future")
+    Call<BookFutureRideResponseModel> bookFutureRide(@Field("userid") String userid,
+                                                     @Field("from") String from,
+                                                     @Field("from_lat") String from_lat,
+                                                     @Field("from_long") String from_long,
+                                                     @Field("to") String to,
+                                                     @Field("to_lat") String to_lat,
+                                                     @Field("to_long") String to_long,
+                                                     @Field("pooling") String pooling,
+                                                     @Field("seats") String seats,
+                                                     @Field("collegeid") String collegeid,
+                                                     @Field("amount") String amount,
+                                                     @Field("current_lat") String current_lat,
+                                                     @Field("current_long") String current_long,
+                                                     @Field("booking_to_date") String booking_to_date,
+                                                     @Field("booking_to_time") String booking_to_time);
 
     @FormUrlEncoded
     @POST("update/phone/otp")

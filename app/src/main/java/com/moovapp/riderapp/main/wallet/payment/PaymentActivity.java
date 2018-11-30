@@ -44,6 +44,7 @@ public class PaymentActivity extends LMTBaseActivity {
     private final int INIT_PAYMENT_API = 1;
     private final int VERIFY_PAYMENT_API = 2;
     private final int PAYMENT_SUCCSSS_DIALOG = 3;
+    private final int PAYMENT_ALERT_DIALOG = 4;
 
     @BindView(R.id.edAmount)
     TextView edAmount;
@@ -113,7 +114,7 @@ public class PaymentActivity extends LMTBaseActivity {
             String[] date = edDate.getText().toString().split("/");
             card = new Card(edCardNumber.getText().toString(), Integer.parseInt(date[0]), Integer.parseInt(date[1]), edCvv.getText().toString(), edName.getText().toString());
             if (card.isValid()) {
-                callInitPaymentApi();
+                showRequestSuccessDialog("Alert", "Bank charges applies", "Okay", PAYMENT_ALERT_DIALOG);
             } else {
                 Toast.makeText(this, "Invalid card details", Toast.LENGTH_SHORT).show();
             }
@@ -304,6 +305,10 @@ public class PaymentActivity extends LMTBaseActivity {
                 WalletActivity.isWalletReacharged = true;
                 finish();
                 break;
+            case PAYMENT_ALERT_DIALOG:
+                callInitPaymentApi();
+                break;
         }
     }
+
 }

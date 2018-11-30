@@ -80,6 +80,10 @@
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDsmAUKdNSJosSziRHpxmITHsoyrmOQRiI" />
+
         <!--&lt;!&ndash; Set custom default icon. This is used when no icon is set for incoming notification messages.-->
      <!--See README(https://goo.gl/l4GJaQ) for more. &ndash;&gt;-->
         <!--<meta-data-->

@@ -8,11 +8,12 @@ import java.util.List;
 
 public class ViewCollegesResponseModel {
 
+
     /**
      * status : true
-     * data : {"details":[{"name":"sample school 1","id ":1},{"name":"sample school 2","id ":2},{"name":"sample school 3","id ":3},{"name":"sample school 4","id ":4}],"user_institute":1}
+     * data : {"details":[{"name":"Covenant University","id ":1},{"name":"Afe babalola university","id ":2},{"name":"Babcock University","id ":3},{"name":"University of Ilorin","id ":4}],"user_institute":3}
      * message : Amount calculated
-     * links : {"self":"http://themoovapp.com/api/v1/api/v1/ride/view_colleges/14"}
+     * links : {"self":"http://themoovapp.com/api/v2/api/v2/ride/view_colleges/42"}
      */
 
     private boolean status;
@@ -54,8 +55,8 @@ public class ViewCollegesResponseModel {
 
     public static class DataEntity {
         /**
-         * details : [{"name":"sample school 1","id ":1},{"name":"sample school 2","id ":2},{"name":"sample school 3","id ":3},{"name":"sample school 4","id ":4}]
-         * user_institute : 1
+         * details : [{"name":"Covenant University","id ":1},{"name":"Afe babalola university","id ":2},{"name":"Babcock University","id ":3},{"name":"University of Ilorin","id ":4}]
+         * user_institute : 3
          */
 
         private int user_institute;
@@ -79,7 +80,7 @@ public class ViewCollegesResponseModel {
 
         public static class DetailsEntity {
             /**
-             * name : sample school 1
+             * name : Covenant University
              * id  : 1
              */
 
@@ -106,7 +107,7 @@ public class ViewCollegesResponseModel {
 
     public static class LinksEntity {
         /**
-         * self : http://themoovapp.com/api/v1/api/v1/ride/view_colleges/14
+         * self : http://themoovapp.com/api/v2/api/v2/ride/view_colleges/42
          */
 
         private String self;

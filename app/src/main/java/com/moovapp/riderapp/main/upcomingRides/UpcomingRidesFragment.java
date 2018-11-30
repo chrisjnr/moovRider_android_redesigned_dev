@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.ornolfr.ratingview.RatingView;
 import com.moovapp.riderapp.R;
+import com.moovapp.riderapp.main.HomeActivity;
 import com.moovapp.riderapp.main.moov.NotificationAction;
 import com.moovapp.riderapp.utils.AppPreferences;
 import com.moovapp.riderapp.utils.ConnectionDetector;
@@ -24,6 +26,8 @@ import com.moovapp.riderapp.utils.retrofit.responseModels.CancelRideResponseMode
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewCurrentRideResponseModel;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -34,40 +38,19 @@ import retrofit2.Response;
  * Created by Lijo Mathew Theckanal on 18-Jul-18.
  */
 
-public class UpcomingRidesFragment extends LMTFragmentHelper implements NotificationAction, SwipeRefreshLayout.OnRefreshListener  {
+public class UpcomingRidesFragment extends LMTFragmentHelper implements NotificationAction, SwipeRefreshLayout.OnRefreshListener, CancelRideInterface {
 
     private final int VIEW_CURRENT_RIDE_API = 1;
     private final int CANCEL_TRIP_API = 6;
     private final int SEARCH_FAILED_DIALOG = 5;
     private final int CANCEL_TRIP_DIALOG = 7;
 
-    @BindView(R.id.layoutRide)
-    View layoutRide;
+    @BindView(R.id.listView)
+    ListView listView;
     @BindView(R.id.tvNoRides)
     TextView tvNoRides;
     @BindView(R.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
-
-    @BindView(R.id.tvRiderName)
-    TextView tvRiderName;
-    @BindView(R.id.imgRiderImage)
-    ImageView imgRiderImage;
-    @BindView(R.id.tvCarModel)
-    TextView tvCarModel;
-    @BindView(R.id.rating1)
-    RatingView rating1;
-    @BindView(R.id.tvRiderPhone)
-    TextView tvRiderPhone;
-    @BindView(R.id.tvDistance)
-    TextView tvDistance;
-    @BindView(R.id.tvCarNumber)
-    TextView tvCarNumber;
-    @BindView(R.id.tvEta)
-    TextView tvEta;
-   @BindView(R.id.tvCancelRide)
-    TextView tvCancelRide;
-    @BindView(R.id.tvNoTrips)
-    TextView tvNoTrips;
 
 
     private MyProgressDialog myProgressDialog;
@@ -76,6 +59,7 @@ public class UpcomingRidesFragment extends LMTFragmentHelper implements Notifica
 
     private String currentRideId = "";
     public static NotificationAction notificationAction;
+    private CancelRideInterface cancelRideInterface;
 
     @Nullable
     @Override
@@ -86,48 +70,22 @@ public class UpcomingRidesFragment extends LMTFragmentHelper implements Notifica
         cd = new ConnectionDetector(getContext());
         appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
         notificationAction = this;
+        cancelRideInterface = this;
         swipeRefreshLayout.setOnRefreshListener(this);
         callViewCurrentRideApi();
         return view;
     }
 
-    private void setValues(ViewCurrentRideResponseModel.DataEntity data) {
+    private void setValues(List<ViewCurrentRideResponseModel.DataEntity> data) {
         tvNoRides.setVisibility(View.GONE);
-        layoutRide.setVisibility(View.VISIBLE);
-        tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
-        tvCarModel.setText(data.getDriver_details().getCar_model());
-        rating1.setRating(data.getDriver_details().getRatings());
-        tvRiderPhone.setText(data.getDriver_details().getPhone());
-//        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-//        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
-        tvNoTrips.setVisibility(View.GONE);
-        tvDistance.setText("15 Km");
-        tvCarNumber.setText(data.getDriver_details().getVehicle_no());
-//        tvEta.setText(data.getDistance_to_drive_details().getTime());
-        tvEta.setText("15 Minutes");
-        try {
-            if (data.getDriver_details().getImage().length() > 3) {
-                Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if(data.getRide_status().equals("booked")){
-            tvCancelRide.setVisibility(View.VISIBLE);
-        }else{
-            tvCancelRide.setVisibility(View.GONE);
-        }
+        listView.setVisibility(View.VISIBLE);
+        UpcominRidesListAdapter upcominRidesListAdapter = new UpcominRidesListAdapter(getContext(), data,cancelRideInterface);
+        listView.setAdapter(upcominRidesListAdapter);
     }
 
     @Override
     public void onReceveNotification(String rideId, String title) {
         callViewCurrentRideApi();
-    }
-
-    @OnClick(R.id.tvCancelRide)
-    public void tvCancelRideClick() {
-        showAlertDialog(getContext(), "Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
     }
 
     private void callViewCurrentRideApi() {
@@ -144,10 +102,10 @@ public class UpcomingRidesFragment extends LMTFragmentHelper implements Notifica
                         try {
                             if (response.body().isStatus()) {
                                 currentRideId = response.body().getData().get(0).getRide_id() + "";
-                                setValues(response.body().getData().get(0));
+                                setValues(response.body().getData());
                             } else {
                                 tvNoRides.setVisibility(View.VISIBLE);
-                                layoutRide.setVisibility(View.GONE);
+                                listView.setVisibility(View.GONE);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -180,7 +138,7 @@ public class UpcomingRidesFragment extends LMTFragmentHelper implements Notifica
             try {
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + currentRideId);
+                Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + currentRideId+"/free");
                 call.enqueue(new retrofit2.Callback<CancelRideResponseModel>() {
                     @Override
                     public void onResponse(Call<CancelRideResponseModel> call, Response<CancelRideResponseModel> response) {
@@ -188,8 +146,9 @@ public class UpcomingRidesFragment extends LMTFragmentHelper implements Notifica
                         try {
                             if (response.body().isStatus()) {
                                 showRequestSuccessDialog(getContext(), "Success", response.body().getMessage(), "Okay", SEARCH_FAILED_DIALOG);
-                                tvNoRides.setVisibility(View.VISIBLE);
-                                layoutRide.setVisibility(View.GONE);
+//                                tvNoRides.setVisibility(View.VISIBLE);
+//                                listView.setVisibility(View.GONE);
+                                callViewCurrentRideApi();
                             } else {
                                 Toast.makeText(getContext(), response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -242,5 +201,11 @@ public class UpcomingRidesFragment extends LMTFragmentHelper implements Notifica
     @Override
     public void onRefresh() {
         callViewCurrentRideApi();
+    }
+
+    @Override
+    public void onCancelRide(String rideId) {
+        currentRideId = rideId;
+        showAlertDialog(getContext(), "Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
     }
 }

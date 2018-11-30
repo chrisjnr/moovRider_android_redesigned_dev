@@ -6,4 +6,5 @@ package com.moovapp.riderapp.main.moov;
 
 public interface NotificationAction {
     public void onReceveNotification(String rideId, String title);
+    public void onRefresh();
 }

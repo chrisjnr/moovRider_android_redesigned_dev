@@ -6,19 +6,14 @@ package com.moovapp.riderapp.utils.retrofit.responseModels;
 
 public class BookRideResponseModel {
 
-    /**
-     * status : true
-     * data : {"driver_details":{"driver_id":5,"first_name":"Sics","last_name":"Tvm","email":"sics@gmail.com","institution_id":4,"institution_name":"university of Ilorin","phone":"9638527410","phone_country":"+91","gender":"male","vehicle_no":"Vvbbn","verified":0,"u_device_id":"8d85abea691d7860aeb4d8faaf4d354e96bb45c3c67d416b9170384418c2424a","car_model":"Hyundai Elantra","car_capacity":7,"license_no":"02/08/2018","license_expiry":"02/08/2018","dob":"02/08/2018","device_type":"iOS","ratings":4,"wallet_balance":"0","total_rides":17,"image":"http://themoovapp.com/manage/uploads/userpic/a708bfd74ceb43d5.jpeg"},"distance_to_drive_details":{"distance":"1 m","time":"1 min"},"trip_id":249,"ride_id":338}
-     * message : Ride booked
-     * links : {"self":"http://themoovapp.com/api/v1/api/v1/ride/book_now"}
-     * push_tests : {"assigned_driver_device_type":"iOS","assigned_driver_device_id":"8d85abea691d7860aeb4d8faaf4d354e96bb45c3c67d416b9170384418c2424a"}
-     */
+
 
     private boolean status;
     private DataEntity data;
     private String message;
     private LinksEntity links;
-    private PushTestsEntity push_tests;
+    private PolyLinesEntity poly_lines;
+    private String poly_line;
 
     public boolean isStatus() {
         return status;
@@ -52,20 +47,28 @@ public class BookRideResponseModel {
         this.links = links;
     }
 
-    public PushTestsEntity getPush_tests() {
-        return push_tests;
+    public PolyLinesEntity getPoly_lines() {
+        return poly_lines;
     }
 
-    public void setPush_tests(PushTestsEntity push_tests) {
-        this.push_tests = push_tests;
+    public void setPoly_lines(PolyLinesEntity poly_lines) {
+        this.poly_lines = poly_lines;
+    }
+
+    public String getPoly_line() {
+        return poly_line;
+    }
+
+    public void setPoly_line(String poly_line) {
+        this.poly_line = poly_line;
     }
 
     public static class DataEntity {
         /**
-         * driver_details : {"driver_id":5,"first_name":"Sics","last_name":"Tvm","email":"sics@gmail.com","institution_id":4,"institution_name":"university of Ilorin","phone":"9638527410","phone_country":"+91","gender":"male","vehicle_no":"Vvbbn","verified":0,"u_device_id":"8d85abea691d7860aeb4d8faaf4d354e96bb45c3c67d416b9170384418c2424a","car_model":"Hyundai Elantra","car_capacity":7,"license_no":"02/08/2018","license_expiry":"02/08/2018","dob":"02/08/2018","device_type":"iOS","ratings":4,"wallet_balance":"0","total_rides":17,"image":"http://themoovapp.com/manage/uploads/userpic/a708bfd74ceb43d5.jpeg"}
+         * driver_details : {"driver_id":2,"first_name":"remya","last_name":"Krishnan ","email":"remyakrishnankutty@gmail.com","institution_id":4,"institution_name":"University of Ilorin","phone":"9446172550","phone_country":"+91","gender":"female","vehicle_no":"Klo2-1092","verified":0,"u_device_id":"","car_model":"Hyundai Elantra","car_capacity":8,"license_no":"02/08/2018","license_expiry":"02/08/2018","dob":"02/08/2018","device_type":"android","ratings":0,"wallet_balance":"0","total_rides":211,"image":"http://themoovapp.com/manage/uploads/userpic/9227df6425b815c8.jpg"}
          * distance_to_drive_details : {"distance":"1 m","time":"1 min"}
-         * trip_id : 249
-         * ride_id : 338
+         * trip_id : 375
+         * ride_id : 560
          */
 
         private DriverDetailsEntity driver_details;
@@ -107,28 +110,28 @@ public class BookRideResponseModel {
 
         public static class DriverDetailsEntity {
             /**
-             * driver_id : 5
-             * first_name : Sics
-             * last_name : Tvm
-             * email : sics@gmail.com
+             * driver_id : 2
+             * first_name : remya
+             * last_name : Krishnan
+             * email : remyakrishnankutty@gmail.com
              * institution_id : 4
-             * institution_name : university of Ilorin
-             * phone : 9638527410
+             * institution_name : University of Ilorin
+             * phone : 9446172550
              * phone_country : +91
-             * gender : male
-             * vehicle_no : Vvbbn
+             * gender : female
+             * vehicle_no : Klo2-1092
              * verified : 0
-             * u_device_id : 8d85abea691d7860aeb4d8faaf4d354e96bb45c3c67d416b9170384418c2424a
+             * u_device_id :
              * car_model : Hyundai Elantra
-             * car_capacity : 7
+             * car_capacity : 8
              * license_no : 02/08/2018
              * license_expiry : 02/08/2018
              * dob : 02/08/2018
-             * device_type : iOS
-             * ratings : 4
+             * device_type : android
+             * ratings : 0
              * wallet_balance : 0
-             * total_rides : 17
-             * image : http://themoovapp.com/manage/uploads/userpic/a708bfd74ceb43d5.jpeg
+             * total_rides : 211
+             * image : http://themoovapp.com/manage/uploads/userpic/9227df6425b815c8.jpg
              */
 
             private int driver_id;
@@ -360,7 +363,7 @@ public class BookRideResponseModel {
 
     public static class LinksEntity {
         /**
-         * self : http://themoovapp.com/api/v1/api/v1/ride/book_now
+         * self : http://themoovapp.com/api/v2/api/v2/ride/book_now
          */
 
         private String self;
@@ -374,29 +377,81 @@ public class BookRideResponseModel {
         }
     }
 
-    public static class PushTestsEntity {
+    public static class PolyLinesEntity {
         /**
-         * assigned_driver_device_type : iOS
-         * assigned_driver_device_id : 8d85abea691d7860aeb4d8faaf4d354e96bb45c3c67d416b9170384418c2424a
+         * start : {"lat":8.57117,"lng":76.86625000000001}
+         * end : {"lat":9.28372,"lng":79.1538}
          */
 
-        private String assigned_driver_device_type;
-        private String assigned_driver_device_id;
+        private StartEntity start;
+        private EndEntity end;
 
-        public String getAssigned_driver_device_type() {
-            return assigned_driver_device_type;
+        public StartEntity getStart() {
+            return start;
         }
 
-        public void setAssigned_driver_device_type(String assigned_driver_device_type) {
-            this.assigned_driver_device_type = assigned_driver_device_type;
+        public void setStart(StartEntity start) {
+            this.start = start;
         }
 
-        public String getAssigned_driver_device_id() {
-            return assigned_driver_device_id;
+        public EndEntity getEnd() {
+            return end;
         }
 
-        public void setAssigned_driver_device_id(String assigned_driver_device_id) {
-            this.assigned_driver_device_id = assigned_driver_device_id;
+        public void setEnd(EndEntity end) {
+            this.end = end;
+        }
+
+        public static class StartEntity {
+            /**
+             * lat : 8.57117
+             * lng : 76.86625000000001
+             */
+
+            private double lat;
+            private double lng;
+
+            public double getLat() {
+                return lat;
+            }
+
+            public void setLat(double lat) {
+                this.lat = lat;
+            }
+
+            public double getLng() {
+                return lng;
+            }
+
+            public void setLng(double lng) {
+                this.lng = lng;
+            }
+        }
+
+        public static class EndEntity {
+            /**
+             * lat : 9.28372
+             * lng : 79.1538
+             */
+
+            private double lat;
+            private double lng;
+
+            public double getLat() {
+                return lat;
+            }
+
+            public void setLat(double lat) {
+                this.lat = lat;
+            }
+
+            public double getLng() {
+                return lng;
+            }
+
+            public void setLng(double lng) {
+                this.lng = lng;
+            }
         }
     }
 }
