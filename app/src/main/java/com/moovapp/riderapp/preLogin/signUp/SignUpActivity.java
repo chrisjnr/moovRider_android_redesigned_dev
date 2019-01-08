@@ -406,21 +406,22 @@ public class SignUpActivity extends LMTBaseActivity implements Validator.Validat
                     @Override
                     public void onResponse(Call<RegistartionResponseModel> call, Response<RegistartionResponseModel> response) {
                         myProgressDialog.dismissProgress();
-                        try {
-                            if (!response.body().isStatus()) {
-                                Toast.makeText(getBaseContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                            } else {
-                                appPrefes.SaveData(Constants.USER_ID, response.body().getData().getUser_details().getU_id() + "");
-                                appPrefes.SaveData(Constants.USER_FIRST_NAME, response.body().getData().getUser_details().getU_first_name() + "");
-                                appPrefes.SaveData(Constants.ACCESS_TOKEN, response.body().getData().getAccess_token());
-                                appPrefes.SaveData(Constants.USER_PROFILE_PIC, response.body().getData().getUser_pic_url());
-                                appPrefes.SaveDataBoolean(Constants.USER_LOGGED_IN_STATUS, true);
-                                showRequestSuccessDialog("Success", "You are successfully registered! Please login to access your account", "Okay", REGISTRATION_SUCCESS_DIALOG);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            showServerErrorAlert(REGISTER_API);
-                        }
+                        Log.e("response", "onResponse: "+response.body().toString() );
+//                        try {
+//                            if (!response.body().isStatus()) {
+//                                Toast.makeText(getBaseContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                appPrefes.SaveData(Constants.USER_ID, response.body().getData().getUser_details().getU_id() + "");
+//                                appPrefes.SaveData(Constants.USER_FIRST_NAME, response.body().getData().getUser_details().getU_first_name() + "");
+//                                appPrefes.SaveData(Constants.ACCESS_TOKEN, response.body().getData().getAccess_token());
+//                                appPrefes.SaveData(Constants.USER_PROFILE_PIC, response.body().getData().getUser_pic_url());
+//                                appPrefes.SaveDataBoolean(Constants.USER_LOGGED_IN_STATUS, true);
+//                                showRequestSuccessDialog("Success", "You are successfully registered! Please login to access your account", "Okay", REGISTRATION_SUCCESS_DIALOG);
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            showServerErrorAlert(REGISTER_API);
+//                        }
                     }
 
                     @Override
