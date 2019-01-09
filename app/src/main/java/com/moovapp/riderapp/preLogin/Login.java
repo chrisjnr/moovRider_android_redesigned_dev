@@ -106,6 +106,7 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
                 image = "";
             }
             callSocialLoginApi("google", account.getId(), account.getEmail(), account.getDisplayName(), image);
+            Log.d(TAG, "handleSignInResult: "+" , "+ account.getId()+" , "+ account.getEmail()+" , "+ account.getDisplayName()+" , "+ image + "android"+ appPrefes.getData(Constants.DEVICE_TOKEN)+ ", 2.0" +"google" );
             try {
                 mGoogleSignInClient.signOut();
             } catch (Exception e) {
@@ -125,6 +126,7 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<SocialLoginResponseModel> call = apiService.socialLogin(loginType, id, "android", appPrefes.getData(Constants.DEVICE_TOKEN), "2.0");
+
                 call.enqueue(new retrofit2.Callback<SocialLoginResponseModel>() {
                     @Override
                     public void onResponse(Call<SocialLoginResponseModel> call, Response<SocialLoginResponseModel> response) {

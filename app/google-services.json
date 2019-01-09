@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "220981022396",
-    "firebase_url": "https://moovandroid-1546947784542.firebaseio.com",
-    "project_id": "moovandroid-1546947784542",
-    "storage_bucket": "moovandroid-1546947784542.appspot.com"
+    "project_number": "961590332627",
+    "firebase_url": "https://moovrider.firebaseio.com",
+    "project_id": "moovrider",
+    "storage_bucket": "moovrider.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:220981022396:android:bac8dee7f120aa82",
+        "mobilesdk_app_id": "1:961590332627:android:bac8dee7f120aa82",
         "android_client_info": {
           "package_name": "com.moovapp.riderapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "220981022396-91n229mc0rl6250ha0kaq7ncqdsr4eui.apps.googleusercontent.com",
+          "client_id": "961590332627-6lvqpcrr2evqhfo5fou5lnpsru6g62up.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyC3Xy4Hkrz2IccuNdWpsl0X0cE6KyHeEZI"
+          "current_key": "AIzaSyDJ34dvVDySpyb6IJHydbgKhIOls31WdoY"
         }
       ],
       "services": {
