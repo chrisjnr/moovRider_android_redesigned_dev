@@ -17,14 +17,20 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashScreenActivity"></activity>
+        <activity android:name=".SplashScreenActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".preLogin.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".preLogin.signUp.SignUpActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".main.HomeActivity"
             android:screenOrientation="portrait" />
@@ -47,7 +53,7 @@
 
         <meta-data
             android:name="co.paystack.android.PublicKey"
-            android:value="pk_live_808cad3e44ee879630593bfd58a7d39a18631f54" />
+            android:value="pk_test_90f8dddc00c2b5461ebb851a739bcb81a017278f" />
         //FB
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -90,11 +96,6 @@
         <!-- android:name="com.google.firebase.messaging.default_notification_channel_id" -->
         <!-- android:value="@string/default_notification_channel_id"/> -->
         <activity android:name=".preLogin.Login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".preLogin.SignInSignUp"></activity>
     </application>

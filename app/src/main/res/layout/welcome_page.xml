@@ -70,7 +70,7 @@
 
 
                     <TextView
-                        android:id="@+id/tvSignUp"
+                        android:id="@+id/tvSignIn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -92,7 +92,7 @@
 
 
                     <TextView
-                        android:id="@+id/tvSignIn"
+                        android:id="@+id/tvSignUp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:drawableLeft="@drawable/ic_create_account"
@@ -141,15 +141,28 @@
                     android:orientation="horizontal"
                     android:padding="8dp"
                     android:weightSum="5">
-
-                    <ImageView
-                        android:id="@+id/facebookAuth"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_vertical"
+                    <RelativeLayout
                         android:layout_weight="1"
-                        android:padding="4dp"
-                        android:src="@drawable/facebook_circle" />
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+
+                        <com.facebook.login.widget.LoginButton
+                            android:visibility="visible"
+                            android:id="@+id/login_button"
+                            android:layout_width="0dp"
+                            android:layout_height="40dp"
+                            android:layout_gravity="center_vertical"
+                            style="@style/com_facebook_login_new"/>
+
+                        <ImageView
+                            android:id="@+id/fcbkImgView"
+                            android:layout_centerVertical="true"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/facebook_circle"/>
+
+                    </RelativeLayout>
+
 
 
                     <TextView
