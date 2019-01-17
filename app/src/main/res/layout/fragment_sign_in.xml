@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -6,13 +7,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:weightSum="5"
-    android:background="@color/grayLitest"
+    android:background="#f7f7fa"
     tools:context=".main.fragments.SignIn">
+
+    <TextView
+        android:visibility="invisible"
+        android:padding="4dp"
+        android:layout_weight=".2"
+        android:gravity="center_vertical"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:background="#ac1313"
+        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/incorrect_username_or_password"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".5" />
-
+        android:layout_weight=".2" />
 
     <ImageView
         android:layout_width="match_parent"
@@ -36,13 +50,20 @@
 
         <android.support.v7.widget.CardView
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="25dp"
+            app:cardCornerRadius="17dp"
             android:layout_margin="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:id="@+id/edEmail"
+                android:background="@drawable/border_white"
                 android:hint="Email"
-                android:padding="10dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:maxLength="25"
+                android:padding="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
         </android.support.v7.widget.CardView>
@@ -55,8 +76,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <EditText
+                android:clickable="true"
+                android:focusableInTouchMode="true"
+                android:id="@+id/edPassword"
+                android:background="@drawable/border_white"
                 android:hint="Password"
-                android:padding="10dp"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:maxLength="25"
+                android:padding="15dp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
         </android.support.v7.widget.CardView>
@@ -74,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_margin="20dp"
-            app:cardBackgroundColor="#FF1493"
+            app:cardBackgroundColor="#F21466"
             app:cardCornerRadius="25dp"
             app:cardElevation="4dp">
 
