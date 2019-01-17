@@ -64,6 +64,7 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
 
     ImageView signInButton;
     TextView tvSignUp;
+    TextView tvSignIn;
     ImageView fcbkImgView;
     private static final String TAG = "LogActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -74,6 +75,8 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.welcome_page);
         FacebookSdk.sdkInitialize(getApplicationContext());
+        tvSignIn = findViewById(R.id.tvSignIn);
+        tvSignIn.setOnClickListener(this);
         tvSignUp = findViewById(R.id.tvSignUp);
         fbInIt();
         tvSignUp.setOnClickListener(this);
@@ -171,7 +174,7 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
 //                        Log.e("response", "onResponse: "+response.body().getData().getUser_details().getU_first_name() );
                         try {
                             if (!response.body().isStatus()) {
-                                Intent intent = new Intent(Login.this, SignUpActivity.class);
+                                Intent intent = new Intent(Login.this, SignInSignUp.class);
                                 intent.putExtra("RegistrationType", "Social");
                                 intent.putExtra("loginType", loginType);
                                 intent.putExtra("id", id);
@@ -179,6 +182,7 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
                                 intent.putExtra("name", name);
                                 intent.putExtra("profilePic", profilePic);
                                 startActivity(intent);
+
                                 Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 appPrefes.SaveData(Constants.USER_ID, response.body().getData().getUser_details().getU_id() + "");
@@ -303,10 +307,15 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
             signIn();
         }else if (v.getId() == R.id.tvSignUp){
             Intent i = new Intent(this, SignInSignUp.class);
+            i.putExtra("firstTab", "SignUp");
             startActivity(i);
         }else if (v.getId() == R.id.fcbkImgView){
             loginButton.callOnClick();
 //            Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
+        }else if(v.getId() == R.id.tvSignIn){
+            Intent i = new Intent(this, SignInSignUp.class);
+            i.putExtra("firstTab", "SignIn");
+            startActivity(i);
         }
     }
 

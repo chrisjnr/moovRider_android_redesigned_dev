@@ -1,6 +1,7 @@
 package com.moovapp.riderapp.main.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.hbb20.CountryCodePicker;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
@@ -31,6 +33,7 @@ import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.mobsandgeeks.saripaar.annotation.Password;
 import com.moovapp.riderapp.R;
 import com.moovapp.riderapp.main.HomeActivity;
+import com.moovapp.riderapp.preLogin.SignInSignUp;
 import com.moovapp.riderapp.preLogin.signUp.SignUpActivity;
 import com.moovapp.riderapp.utils.Constants;
 import com.moovapp.riderapp.utils.LMTFragment;
@@ -49,11 +52,13 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,6 +71,7 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
     private final int CHECK_EMAIL_API = 4;
     private final int EXIT_DIALOG = 5;
     private final int REGISTRATION_SUCCESS_DIALOG = 6;
+    public SignInSignUp signInSignUp;
 
     @BindView(R.id.imgSeekBar)
     ImageView imgSeekBar;
@@ -126,6 +132,8 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
     private String profilePic = "";
     private boolean isEmailOk = true;
     private boolean isNextClick = false;
+
+
     public SignUp() {
         // Required empty public constructor
     }
@@ -139,11 +147,16 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
     }
 
     @Override
+    public void onCreate(Bundle arg0) {
+        signInSignUp = (SignInSignUp) getActivity();
+        super.onCreate(arg0);
+
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        ButterKnife.bind(view);
-        validator = new Validator(this);
-        validator.setValidationListener(this);
+        ButterKnife.bind(view);
         edEmail = view.findViewById(R.id.edEmail);
         edFirstName = view.findViewById(R.id.edFirstName);
         rootView = view.findViewById(R.id.rootView);
@@ -152,24 +165,16 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
         layoutTwo = view.findViewById(R.id.layoutTwo);
         layoutThree = view.findViewById(R.id.layoutThree);
         imgSeekBar = view.findViewById(R.id.imgSeekBar);
+        spinnerInstitution = view.findViewById(R.id.spinnerInstitution);
+        spinnerRole = view.findViewById(R.id.spinnerRole);
         tvNext  =view.findViewById(R.id.tvNext);
-
-//        Toast.makeText(getActivity(), "mjfkd", Toast.LENGTH_SHORT).show();
-
-        registrationType = mainActivity.getIntent().getStringExtra("RegistrationType");
-        if (registrationType != null){
+        validator = new Validator(this);
+        validator.setValidationListener(this);
+        if (getArguments() != null){
+            registrationType = getArguments().getString("RegistrationType");
             if (registrationType.equals("Social")) {
                 setSocialRegistration();
                 authModeStr = "social";
-                Bundle args = getArguments();
-                socialLoginType = registrationType = mainActivity.getIntent().getStringExtra("loginType");
-                socialLoginId = registrationType = mainActivity.getIntent().getStringExtra("id");
-                socialEmail = registrationType = mainActivity.getIntent().getStringExtra("email");
-                socialName = registrationType = mainActivity.getIntent().getStringExtra("name");
-                profilePic = registrationType = mainActivity.getIntent().getStringExtra("profilePic");
-                edFirstName.setText(socialName);
-                edEmail.setText(socialEmail);
-                changePage();
             }
         }
 
@@ -177,7 +182,6 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
         keyboardListener();
         setEmailListener();
     }
-
 
     private void setEmailListener() {
         edEmail.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -208,12 +212,18 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
     }
 
     private void setSocialRegistration() {
-
+        socialLoginType = registrationType = getArguments().getString("loginType");
+        socialLoginId = registrationType = getArguments().getString("id");
+        socialEmail = registrationType = getArguments().getString("email");
+        socialName = registrationType = getArguments().getString("name");
+        profilePic = registrationType = getArguments().getString("profilePic");
+        edFirstName.setText(socialName);
+        edEmail.setText(socialEmail);
+        changePage();
     }
 
-
     private void keyboardListener() {
-        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+       rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 Rect r = new Rect();
@@ -240,7 +250,142 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
 
 
 
+    @OnClick(R.id.tvSignIn)
+    public void tvSignInClick() {
+        getActivity().finish();
+    }
 
+//    @Override
+//    public void onBackPressed() {
+//        if (currentPage == 1) {
+//            showAlertDialog("Exit", "Are you sure you want to exit from registration?", "Yes", "Cancel", EXIT_DIALOG);
+//        } else if (currentPage == 2) {
+//            llAlreadyHaveAccount.setVisibility(View.VISIBLE);
+//            layoutOne.setVisibility(View.VISIBLE);
+//            layoutTwo.setVisibility(View.GONE);
+//            imgSeekBar.setImageResource(R.mipmap.slide_bar_one);
+//            currentPage = 1;
+//        } else if (currentPage == 3) {
+//            llAlreadyHaveAccount.setVisibility(View.INVISIBLE);
+//            layoutThree.setVisibility(View.GONE);
+//            layoutTwo.setVisibility(View.VISIBLE);
+//            imgSeekBar.setImageResource(R.mipmap.slide_bar_two);
+//            currentPage = 2;
+//        }
+//    }
+
+    @OnClick(R.id.tvNext)
+    public void tvNextClick() {
+        if (currentPage == 1) {
+            if (isEmailOk) {
+                validator.validate();
+            } else {
+                isNextClick = true;
+                callCheckEmailApi();
+            }
+        } else if (currentPage == 2) {
+            if (!selectedCollegeId.equals("")) {
+                if (!selectedUserId.equals("")) {
+                    changePage();
+                } else {
+                    Toast.makeText(getContext(), "Please fill all the fields", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getContext(), "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            }
+        } else if (currentPage == 3) {
+            if (edPhoneNumber.getText().toString().trim().length() < 8) {
+                edPhoneNumber.setError("Please enter a valid mobile number");
+            } else {
+                callRegisterApi();
+            }
+        }
+    }
+
+    private void changePage() {
+        switch (currentPage) {
+            case 1:
+                llAlreadyHaveAccount.setVisibility(View.INVISIBLE);
+                layoutOne.setVisibility(View.GONE);
+                layoutTwo.setVisibility(View.VISIBLE);
+                imgSeekBar.setImageResource(R.mipmap.slide_bar_two);
+                currentPage = 2;
+                break;
+            case 2:
+                layoutTwo.setVisibility(View.GONE);
+                layoutThree.setVisibility(View.VISIBLE);
+                tvNext.setText("SIGN UP");
+                imgSeekBar.setImageResource(R.mipmap.slide_bar_three);
+                currentPage = 3;
+                break;
+            case 3:
+                mainActivity.finish();
+                break;
+        }
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        changePage();
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(getContext());
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void setCollegeSpinner() {
+        collegeList = new ArrayList<>();
+        collegeIdList = new ArrayList<>();
+        for (int i = 0; i < selectCollegeDataEntity.getDetails().size(); i++) {
+            collegeList.add(selectCollegeDataEntity.getDetails().get(i).getName());
+            collegeIdList.add(selectCollegeDataEntity.getDetails().get(i).getId() + "");
+        }
+        WhiteSpinnerAdapter classAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, collegeList);
+        spinnerInstitution.setAdapter(classAdapter);
+        spinnerInstitution.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCollegeId = collegeIdList.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setUserTypeSpinner() {
+        userList = new ArrayList<>();
+        userIdList = new ArrayList<>();
+        for (int i = 0; i < selectUserTypeDataEntity.getDetails().size(); i++) {
+            userList.add(selectUserTypeDataEntity.getDetails().get(i).getName());
+            userIdList.add(selectUserTypeDataEntity.getDetails().get(i).getId() + "");
+        }
+        WhiteSpinnerAdapter classAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, userList);
+        spinnerRole.setAdapter(classAdapter);
+        spinnerRole.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedUserId = userIdList.get(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
 
     private void callRegisterApi() {
         if (cd.isConnectingToInternet()) {
@@ -248,7 +393,7 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Map<String, RequestBody> map = new HashMap<>();
-
+                Log.d("maps", "callRegisterApi: "+ edFirstName.getText().toString());
                 RequestBody f_name = RequestBody.create(MediaType.parse("text/plain"), edFirstName.getText().toString());
                 map.put("f_name", f_name);
                 RequestBody l_name = RequestBody.create(MediaType.parse("text/plain"), edLastName.getText().toString());
@@ -257,50 +402,72 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
                 map.put("email", email);
                 RequestBody password = RequestBody.create(MediaType.parse("text/plain"), edPassword.getText().toString());
                 map.put("password", password);
-
+                Log.d("maps", "callRegisterApi: "+ edPassword.getText().toString());
                 RequestBody college = RequestBody.create(MediaType.parse("text/plain"), selectedCollegeId);
+                Log.d("maps", "callRegisterApi: "+ selectedCollegeId);
                 map.put("college", college);
                 RequestBody user_type = RequestBody.create(MediaType.parse("text/plain"), selectedUserId);
+                Log.d("maps", "callRegisterApi: "+ selectedUserId);
                 map.put("user_type", user_type);
+                Log.d("maps", "callRegisterApi: "+ user_type);
 
                 String cCode = codePicker.getSelectedCountryCode();
                 if (!cCode.contains("+")) {
                     cCode = "+" + cCode;
                 }
                 RequestBody phone_country = RequestBody.create(MediaType.parse("text/plain"), cCode);
+                Log.d("maps", "cCode: "+ cCode);
                 map.put("phone_country", phone_country);
+                Log.d("maps", "phone_country: "+ phone_country);
+                Log.d("maps", "phone: "+ edPhoneNumber.getText().toString());
                 RequestBody phone = RequestBody.create(MediaType.parse("text/plain"), edPhoneNumber.getText().toString());
                 map.put("phone", phone);
 
                 RequestBody gender = RequestBody.create(MediaType.parse("text/plain"), "");
                 map.put("gender", gender);
                 RequestBody auth_mode = RequestBody.create(MediaType.parse("text/plain"), authModeStr);
+                Log.d("maps", "authModeStr: "+ authModeStr);
                 map.put("auth_mode", auth_mode);
                 RequestBody auth_provider = RequestBody.create(MediaType.parse("text/plain"), socialLoginType);
                 map.put("auth_provider", auth_provider);
+                Log.d("maps", "callRegisterApi: "+ socialLoginType);
                 RequestBody auth_uid = RequestBody.create(MediaType.parse("text/plain"), socialLoginId);
+                Log.d("maps", "callRegisterApi: "+ socialLoginId);
                 map.put("auth_uid", auth_uid);
-
+                Log.d("maps", "callRegisterApi: "+ auth_uid);
                 RequestBody device_type = RequestBody.create(MediaType.parse("text/plain"), "android");
                 map.put("device_type", device_type);
                 RequestBody device_id = RequestBody.create(MediaType.parse("text/plain"), appPrefes.getData(Constants.DEVICE_TOKEN));
-                map.put("device_id", device_id);
+                Log.d("maps", "device_id: "+ appPrefes.getData(Constants.DEVICE_TOKEN));
+                Log.d("maps", "auth_uid: "+ auth_uid);
+                map.put("device", device_id);
                 RequestBody push_token = RequestBody.create(MediaType.parse("text/plain"), appPrefes.getData(Constants.DEVICE_TOKEN));
                 map.put("push_token", push_token);
+                Log.d("maps", "auth_uid: "+ auth_uid);
+                Log.d("maps", "appPrefes.getData(Constants.DEVICE_TOKEN "+ appPrefes.getData(Constants.DEVICE_TOKEN));
                 RequestBody app_version = RequestBody.create(MediaType.parse("text/plain"), "2.0");
                 map.put("app_version", app_version);
+
+
 
                 if (registrationType.equals("Social")) {
                     RequestBody image = RequestBody.create(MediaType.parse("text/plain"), profilePic);
                     map.put("image", image);
+                    Log.d("maps", "auth_uid: "+ profilePic);
                 }
+
+                Gson gson = new Gson();
+                String json = gson.toJson(map);
+
+
+                Log.d("Json", "callRegisterApi: "+json.toString());
 
                 Call<RegistartionResponseModel> call = apiService.register(map);
                 call.enqueue(new Callback<RegistartionResponseModel>() {
                     @Override
                     public void onResponse(Call<RegistartionResponseModel> call, Response<RegistartionResponseModel> response) {
                         myProgressDialog.dismissProgress();
-                        Log.e("response", "onResponse: "+response.body().toString() );
+//                        Log.e("response", "onResponse: "+response.body().isStatus() );
                         try {
                             if (!response.body().isStatus()) {
                                 Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -338,15 +505,13 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
     private void callListCollegesApi() {
         if (cd.isConnectingToInternet()) {
             try {
-                Log.d("callListCollegesApi", "callListCollegesApi: ");
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<SelectCollegeResponseModel> call = apiService.selectCollege("dummy");
+                Call<SelectCollegeResponseModel> call = apiService.selectCollege("");
                 call.enqueue(new retrofit2.Callback<SelectCollegeResponseModel>() {
                     @Override
                     public void onResponse(Call<SelectCollegeResponseModel> call, Response<SelectCollegeResponseModel> response) {
                         myProgressDialog.dismissProgress();
-                        Log.d("callListCollegesApi", "callListCollegesApi: "+response.body().toString());
                         try {
                             if (!response.body().isStatus()) {
                                 Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -357,7 +522,6 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Log.d("callListCollegesApi", "failed");
                             showServerErrorAlert(LIST_COLLEGES_API);
                         }
                     }
@@ -365,7 +529,6 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
                     @Override
                     public void onFailure(Call<SelectCollegeResponseModel> call, Throwable t) {
                         myProgressDialog.dismissProgress();
-                        Log.d("callListCollegesApi", "callListCollegesApi: "+t.getLocalizedMessage());
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(LIST_COLLEGES_API);
                     }
@@ -392,6 +555,7 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
+                                // TODO: 1/9/2019 better error catching
                                 if (response.body().getMessage().contains("Email")) {
                                     llAlreadyHaveAccount.setVisibility(View.VISIBLE);
                                     layoutOne.setVisibility(View.VISIBLE);
@@ -494,7 +658,7 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
         super.onClickAlertOkButton(apiCode);
         switch (apiCode) {
             case EXIT_DIALOG:
-                mainActivity.finish();
+               getActivity().finish();
                 break;
         }
     }
@@ -507,93 +671,7 @@ public class SignUp extends LMTFragment implements Validator.ValidationListener 
                 Intent intent = new Intent(getActivity(), HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                mainActivity.finish();
-                break;
-        }
-    }
-
-    private void setCollegeSpinner() {
-        collegeList = new ArrayList<>();
-        collegeIdList = new ArrayList<>();
-        for (int i = 0; i < selectCollegeDataEntity.getDetails().size(); i++) {
-            collegeList.add(selectCollegeDataEntity.getDetails().get(i).getName());
-            collegeIdList.add(selectCollegeDataEntity.getDetails().get(i).getId() + "");
-        }
-        WhiteSpinnerAdapter classAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, collegeList);
-        spinnerInstitution.setAdapter(classAdapter);
-        spinnerInstitution.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedCollegeId = collegeIdList.get(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-    }
-
-    private void setUserTypeSpinner() {
-        userList = new ArrayList<>();
-        userIdList = new ArrayList<>();
-        for (int i = 0; i < selectUserTypeDataEntity.getDetails().size(); i++) {
-            userList.add(selectUserTypeDataEntity.getDetails().get(i).getName());
-            userIdList.add(selectUserTypeDataEntity.getDetails().get(i).getId() + "");
-        }
-        WhiteSpinnerAdapter classAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, userList);
-        spinnerRole.setAdapter(classAdapter);
-        spinnerRole.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedUserId = userIdList.get(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-    }
-
-    @Override
-    public void onValidationSucceeded() {
-        changePage();
-    }
-
-    @Override
-    public void onValidationFailed(List<ValidationError> errors) {
-        for (ValidationError error : errors) {
-            View view = error.getView();
-            String message = error.getCollatedErrorMessage(getContext());
-            // Display error messages ;)
-            if (view instanceof EditText) {
-                ((EditText) view).setError(message);
-            } else {
-                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-
-    private void changePage() {
-        switch (currentPage) {
-            case 1:
-                llAlreadyHaveAccount.setVisibility(View.INVISIBLE);
-                layoutOne.setVisibility(View.GONE);
-                layoutTwo.setVisibility(View.VISIBLE);
-                imgSeekBar.setImageResource(R.mipmap.slide_bar_two);
-                currentPage = 2;
-                break;
-            case 2:
-                layoutTwo.setVisibility(View.GONE);
-                layoutThree.setVisibility(View.VISIBLE);
-                tvNext.setText("SIGN UP");
-                imgSeekBar.setImageResource(R.mipmap.slide_bar_three);
-                currentPage = 3;
-                break;
-            case 3:
-                mainActivity.finish();
+                getActivity().finish();
                 break;
         }
     }

@@ -55,6 +55,9 @@ public class SignIn extends LMTFragment  {
     EditText edPassword;
     TextView tvSignInContinue;
 
+    @BindView(R.id.loginHasFailed)
+    TextView loginHasFailed;
+
     private String forgotPasswordEmail = "";
 
 
@@ -75,6 +78,7 @@ public class SignIn extends LMTFragment  {
         super.onViewCreated(view, savedInstanceState);
 //        ButterKnife.bind(view);
         getDeviceToken();
+        loginHasFailed = view.findViewById(R.id.loginHasFailed);
         tvSignInContinue = view.findViewById(R.id.tvSignInContinue);
         tvSignInContinue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,7 +154,8 @@ public class SignIn extends LMTFragment  {
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
-                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                loginHasFailed.setVisibility(View.VISIBLE);
+//                                    Toast.makeText(getContext(), "401 error" , Toast.LENGTH_SHORT).show();
                             } else {
                                 appPrefes.SaveData(Constants.USER_ID, response.body().getData().getUser_details().getU_id() + "");
                                 appPrefes.SaveData(Constants.USER_FIRST_NAME, response.body().getData().getUser_details().getU_first_name() + "");
