@@ -95,9 +95,9 @@
         <!-- <meta-data -->
         <!-- android:name="com.google.firebase.messaging.default_notification_channel_id" -->
         <!-- android:value="@string/default_notification_channel_id"/> -->
-        <activity android:name=".preLogin.Login">
-        </activity>
-        <activity android:name=".preLogin.SignInSignUp"></activity>
+        <activity android:name=".preLogin.Login"></activity>
+        <activity android:name=".preLogin.SignInSignUp" />
+        <activity android:name=".TestAutocomplete"></activity>
     </application>
 
 </manifest>
