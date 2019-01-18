@@ -53,7 +53,7 @@
 
         <meta-data
             android:name="co.paystack.android.PublicKey"
-            android:value="pk_test_90f8dddc00c2b5461ebb851a739bcb81a017278f" />
+            android:value="pk_test_1544ffee69407a91be7cece08566ea4ca1343126" />
         //FB
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
