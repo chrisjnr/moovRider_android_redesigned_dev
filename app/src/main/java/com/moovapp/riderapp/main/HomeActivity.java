@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -55,6 +56,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 import com.moovapp.riderapp.R;
+import com.moovapp.riderapp.main.fragments.LocationAdapter;
 import com.moovapp.riderapp.main.moov.MoovFragment;
 import com.moovapp.riderapp.main.moov.NotificationAction;
 import com.moovapp.riderapp.main.paymentHistory.PaymentHistoryFragment;
@@ -250,6 +252,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     Marker destinationLocationMarker;
     private boolean isDraw1stPolyLine = false;
     private int remainingTime = 10;
+    public RecyclerView recyclerViewLocation;
+    public LocationAdapter locationAdapter;
+    public CardView locations;
+//    public TextView tvSearch;
 
 
     @Override
@@ -258,6 +264,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
         setContentView(R.layout.home_activity);
+        recyclerViewLocation = findViewById(R.id.recycler_location);
+        locations = findViewById(R.id.locations);
+//        tvSearch = findViewById(R.id.tvSearch);
+        recyclerViewLocation.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewLocation.setHasFixedSize(true);
         welcomeText = findViewById(R.id.welcomeText);
         ButterKnife.bind(this);
         homeActivityActions = this;
@@ -342,7 +353,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 Picasso.get().load(appPrefes.getData(Constants.USER_PROFILE_PIC)).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(profileImage);
             }
             tvUserName.setText(appPrefes.getData(Constants.USER_FIRST_NAME));
-            welcomeText.setText("Hey, "+ appPrefes.getData(Constants.USER_FIRST_NAME));
+            welcomeText.setText("Hey "+ appPrefes.getData(Constants.USER_FIRST_NAME));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -605,6 +616,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
+
     @OnClick(R.id.cardViewNext)
     public void cardViewNextClick() {
         if (isDropDownSelected && isDropDownSelectedLocation) {
@@ -617,6 +634,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 cardViewRideDetails.setVisibility(View.VISIBLE);
                 cardViewMove.setVisibility(View.VISIBLE);
                 tvBookFutureRide.setVisibility(View.VISIBLE);
+                locations.setVisibility(View.INVISIBLE);
                 setSeatSpinner();
             }
         } else {
@@ -637,6 +655,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //            cardViewMove.setVisibility(View.GONE);
         } else {
             currentStep = 3;
+            locations.setVisibility(View.INVISIBLE);
 //            cardViewMove.setVisibility(View.GONE);
 //            cardViewRideDetails.setVisibility(View.GONE);
             if (isFutureRide) {
@@ -694,6 +713,28 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 // TODO Auto-generated method stub
             }
         });
+
+        autoCompleteLocation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus){
+                    recyclerViewLocation.setVisibility(View.GONE);
+                }else{
+                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        autoCompleteDestination.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b){
+                    recyclerViewLocation.setVisibility(View.GONE);
+                }else{
+                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     public void setAutoCompleteTextViewListners() {
@@ -721,6 +762,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.GONE);
+//                    tvSearch.setVisibility(View.GONE);
                 }
             }
 
@@ -738,6 +781,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+//                    tvSearch.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -766,6 +811,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.GONE);
+//                    tvSearch.setVisibility(View.GONE);
                 }
             }
 
@@ -784,6 +831,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+//                    tvSearch.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -952,13 +1001,43 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 int[] to = new int[]{android.R.id.text1};
                 adapter = new SimpleAdapter(getApplicationContext(), result, R.layout.simple_spinner_dropdown_item, from, to);
                 if (isTypingOnDestination) {
-                    autoCompleteDestination.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+//                    autoCompleteDestination.setAdapter(adapter);
+                    locationAdapter = new LocationAdapter(result, new LocationAdapter.ListItemClickListener() {
+                        @Override
+                        public void OnLocationClicked(HashMap<String, String> selectedLocation) {
+                            autoCompleteDestination.setText(selectedLocation.get("description"));
+                            recyclerViewLocation.setVisibility(View.GONE);
+                            isDropDownSelected = true;
+                            isDropDownSelectedLocation = true;
+//                            tvSearch.setVisibility(View.GONE);
+                        }
+                    });
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                    recyclerViewLocation.setAdapter(locationAdapter);
+                    locationAdapter.notifyDataSetChanged();
+//                    Log.d("onPostExecute", "onPostExecute: "+ result.get(0).toString());
+//                    recyclerViewLocation.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
                     System.out.println("atvvv" + autoCompleteDestination.getText().toString());
                     getLatLng(autoCompleteDestination.getText().toString());
                 } else {
-                    autoCompleteLocation.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                    locationAdapter = new LocationAdapter(result, new LocationAdapter.ListItemClickListener() {
+                        @Override
+                        public void OnLocationClicked(HashMap<String, String> selectedLocation) {
+                            autoCompleteLocation.setText(selectedLocation.get("description"));
+                            isDropDownSelected = true;
+                            isDropDownSelectedLocation = true;
+                            recyclerViewLocation.setVisibility(View.GONE);
+//                            tvSearch.setVisibility(View.GONE);
+                        }
+                    });
+
+                    recyclerViewLocation.setAdapter(locationAdapter);
+                    locationAdapter.notifyDataSetChanged();
+//                    autoCompleteLocation.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
                     System.out.println("atvvv" + autoCompleteLocation.getText().toString());
                     getLatLng(autoCompleteLocation.getText().toString());
                 }

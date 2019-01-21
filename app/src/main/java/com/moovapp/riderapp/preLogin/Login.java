@@ -170,9 +170,9 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
                     public void onResponse(Call<SocialLoginResponseModel> call, Response<SocialLoginResponseModel> response) {
                         myProgressDialog.dismissProgress();
 //                        Log.d(TAG, "onResponse: "+ response.body());
-                        Log.d(TAG, "onResponse: "+ response.raw().body());
+//                        Log.d(TAG, "onResponse: "+ response.raw().body());
 //                        Log.e("response", "onResponse: "+response.body().getData().getUser_details().getWallet_balance() );
-                        Log.e("response", "onResponse: "+response.body().getData().getUser_details().getU_first_name() );
+//                        Log.e("response", "onResponse: "+response.body().getData().getUser_details().getU_first_name() );
                         try {
                             if (!response.body().isStatus()) {
                                 Intent intent = new Intent(Login.this, SignInSignUp.class);

@@ -29,6 +29,7 @@
     <color name="colorPrimaryLite">#77ee3469</color>
     <color name="pink">#ef466e</color>
     <color name="buttons">#F21466</color>
+    <color name="grey_white">#ECEFF1</color>
 
     <color name="colorRouteLine">#2162fc</color>
 </resources>
