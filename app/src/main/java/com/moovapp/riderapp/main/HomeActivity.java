@@ -1786,6 +1786,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 call.enqueue(new retrofit2.Callback<ViewCurrentRideResponseModel>() {
                     @Override
                     public void onResponse(Call<ViewCurrentRideResponseModel> call, Response<ViewCurrentRideResponseModel> response) {
+                        Log.d("current_ride", "onResponse: "+appPrefes.getData(Constants.USER_ID));
+                        Log.d("current_ride", "onResponse: "+response.raw());
                         myProgressDialog.dismissProgress();
                         try {
                             if (response.body().isStatus()) {
@@ -1834,6 +1836,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     @Override
                     public void onFailure(Call<ViewCurrentRideResponseModel> call, Throwable t) {
                         myProgressDialog.dismissProgress();
+                        Log.d("current_ride", "onResponse: "+appPrefes.getData(Constants.USER_ID));
+                        Log.d("current_ride", "onResponse: "+t.getLocalizedMessage());
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(VIEW_CURRENT_RIDE_API);
                     }
