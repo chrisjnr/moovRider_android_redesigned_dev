@@ -26,6 +26,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -159,7 +160,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @BindView(R.id.autoCompleteLocation)
     CustomAutoCompleteTextView autoCompleteLocation;
     @BindView(R.id.cardViewRideDetails)
-    CardView cardViewRideDetails;
+    LinearLayout cardViewRideDetails;
     @BindView(R.id.cardViewMove)
     CardView cardViewMove;
     @BindView(R.id.cardViewNext)
@@ -168,10 +169,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     CheckBox cbPool;
     @BindView(R.id.layoutCurrentRider)
     View layoutCurrentRider;
-    @BindView(R.id.spinnerUniversity)
-    Spinner spinnerUniversity;
-    @BindView(R.id.spinnerSeats)
-    Spinner spinnerSeats;
+//    @BindView(R.id.spinnerUniversity)
+//    Spinner spinnerUniversity;
+//    @BindView(R.id.spinnerSeats)
+//    Spinner spinnerSeats;
     @BindView(R.id.tvAmount)
     TextView tvAmount;
     @BindView(R.id.tvMoov)
@@ -205,6 +206,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     TextView tvDate;
     @BindView(R.id.tvTime)
     TextView tvTime;
+    @BindView(R.id.tvDestinationName)
+    TextView tvDestinationName;
+    @BindView(R.id.tvLocationName)
+    public TextView tvLocationName;
+
+
 
     private PlacesTask placesTask;
     private ParserTask parserTask;
@@ -255,6 +262,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     public RecyclerView recyclerViewLocation;
     public LocationAdapter locationAdapter;
     public CardView locations;
+    public Button increaseSeats;
+    public Button decreaseSeats;
+    public int seatNumber = 1;
+    public TextView tvSeatNumber;
+
 //    public TextView tvSearch;
 
 
@@ -264,7 +276,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
         setContentView(R.layout.home_activity);
+        tvSeatNumber = findViewById(R.id.tvSeatNumber);
         recyclerViewLocation = findViewById(R.id.recycler_location);
+        increaseSeats = findViewById(R.id.increaseSeats);
+        decreaseSeats = findViewById(R.id.decreaseSeats);
         locations = findViewById(R.id.locations);
 //        tvSearch = findViewById(R.id.tvSearch);
         recyclerViewLocation.setLayoutManager(new LinearLayoutManager(this));
@@ -590,30 +605,75 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         }
     }
 
-
-    private void setSeatSpinner() {
-        List<String> seats = new ArrayList<>();
-        seats.add("1");
-        seats.add("2");
-        seats.add("3");
-        seats.add("4");
-        seats.add("5");
-        seats.add("6");
-        seats.add("7");
-        seats.add("8");
-        WhiteSpinnerAdapter seatAdapter = new WhiteSpinnerAdapter(this, R.layout.white_spinner_list_item, R.id.title, seats);
-        spinnerSeats.setAdapter(seatAdapter);
-        spinnerSeats.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void setUpSeatListeners(){
+//        callViewRideCostApi();
+        increaseSeats.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                callViewRideCostApi();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onClick(View view) {
+                if (seatNumber == 9){
+                    return;
+                }
+                seatNumber++;
+                tvSeatNumber.setText(String.valueOf(seatNumber));
 
             }
         });
+
+        decreaseSeats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (seatNumber < 2){
+                    return;
+                }
+                seatNumber--;
+                tvSeatNumber.setText(String.valueOf(seatNumber));
+            }
+        });
+
+        tvSeatNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                callViewRideCostApi();
+            }
+        });
+    }
+
+
+    private void setSeatSpinner() {
+//        setUpSeatListeners();
+        callViewRideCostApi();
+//        List<String> seats = new ArrayList<>();
+//        seats.add("1");
+//        seats.add("2");
+//        seats.add("3");
+//        seats.add("4");
+//        seats.add("5");
+//        seats.add("6");
+//        seats.add("7");
+//        seats.add("8");
+//        WhiteSpinnerAdapter seatAdapter = new WhiteSpinnerAdapter(this, R.layout.white_spinner_list_item, R.id.title, seats);
+//        spinnerSeats.setAdapter(seatAdapter);
+//        spinnerSeats.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                callViewRideCostApi();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -634,8 +694,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 cardViewRideDetails.setVisibility(View.VISIBLE);
                 cardViewMove.setVisibility(View.VISIBLE);
                 tvBookFutureRide.setVisibility(View.VISIBLE);
-                locations.setVisibility(View.INVISIBLE);
+                locations.setVisibility(View.GONE);
+                tvLocationName.setText(autoCompleteLocation.getText().toString());
+                tvDestinationName.setText(autoCompleteDestination.getText().toString());
                 setSeatSpinner();
+                setUpSeatListeners();
             }
         } else {
             Toast.makeText(getApplicationContext(), "Please choose locations", Toast.LENGTH_SHORT).show();
@@ -1360,35 +1423,35 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             if (!response.body().isStatus()) {
                                 Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                List<String> collegeList = new ArrayList<>();
-                                int p = 0;
-                                final List<String> collegeIdList = new ArrayList<>();
-                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
-                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
-                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
-                                    if (response.body().getData().getUser_institute() == response.body().getData().getDetails().get(i).getId()) {
-                                        p = i;
-                                    }
-                                }
-                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(HomeActivity.this, R.layout.white_spinner_list_item, R.id.title, collegeList);
-                                spinnerUniversity.setAdapter(collegeAdapter);
-                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                        selectedCollegeId = collegeIdList.get(i);
-                                        callViewRideCostApi();
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                    }
-                                });
-                                try {
-                                    spinnerUniversity.setSelection(p);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+//                                List<String> collegeList = new ArrayList<>();
+//                                int p = 0;
+//                                final List<String> collegeIdList = new ArrayList<>();
+//                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
+//                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
+//                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
+//                                    if (response.body().getData().getUser_institute() == response.body().getData().getDetails().get(i).getId()) {
+//                                        p = i;
+//                                    }
+//                                }
+//                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(HomeActivity.this, R.layout.white_spinner_list_item, R.id.title, collegeList);
+//                                spinnerUniversity.setAdapter(collegeAdapter);
+//                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                    @Override
+//                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                                        selectedCollegeId = collegeIdList.get(i);
+//                                        callViewRideCostApi();
+//                                    }
+//
+//                                    @Override
+//                                    public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//                                    }
+//                                });
+//                                try {
+//                                    spinnerUniversity.setSelection(p);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1424,10 +1487,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 }
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<RideSearchResponseModel> call = apiService.rideSearch("ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + spinnerSeats.getSelectedItem() + "/" + poolRiding);
+                Call<RideSearchResponseModel> call = apiService.rideSearch("ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + String.valueOf(seatNumber) + "/" + poolRiding);
                 call.enqueue(new retrofit2.Callback<RideSearchResponseModel>() {
                     @Override
                     public void onResponse(Call<RideSearchResponseModel> call, Response<RideSearchResponseModel> response) {
+                        Log.d("response", "onResponse: "+response.raw());
+                        Log.d("response", "onResponse: "+response.body().getMessage());
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
@@ -1517,7 +1582,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
                         fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
-                        toLat + "", toLong + "", poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                        toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
                 call.enqueue(new retrofit2.Callback<BookRideResponseModel>() {
                     @Override
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
@@ -1585,7 +1650,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<BookFutureRideResponseModel> call = apiService.bookFutureRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
                         fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
-                        toLat + "", toLong + "", poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + ""
+                        toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + ""
                         , tvDate.getText().toString(), tvTime.getText().toString());
                 call.enqueue(new retrofit2.Callback<BookFutureRideResponseModel>() {
                     @Override

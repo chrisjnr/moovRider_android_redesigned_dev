@@ -40,7 +40,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="50dp"
             android:overScrollMode="always"
             android:isScrollContainer="true"
             android:scrollbarAlwaysDrawVerticalTrack="true"
@@ -57,13 +57,13 @@
         </ScrollView>
 
         <!--<TextView-->
-            <!--android:id="@+id/tvSearch"-->
-            <!--android:visibility="invisible"-->
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:textColor="@color/grey_white"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Search Results"/>-->
+        <!--android:id="@+id/tvSearch"-->
+        <!--android:visibility="invisible"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--android:textColor="@color/grey_white"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Search Results"/>-->
 
 
 
@@ -74,77 +74,133 @@
             android:layout_height="wrap_content">
 
 
-
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:visibility="gone"
-                android:layout_above="@id/cardViewMove"
+                android:layout_alignParentBottom="true"
+                android:padding="10dp"
                 android:id="@+id/cardViewRideDetails"
+                android:background="@color/white"
+                android:layout_above="@id/locations"
+                android:orientation="vertical"
+                android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="10dp">
+                android:layout_height="wrap_content">
 
-                <LinearLayout
+                <android.support.v7.widget.CardView
+                    android:layout_marginBottom="4dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                    <Spinner
-                        android:id="@+id/spinnerUniversity"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:weightSum="6"
+                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:background="@drawable/layout_gray_little_rounded_white_bg"
-                        android:gravity="center_vertical"
-                        android:hint="University"
-                        android:imeOptions="actionNext"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:textColor="@color/black" />
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            android:background="#0000"
+                            android:src="@mipmap/my_location_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            />
+                        <LinearLayout
+                            android:layout_weight="6"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="5dp">
+                            <TextView
+                                android:padding="4dp"
+                                android:layout_width="wrap_content"
+                                android:text="Pick Up Location"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/tvLocationName"
+                                android:padding="4dp"
+                                android:layout_width="wrap_content"
+                                android:text="Name Of Location"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/lato_black"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="40dp"
-                            android:layout_marginLeft="5dp"
-                            android:gravity="center_vertical"
-                            android:text="No of seats" />
-
-                        <Spinner
-                            android:id="@+id/spinnerSeats"
-                            android:layout_width="100dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentRight="true"
-                            android:background="@drawable/layout_gray_little_rounded_white_bg"
-                            android:gravity="center_vertical"
-                            android:hint="University"
-                            android:imeOptions="actionNext"
-                            android:paddingLeft="15dp"
-                            android:paddingRight="15dp"
-                            android:textColor="@color/black" />
 
                         <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="40dp"
-                            android:layout_alignParentRight="true"
-                            android:layout_marginRight="7dp"
-                            android:src="@mipmap/down_arrow" />
-                    </RelativeLayout>
-
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            android:background="#0000"
+                            android:src="@drawable/ic_add"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+                <android.support.v7.widget.CardView
+                    android:layout_marginBottom="15dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
                     <LinearLayout
+                        android:padding="10dp"
+                        android:weightSum="6"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <ImageView
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            android:background="#0000"
+                            android:src="@mipmap/destination_location"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            />
+                        <LinearLayout
+                            android:layout_weight="6"
+                            android:orientation="vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:padding="4dp"
+                                android:layout_width="wrap_content"
+                                android:text="Destination Location"
+                                android:layout_height="wrap_content" />
+                            <TextView
+                                android:id="@+id/tvDestinationName"
+                                android:padding="4dp"
+                                android:layout_width="wrap_content"
+                                android:text="Name Of Location"
+                                android:textStyle="bold"
+                                android:fontFamily="@font/lato_black"
+                                android:layout_height="wrap_content" />
+                        </LinearLayout>
+
+
+                        <ImageView
+                            android:layout_margin="4dp"
+                            android:layout_gravity="center"
+                            android:background="#0000"
+                            android:src="@mipmap/edit_icon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:background="@drawable/border_gray"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:visibility="gone"
                         android:id="@+id/llFutureRideDetails"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
-                        android:layout_marginTop="5dp"
                         android:orientation="horizontal"
-                        android:visibility="gone"
                         android:weightSum="2.1">
 
                         <TextView
@@ -177,46 +233,295 @@
                             android:textColor="@color/black" />
 
                     </LinearLayout>
+                </android.support.v7.widget.CardView>
 
-                    <EditText
-                        android:id="@+id/tvAmount"
+                <android.support.v7.widget.CardView
+                    android:background="@drawable/border_gray"
+                    android:layout_marginTop="8dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:weightSum="8"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@drawable/layout_gray_little_rounded_white_bg"
-                        android:focusable="false"
-                        android:gravity="center_vertical"
-                        android:hint="Amount"
-                        android:imeOptions="actionNext"
-                        android:paddingLeft="15dp"
-                        android:paddingRight="15dp"
-                        android:textColor="@color/black" />
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:padding="8dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@mipmap/seat"/>
+
+                        <TextView
+                            android:padding="8dp"
+                            android:layout_weight="5"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Number of Seats"/>
+
+                        <Button
+                            android:id="@+id/decreaseSeats"
+                            android:layout_weight="1"
+                            android:background="@drawable/border_gray"
+                            android:text="-"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            />
+
+                        <TextView
+                            android:id="@+id/tvSeatNumber"
+                            android:background="@drawable/border_gray"
+                            android:textAlignment="center"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:text="1"/>
+
+                        <Button
+                            android:id="@+id/increaseSeats"
+                            android:layout_weight="1"
+                            android:background="@drawable/border_gray"
+                            android:text="+"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            />
+
+                    </LinearLayout>
 
 
-            <android.support.v7.widget.CardView
-                android:visibility="gone"
-                android:layout_above="@id/locations"
-                android:id="@+id/cardViewMove"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                app:cardBackgroundColor="@color/buttons"
-                android:layout_marginTop="20dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="7dp">
 
-                <TextView
-                    android:id="@+id/tvMoov"
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_marginTop="8dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:weightSum="4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_marginLeft="10dp"
+                            android:padding="4dp"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:text="Price"
+                            android:layout_weight="2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+
+                        <TextView
+                            android:layout_marginLeft="10dp"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:text="\u20a6"
+                            android:textAlignment="textEnd"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="end" />
+                        <TextView
+                            android:id="@+id/tvAmount"
+                            android:padding="4dp"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:text=""
+                            android:layout_weight="2"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/cardViewMove"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
+                    app:cardBackgroundColor="@color/buttons"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="7dp">
+
+                    <TextView
+                        android:id="@+id/tvMoov"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        android:text="Request Ride"
+                        android:textColor="@color/white"
+                        android:textSize="16dp" />
+
+                </android.support.v7.widget.CardView>
+
+
+                <TextView
+                    android:id="@+id/tvBookFutureRide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Schedule a ride"
                     android:gravity="center"
-                    android:text="MOOV"
-                    android:textColor="@color/white"
-                    android:textSize="16dp" />
-            </android.support.v7.widget.CardView>
+                    android:layout_gravity="center"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="15sp"
+                    android:layout_margin="15dp"/>
+
+
+
+            </LinearLayout>
+
+
+
+            <!--<android.support.v7.widget.CardView-->
+                <!--android:visibility="gone"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="5dp"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--app:cardCornerRadius="10dp"-->
+                <!--app:cardElevation="10dp">-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:background="@color/white"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:padding="10dp">-->
+
+                    <!--<Spinner-->
+                        <!--android:id="@+id/spinnerUniversity"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:background="@drawable/layout_gray_little_rounded_white_bg"-->
+                        <!--android:gravity="center_vertical"-->
+                        <!--android:hint="University"-->
+                        <!--android:imeOptions="actionNext"-->
+                        <!--android:paddingLeft="15dp"-->
+                        <!--android:paddingRight="15dp"-->
+                        <!--android:textColor="@color/black" />-->
+
+                    <!--<RelativeLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:layout_marginTop="5dp">-->
+
+                        <!--<TextView-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="40dp"-->
+                            <!--android:layout_marginLeft="5dp"-->
+                            <!--android:gravity="center_vertical"-->
+                            <!--android:text="No of seats" />-->
+
+                        <!--<Spinner-->
+                            <!--android:id="@+id/spinnerSeats"-->
+                            <!--android:layout_width="100dp"-->
+                            <!--android:layout_height="40dp"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:background="@drawable/layout_gray_little_rounded_white_bg"-->
+                            <!--android:gravity="center_vertical"-->
+                            <!--android:hint="University"-->
+                            <!--android:imeOptions="actionNext"-->
+                            <!--android:paddingLeft="15dp"-->
+                            <!--android:paddingRight="15dp"-->
+                            <!--android:textColor="@color/black" />-->
+
+                        <!--<ImageView-->
+                            <!--android:layout_width="15dp"-->
+                            <!--android:layout_height="40dp"-->
+                            <!--android:layout_alignParentRight="true"-->
+                            <!--android:layout_marginRight="7dp"-->
+                            <!--android:src="@mipmap/down_arrow" />-->
+                    <!--</RelativeLayout>-->
+
+                    <!--<LinearLayout-->
+                        <!--android:id="@+id/llFutureRideDetails"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:layout_marginTop="5dp"-->
+                        <!--android:orientation="horizontal"-->
+                        <!--android:visibility="gone"-->
+                        <!--android:weightSum="2.1">-->
+
+                        <!--<TextView-->
+                            <!--android:id="@+id/tvDate"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:background="@drawable/layout_gray_little_rounded_white_bg"-->
+                            <!--android:gravity="center_vertical"-->
+                            <!--android:hint="Date"-->
+                            <!--android:paddingLeft="15dp"-->
+                            <!--android:paddingRight="15dp"-->
+                            <!--android:textColor="@color/black" />-->
+
+                        <!--<View-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--android:layout_weight=".1" />-->
+
+                        <!--<TextView-->
+                            <!--android:id="@+id/tvTime"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:background="@drawable/layout_gray_little_rounded_white_bg"-->
+                            <!--android:gravity="center_vertical"-->
+                            <!--android:hint="Time"-->
+                            <!--android:paddingLeft="15dp"-->
+                            <!--android:paddingRight="15dp"-->
+                            <!--android:textColor="@color/black" />-->
+
+                    <!--</LinearLayout>-->
+
+                    <!--<EditText-->
+                        <!--android:id="@+id/tvAmounts"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="40dp"-->
+                        <!--android:layout_marginTop="5dp"-->
+                        <!--android:background="@drawable/layout_gray_little_rounded_white_bg"-->
+                        <!--android:focusable="false"-->
+                        <!--android:gravity="center_vertical"-->
+                        <!--android:hint="Amount"-->
+                        <!--android:imeOptions="actionNext"-->
+                        <!--android:paddingLeft="15dp"-->
+                        <!--android:paddingRight="15dp"-->
+                        <!--android:textColor="@color/black" />-->
+                <!--</LinearLayout>-->
+            <!--</android.support.v7.widget.CardView>-->
+
+
+            <!--<android.support.v7.widget.CardView-->
+                <!--android:visibility="gone"-->
+                <!--android:layout_above="@id/locations"-->
+                <!--android:id="@+id/cardViewMoves"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_marginLeft="5dp"-->
+                <!--android:layout_marginRight="5dp"-->
+                <!--app:cardBackgroundColor="@color/buttons"-->
+                <!--android:layout_marginTop="20dp"-->
+                <!--app:cardCornerRadius="20dp"-->
+                <!--app:cardElevation="7dp">-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tvMoovs"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="40dp"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="MOOV"-->
+                    <!--android:textColor="@color/white"-->
+                    <!--android:textSize="16dp" />-->
+            <!--</android.support.v7.widget.CardView>-->
 
 
 
@@ -374,17 +679,6 @@
 
 
 
-            <TextView
-                android:id="@+id/tvBookFutureRide"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:text="Schedule a ride"
-                android:visibility="gone"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="15dp"
-                android:layout_marginTop="10dp"/>
         </RelativeLayout>
     </LinearLayout>
 
