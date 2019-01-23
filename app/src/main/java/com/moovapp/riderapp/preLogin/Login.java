@@ -1,5 +1,7 @@
 package com.moovapp.riderapp.preLogin;
-
+/**
+ * Created by Manuel Chris-Ogar on 1/10/2019.
+ */
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

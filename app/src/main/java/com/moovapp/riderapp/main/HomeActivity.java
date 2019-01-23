@@ -1,6 +1,5 @@
 package com.moovapp.riderapp.main;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -33,11 +32,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.github.ornolfr.ratingview.RatingView;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -58,7 +55,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.PolyUtil;
 import com.moovapp.riderapp.R;
 import com.moovapp.riderapp.main.fragments.LocationAdapter;
-import com.moovapp.riderapp.main.moov.MoovFragment;
 import com.moovapp.riderapp.main.moov.NotificationAction;
 import com.moovapp.riderapp.main.paymentHistory.PaymentHistoryFragment;
 import com.moovapp.riderapp.main.previousRides.PreviousRidesFragment;
@@ -83,9 +79,7 @@ import com.moovapp.riderapp.utils.retrofit.responseModels.CancelRideResponseMode
 import com.moovapp.riderapp.utils.retrofit.responseModels.RideSearchResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewCollegesResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewCurrentRideResponseModel;
-import com.moovapp.riderapp.utils.retrofit.responseModels.ViewProfileResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
-import com.moovapp.riderapp.utils.spinnerAdapter.WhiteSpinnerAdapter;
 import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
@@ -100,7 +94,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -209,7 +202,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @BindView(R.id.tvDestinationName)
     TextView tvDestinationName;
     @BindView(R.id.tvLocationName)
-    public TextView tvLocationName;
+    TextView tvLocationName;
+    @BindView(R.id.changeDestination)
+    ImageView changeDestination;
+    @BindView(R.id.changeLocation)
+    ImageView changeLocation;
+
 
 
 
@@ -706,6 +704,20 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     }
 
 
+    @OnClick(R.id.changeLocation)
+    public void changeLocationClick(){
+        cardViewRideDetails.setVisibility(View.GONE);
+        locations.setVisibility(View.VISIBLE);
+
+    }
+
+    @OnClick(R.id.changeDestination)
+    public void changeDestinationClick(){
+        cardViewRideDetails.setVisibility(View.GONE);
+        locations.setVisibility(View.VISIBLE);
+    }
+
+
     @OnClick(R.id.cardViewMove)
     public void cardViewMoveClick() {
         if (isNotEnoughBalance) {
@@ -718,7 +730,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //            cardViewMove.setVisibility(View.GONE);
         } else {
             currentStep = 3;
-            locations.setVisibility(View.INVISIBLE);
+            locations.setVisibility(View.GONE);
 //            cardViewMove.setVisibility(View.GONE);
 //            cardViewRideDetails.setVisibility(View.GONE);
             if (isFutureRide) {
@@ -1582,7 +1594,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
                         fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
-                        toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                        toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), appPrefes.getData(Constants.USER_UNIVERSITY_ID), tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
                 call.enqueue(new retrofit2.Callback<BookRideResponseModel>() {
                     @Override
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
@@ -1609,6 +1621,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 currentStep = 1;
                                 cardViewNext.setVisibility(View.VISIBLE);
                                 cbPool.setVisibility(View.VISIBLE);
+                                locations.setVisibility(View.VISIBLE);
                                 cardViewRideDetails.setVisibility(View.GONE);
                                 cardViewMove.setVisibility(View.GONE);
                                 tvBookFutureRide.setVisibility(View.GONE);
@@ -1671,10 +1684,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 tvTime.setText("");
                                 tvBookFutureRide.setText("Schedule a ride");
                                 llFutureRideDetails.setVisibility(View.GONE);
+                                locations.setVisibility(View.VISIBLE);
                                 Toast.makeText(HomeActivity.this, "Ride booked!", Toast.LENGTH_SHORT).show();
                             } else {
                                 showRequestSuccessDialog("Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
                                 currentStep = 1;
+                                locations.setVisibility(View.VISIBLE);
                                 cardViewNext.setVisibility(View.VISIBLE);
                                 cbPool.setVisibility(View.VISIBLE);
                                 cardViewRideDetails.setVisibility(View.GONE);
@@ -1683,6 +1698,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                            locations.setVisibility(View.VISIBLE);
                             showServerErrorAlert(BOOK_FUTURE_RIDE_API);
                         }
                     }

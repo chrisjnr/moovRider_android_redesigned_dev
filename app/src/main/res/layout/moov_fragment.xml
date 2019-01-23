@@ -40,7 +40,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="100dp"
             android:overScrollMode="always"
             android:isScrollContainer="true"
             android:scrollbarAlwaysDrawVerticalTrack="true"
@@ -76,11 +76,9 @@
 
             <LinearLayout
                 android:visibility="gone"
-                android:layout_alignParentBottom="true"
                 android:padding="10dp"
                 android:id="@+id/cardViewRideDetails"
                 android:background="@color/white"
-                android:layout_above="@id/locations"
                 android:orientation="vertical"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
@@ -115,13 +113,13 @@
                             <TextView
                                 android:padding="4dp"
                                 android:layout_width="wrap_content"
-                                android:text="Pick Up Location"
+                                android:text="@string/dummy_pickup"
                                 android:layout_height="wrap_content" />
                             <TextView
                                 android:id="@+id/tvLocationName"
                                 android:padding="4dp"
                                 android:layout_width="wrap_content"
-                                android:text="Name Of Location"
+                                tools:text="@string/dummy_location"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/lato_black"
                                 android:layout_height="wrap_content" />
@@ -129,6 +127,7 @@
 
 
                         <ImageView
+                            android:id="@+id/changeLocation"
                             android:layout_margin="4dp"
                             android:layout_gravity="center"
                             android:background="#0000"
@@ -172,7 +171,7 @@
                                 android:id="@+id/tvDestinationName"
                                 android:padding="4dp"
                                 android:layout_width="wrap_content"
-                                android:text="Name Of Location"
+                                tools:text="Name Of Destination"
                                 android:textStyle="bold"
                                 android:fontFamily="@font/lato_black"
                                 android:layout_height="wrap_content" />
@@ -180,6 +179,7 @@
 
 
                         <ImageView
+                            android:id="@+id/changeDestination"
                             android:layout_margin="4dp"
                             android:layout_gravity="center"
                             android:background="#0000"
@@ -528,9 +528,10 @@
 
 
             <android.support.v7.widget.CardView
-                android:layout_margin="10dp"
+                android:layout_above="@id/anchor"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
                 app:cardCornerRadius="20dp"
-                android:layout_alignParentBottom="true"
                 app:cardBackgroundColor="@color/white"
                 android:id="@+id/locations"
                 android:layout_width="match_parent"
@@ -677,7 +678,11 @@
 
 
 
-
+            <View
+                android:layout_alignParentBottom="true"
+                android:id="@+id/anchor"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"/>
 
         </RelativeLayout>
     </LinearLayout>
@@ -690,4 +695,6 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
         android:visibility="gone" />
+
+
 </RelativeLayout>

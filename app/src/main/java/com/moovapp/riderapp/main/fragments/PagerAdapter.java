@@ -1,5 +1,7 @@
 package com.moovapp.riderapp.main.fragments;
-
+/**
+ * Created by Manuel Chris-Ogar on 1/23/2019.
+ */
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

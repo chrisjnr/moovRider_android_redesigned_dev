@@ -1,5 +1,7 @@
 package com.moovapp.riderapp.preLogin;
-
+/**
+ * Created by Manuel Chris-Ogar on 1/10/2019.
+ */
 import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
