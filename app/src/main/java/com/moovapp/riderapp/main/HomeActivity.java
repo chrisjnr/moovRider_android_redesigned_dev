@@ -52,6 +52,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.maps.android.PolyUtil;
 import com.moovapp.riderapp.R;
 import com.moovapp.riderapp.main.fragments.LocationAdapter;
@@ -207,6 +209,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     ImageView changeDestination;
     @BindView(R.id.changeLocation)
     ImageView changeLocation;
+    @BindView(R.id.scrollViewResults)
+    LinearLayout scrollViewResults;
 
 
 
@@ -752,6 +756,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         } else {
             showAlertDialog("Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
         }
+        if(cancelledTrip){
+            locations.setVisibility(View.VISIBLE);
+        }
     }
 
     public void inItAutoCompleteLocation() {
@@ -794,8 +801,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             public void onFocusChange(View view, boolean hasFocus) {
                 if (!hasFocus){
                     recyclerViewLocation.setVisibility(View.GONE);
+                    scrollViewResults.setVisibility(View.GONE);
                 }else{
                     recyclerViewLocation.setVisibility(View.VISIBLE);
+                    scrollViewResults.setVisibility(View.VISIBLE);
+
                 }
             }
         });
@@ -805,8 +815,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             public void onFocusChange(View view, boolean b) {
                 if (!b){
                     recyclerViewLocation.setVisibility(View.GONE);
+                    scrollViewResults.setVisibility(View.GONE);
                 }else{
                     recyclerViewLocation.setVisibility(View.VISIBLE);
+                    scrollViewResults.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -1083,6 +1095,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                         public void OnLocationClicked(HashMap<String, String> selectedLocation) {
                             autoCompleteDestination.setText(selectedLocation.get("description"));
                             recyclerViewLocation.setVisibility(View.GONE);
+                            scrollViewResults.setVisibility(View.GONE);
                             isDropDownSelected = true;
                             isDropDownSelectedLocation = true;
 //                            tvSearch.setVisibility(View.GONE);
@@ -1105,6 +1118,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             isDropDownSelected = true;
                             isDropDownSelectedLocation = true;
                             recyclerViewLocation.setVisibility(View.GONE);
+                            scrollViewResults.setVisibility(View.GONE);
 //                            tvSearch.setVisibility(View.GONE);
                         }
                     });
@@ -1236,37 +1250,37 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     private void setRiderDetails(ViewCurrentRideResponseModel.DataEntity data) {
         layoutCurrentRider.setVisibility(View.VISIBLE);
-        tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
-        tvCarModel.setText(data.getDriver_details().getCar_model());
+        tvRiderName.setText(data.getDriverDetails().getFirstName() + " " + data.getDriverDetails().getLastName());
+        tvCarModel.setText(data.getDriverDetails().getCarModel());
         tvNoTrips.setText("No of trips: ");
 //        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-        rating1.setRating(Float.parseFloat(data.getDriver_details().getRatings() + ""));
-        tvRiderPhone.setText(data.getDriver_details().getPhone());
+        rating1.setRating(Float.parseFloat(data.getDriverDetails().getRatings() + ""));
+        tvRiderPhone.setText(data.getDriverDetails().getPhone());
 //        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
         tvDistance.setText("2 Km");
-        tvCarNumber.setText(data.getDriver_details().getVehicle_no());
+        tvCarNumber.setText(data.getDriverDetails().getVehicleNo());
 //        tvEta.setText(data.getDistance_to_drive_details().getTime());
         tvEta.setText("15 Min");
 
 
         try {
-            if (data.getDriver_details().getImage().length() > 3) {
-                Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
+            if (data.getDriverDetails().getImage().length() > 3) {
+                Picasso.get().load(data.getDriverDetails().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        double lat1 = Double.parseDouble(data.getPoly_lines().getStart().getLat().substring(0, 9));
-        double long1 = Double.parseDouble(data.getPoly_lines().getStart().getLng().substring(0, 9));
+        double lat1 = Double.parseDouble(data.getPolyLines().getStart().getLat().toString().substring(0, 9));
+        double long1 = Double.parseDouble(data.getPolyLines().getStart().getLng().toString().substring(0, 9));
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lat1, long1)));
-        List<LatLng> decodedPath = PolyUtil.decode(data.getPoly_line());
+        List<LatLng> decodedPath = PolyUtil.decode(data.getPolyLine());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 12));
 
-        double lat2 = Double.parseDouble(data.getPoly_lines().getEnd().getLat().substring(0, 9));
-        double long2 = Double.parseDouble(data.getPoly_lines().getEnd().getLng().substring(0, 9));
+        double lat2 = Double.parseDouble(data.getPolyLines().getEnd().getLat().toString().substring(0, 9));
+        double long2 = Double.parseDouble(data.getPolyLines().getEnd().getLng().toString().substring(0, 9));
 
         LatLng origin = new LatLng(lat2, long2);
         LatLng destination = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
@@ -1276,7 +1290,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
 
 
-        myRef.child(data.getDriver_details().getDriver_id() + "").addValueEventListener(new ValueEventListener() {
+        myRef.child(data.getDriverDetails().getDriverId() + "").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -1595,10 +1609,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
                         fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
                         toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), appPrefes.getData(Constants.USER_UNIVERSITY_ID), tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                Log.d("params", "callBookRideApi: "+ appPrefes.getData(Constants.USER_ID) +","+ autoCompleteLocation.getText().toString().replaceAll(" ", "+")+","+
+                        fromLat +","+ fromLong +","+ autoCompleteDestination.getText().toString().replaceAll(" ", "+")+","+
+                        toLat+","+ toLong +","+ poolRiding+","+ String.valueOf(seatNumber)+","+ appPrefes.getData(Constants.USER_UNIVERSITY_ID)+","+ tvAmount.getText().toString()+","+ gpsTracker.getLatitude()  +","+ gpsTracker.getLongitude());
+
                 call.enqueue(new retrofit2.Callback<BookRideResponseModel>() {
                     @Override
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
                         myProgressDialog.dismissProgress();
+                        Log.e("response", "onResponse: "+ response.raw() );
                         try {
                             if (response.body().isStatus()) {
                                 setRiderDetails(response.body().getData());
@@ -1634,6 +1653,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
                     @Override
                     public void onFailure(Call<BookRideResponseModel> call, Throwable t) {
+                        Log.e("response", "onResponse: "+ t.getLocalizedMessage() );
                         myProgressDialog.dismissProgress();
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(BOOK_RIDE_API);
@@ -1730,6 +1750,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + currentRideId + "/" + freeOrPaid);
+                Log.d("response", "rides/cancel/" + currentRideId + "/" + freeOrPaid);
                 call.enqueue(new retrofit2.Callback<CancelRideResponseModel>() {
                     @Override
                     public void onResponse(Call<CancelRideResponseModel> call, Response<CancelRideResponseModel> response) {
@@ -1783,6 +1804,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<ViewCurrentRideResponseModel> call = apiService.viewCurrentRide("view/rides/current/user/" + appPrefes.getData(Constants.USER_ID));
+                Log.d("responseRide", "view/rides/current/user/" + appPrefes.getData(Constants.USER_ID));
                 call.enqueue(new retrofit2.Callback<ViewCurrentRideResponseModel>() {
                     @Override
                     public void onResponse(Call<ViewCurrentRideResponseModel> call, Response<ViewCurrentRideResponseModel> response) {
@@ -1790,21 +1812,21 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                         Log.d("current_ride", "onResponse: "+response.raw());
                         myProgressDialog.dismissProgress();
                         try {
-                            if (response.body().isStatus()) {
+                            if (response.body().getStatus()) {
                                 boolean isLiveRide = false;
                                 for (int i = 0; i < response.body().getData().size(); i++) {
-                                    if (response.body().getData().get(i).getRide_type().equals("live")) {
+                                    if (response.body().getData().get(i).getRideType().equals("live")) {
                                         setRiderDetails(response.body().getData().get(i));
-                                        currentRideId = response.body().getData().get(i).getRide_id() + "";
+                                        currentRideId = response.body().getData().get(i).getRideId() + "";
                                         cardViewMove.setVisibility(View.GONE);
                                         tvBookFutureRide.setVisibility(View.GONE);
                                         cardViewRideDetails.setVisibility(View.GONE);
                                         cardViewNext.setVisibility(View.GONE);
                                         cbPool.setVisibility(View.GONE);
-                                        toLat = Double.parseDouble(response.body().getData().get(i).getPoly_lines().getEnd().getLat().substring(0, 9));
-                                        toLong = Double.parseDouble(response.body().getData().get(i).getPoly_lines().getEnd().getLng().substring(0, 9));
+                                        toLat = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLat().toString().substring(0, 9));
+                                        toLong = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLng().toString().substring(0, 9));
                                     }
-                                    if (response.body().getData().get(i).getRide_type().equals("live")) {
+                                    if (response.body().getData().get(i).getRideType().equals("live")) {
                                         isLiveRide = true;
                                     }
                                 }

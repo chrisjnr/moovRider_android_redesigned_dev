@@ -32,4 +32,5 @@
     <color name="grey_white">#ECEFF1</color>
 
     <color name="colorRouteLine">#2162fc</color>
+    <color name="search_results_color">#F7F7FA</color>
 </resources>
