@@ -367,7 +367,7 @@
             <LinearLayout
                 android:visibility="gone"
                 android:id="@+id/scrollViewResults"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="10dp"
                 android:weightSum="5"
                 android:orientation="vertical"
                 android:layout_above="@id/anchor"
@@ -382,7 +382,7 @@
                     android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="@color/black"
+                    android:textColor="#78849E"
                     android:textAllCaps="true"
                     android:text="Search Results"
                     android:paddingStart="10dp" />
@@ -420,7 +420,7 @@
 
 
             <android.support.v7.widget.CardView
-                android:layout_marginTop="120dp"
+                android:layout_marginTop="60dp"
                 android:layout_above="@id/anchor"
                 android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
@@ -576,14 +576,14 @@
                 android:layout_alignParentBottom="true"
                 android:id="@+id/anchor"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"/>
+                android:layout_height="10dp"/>
 
         </RelativeLayout>
     </LinearLayout>
 
     <include
         android:id="@+id/layoutCurrentRider"
-        layout="@layout/current_rider"
+        layout="@layout/current_rider_new"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

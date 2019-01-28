@@ -179,11 +179,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     ImageView imgRiderImage;
     @BindView(R.id.tvCarModel)
     TextView tvCarModel;
-    @BindView(R.id.rating1)
-    RatingView rating1;
-    @BindView(R.id.tvRiderPhone)
-    TextView tvRiderPhone;
-    @BindView(R.id.tvDistance)
+//    @BindView(R.id.rating1)
+//    RatingView rating1;
+//    @BindView(R.id.tvRiderPhone)
+//    TextView tvRiderPhone;
+//    @BindView(R.id.tvDistance)
     TextView tvDistance;
     @BindView(R.id.tvCarNumber)
     TextView tvCarNumber;
@@ -191,8 +191,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     TextView tvEta;
     @BindView(R.id.tvCancelRide)
     TextView tvCancelRide;
-    @BindView(R.id.tvNoTrips)
-    TextView tvNoTrips;
+//    @BindView(R.id.tvNoTrips)
+//    TextView tvNoTrips;
     @BindView(R.id.llFutureRideDetails)
     LinearLayout llFutureRideDetails;
     @BindView(R.id.tvBookFutureRide)
@@ -680,6 +680,27 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     @Override
     public void onBackPressed() {
+//        super.onBackPressed();
+        if (currentStep == 2){
+            cardViewNext.setVisibility(View.VISIBLE);
+            cbPool.setVisibility(View.VISIBLE);
+            cardViewRideDetails.setVisibility(View.GONE);
+            cardViewMove.setVisibility(View.GONE);
+            tvBookFutureRide.setVisibility(View.GONE);
+        }if (currentStep == 3){
+            locations.setVisibility(View.VISIBLE);
+            cardViewNext.setVisibility(View.GONE);
+            cbPool.setVisibility(View.GONE);
+            cardViewRideDetails.setVisibility(View.VISIBLE);
+            cardViewMove.setVisibility(View.VISIBLE);
+            tvBookFutureRide.setVisibility(View.VISIBLE);
+            locations.setVisibility(View.GONE);
+            tvLocationName.setText(autoCompleteLocation.getText().toString());
+            tvDestinationName.setText(autoCompleteDestination.getText().toString());
+            setSeatSpinner();
+            setUpSeatListeners();
+        }
+
         super.onBackPressed();
 
     }
@@ -755,19 +776,23 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             showAlertDialog("Cancel Ride", "Your ride is 5 minutes away, you will be charged a cancellation fee. Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
         } else {
             showAlertDialog("Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
+            if(cancelledTrip){
+                locations.setVisibility(View.VISIBLE);
+            }
         }
-        if(cancelledTrip){
-            locations.setVisibility(View.VISIBLE);
-        }
+
     }
 
     public void inItAutoCompleteLocation() {
         autoCompleteDestination.setThreshold(1);
         autoCompleteDestination.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                isTypingOnDestination = true;
-                placesTask = new PlacesTask();
-                placesTask.execute(s.toString());
+                if (count > 3){
+                    isTypingOnDestination = true;
+                    placesTask = new PlacesTask();
+                    placesTask.execute(s.toString());
+                }
+
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -782,9 +807,13 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         autoCompleteLocation.setThreshold(1);
         autoCompleteLocation.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                isTypingOnDestination = false;
-                placesTask = new PlacesTask();
-                placesTask.execute(s.toString());
+
+                    if (count > 3){
+                        isTypingOnDestination = false;
+                        placesTask = new PlacesTask();
+                        placesTask.execute(s.toString());
+                    }
+
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1252,12 +1281,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         layoutCurrentRider.setVisibility(View.VISIBLE);
         tvRiderName.setText(data.getDriverDetails().getFirstName() + " " + data.getDriverDetails().getLastName());
         tvCarModel.setText(data.getDriverDetails().getCarModel());
-        tvNoTrips.setText("No of trips: ");
+//        tvNoTrips.setText("No of trips: ");
 //        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-        rating1.setRating(Float.parseFloat(data.getDriverDetails().getRatings() + ""));
-        tvRiderPhone.setText(data.getDriverDetails().getPhone());
+//        rating1.setRating(Float.parseFloat(data.getDriverDetails().getRatings() + ""));
+//        tvRiderPhone.setText(data.getDriverDetails().getPhone());
 //        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
-        tvDistance.setText("2 Km");
+//        tvDistance.setText("2 Km");
         tvCarNumber.setText(data.getDriverDetails().getVehicleNo());
 //        tvEta.setText(data.getDistance_to_drive_details().getTime());
         tvEta.setText("15 Min");
@@ -1271,16 +1300,16 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             e.printStackTrace();
         }
 
-        double lat1 = Double.parseDouble(data.getPolyLines().getStart().getLat().toString().substring(0, 9));
-        double long1 = Double.parseDouble(data.getPolyLines().getStart().getLng().toString().substring(0, 9));
+        double lat1 = Double.parseDouble(data.getPolyLines().getStart().getLat().toString().substring(0, data.getPolyLines().getStart().getLat().toString().length()-1));
+        double long1 = Double.parseDouble(data.getPolyLines().getStart().getLng().toString().substring(0, data.getPolyLines().getStart().getLng().toString().length()-1));
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lat1, long1)));
         List<LatLng> decodedPath = PolyUtil.decode(data.getPolyLine());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 12));
 
-        double lat2 = Double.parseDouble(data.getPolyLines().getEnd().getLat().toString().substring(0, 9));
-        double long2 = Double.parseDouble(data.getPolyLines().getEnd().getLng().toString().substring(0, 9));
+        double lat2 = Double.parseDouble(data.getPolyLines().getEnd().getLat().toString().substring(0, data.getPolyLines().getEnd().getLat().toString().length()-1));
+        double long2 = Double.parseDouble(data.getPolyLines().getEnd().getLng().toString().substring(0, data.getPolyLines().getEnd().getLng().toString().length()-1));
 
         LatLng origin = new LatLng(lat2, long2);
         LatLng destination = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
@@ -1316,10 +1345,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         layoutCurrentRider.setVisibility(View.VISIBLE);
         tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
         tvCarModel.setText(data.getDriver_details().getCar_model());
-        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-        rating1.setRating(data.getDriver_details().getRatings());
-        tvRiderPhone.setText(data.getDriver_details().getPhone());
-        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
+//        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
+//        rating1.setRating(data.getDriver_details().getRatings());
+//        tvRiderPhone.setText(data.getDriver_details().getPhone());
+//        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
         tvCarNumber.setText(data.getDriver_details().getVehicle_no());
         tvEta.setText(data.getDistance_to_drive_details().getTime());
 
@@ -1421,7 +1450,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     System.out.println("HAHAHAHA: " + distanceInMeters);
                     remainingTime = (int) ((distanceInMeters / 650));
                     tvEta.setText(((int) ((distanceInMeters / 650)) + 1) + " Min");
-                    tvDistance.setText(((int) (distanceInMeters / 1000)) + " Km");
+//                    tvDistance.setText(((int) (distanceInMeters / 1000)) + " Km");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1804,7 +1833,6 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<ViewCurrentRideResponseModel> call = apiService.viewCurrentRide("view/rides/current/user/" + appPrefes.getData(Constants.USER_ID));
-                Log.d("responseRide", "view/rides/current/user/" + appPrefes.getData(Constants.USER_ID));
                 call.enqueue(new retrofit2.Callback<ViewCurrentRideResponseModel>() {
                     @Override
                     public void onResponse(Call<ViewCurrentRideResponseModel> call, Response<ViewCurrentRideResponseModel> response) {
@@ -1814,7 +1842,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                         try {
                             if (response.body().getStatus()) {
                                 boolean isLiveRide = false;
+//                                Log.d("current_ride_exc", "length "+response.body().getData().size());
                                 for (int i = 0; i < response.body().getData().size(); i++) {
+                                    Log.d("current_ride_exc", "each i "+i);
                                     if (response.body().getData().get(i).getRideType().equals("live")) {
                                         setRiderDetails(response.body().getData().get(i));
                                         currentRideId = response.body().getData().get(i).getRideId() + "";
@@ -1823,8 +1853,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                         cardViewRideDetails.setVisibility(View.GONE);
                                         cardViewNext.setVisibility(View.GONE);
                                         cbPool.setVisibility(View.GONE);
-                                        toLat = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLat().toString().substring(0, 9));
-                                        toLong = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLng().toString().substring(0, 9));
+//                                        Log.d("current_ride_exc", "each i "+i);
+                                        toLat = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLat().toString().substring(0, response.body().getData().get(i).getPolyLines().getEnd().getLat().toString().length()-1));
+                                        toLong = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLng().toString().substring(0, response.body().getData().get(i).getPolyLines().getEnd().getLng().toString().length()-1));
                                     }
                                     if (response.body().getData().get(i).getRideType().equals("live")) {
                                         isLiveRide = true;
@@ -1843,6 +1874,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                         destinationLocationMarker.remove();
                                         destinationLocationMarker = null;
                                     } catch (Exception e) {
+                                        Log.d("current_ride_exc1", "onResponse: "+e.getLocalizedMessage());
                                         e.printStackTrace();
                                     }
                                     cbPool.setChecked(true);
@@ -1850,6 +1882,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             } else {
                             }
                         } catch (Exception e) {
+                            Log.d("current_ride_exc2", "onResponse: "+e.getLocalizedMessage());
                             e.printStackTrace();
                             showServerErrorAlert(VIEW_CURRENT_RIDE_API);
                         }
@@ -1858,14 +1891,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     @Override
                     public void onFailure(Call<ViewCurrentRideResponseModel> call, Throwable t) {
                         myProgressDialog.dismissProgress();
-                        Log.d("current_ride", "onResponse: "+appPrefes.getData(Constants.USER_ID));
-                        Log.d("current_ride", "onResponse: "+t.getLocalizedMessage());
+//                        Log.d("failed", "onResponse: "+appPrefes.getData(Constants.USER_ID));
+                        Log.d("failed", "onResponse: "+t.getLocalizedMessage());
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(VIEW_CURRENT_RIDE_API);
                     }
                 });
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d("current_ride_fail_exc", "onResponse: "+e.getLocalizedMessage());
                 myProgressDialog.dismissProgress();
                 showServerErrorAlert(VIEW_CURRENT_RIDE_API);
             }
