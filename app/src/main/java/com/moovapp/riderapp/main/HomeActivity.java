@@ -1,6 +1,7 @@
 package com.moovapp.riderapp.main;
 
 import android.annotation.TargetApi;
+import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,11 +16,14 @@ import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,10 +31,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -150,6 +156,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @BindView(R.id.container)
     FrameLayout container;
 
+    @BindView(R.id.cardLocations)
+    CardView cardLocations;
+
+    @BindView(R.id.searchResultsTv)
+    TextView searchResultsTv;
+
+    @BindView(R.id.searchResults)
+    ScrollView searchResults;
+
     @BindView(R.id.autoCompleteDestination)
     CustomAutoCompleteTextView autoCompleteDestination;
     @BindView(R.id.autoCompleteLocation)
@@ -268,7 +283,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     public Button decreaseSeats;
     public int seatNumber = 1;
     public TextView tvSeatNumber;
-
+    public EditText goingTo;
+    private CardView location;
 //    public TextView tvSearch;
 
 
@@ -278,8 +294,17 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
         setContentView(R.layout.home_activity);
+        location = findViewById(R.id.location);
+        goingTo = findViewById(R.id.goingTo);
         tvSeatNumber = findViewById(R.id.tvSeatNumber);
         recyclerViewLocation = findViewById(R.id.recycler_location);
+        DividerItemDecoration divider = new
+                DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL);
+        divider.setDrawable(
+                ContextCompat.getDrawable(this, R.drawable.line_divider)
+        );
+        recyclerViewLocation.addItemDecoration(divider);
         increaseSeats = findViewById(R.id.increaseSeats);
         decreaseSeats = findViewById(R.id.decreaseSeats);
         locations = findViewById(R.id.locations);
@@ -291,6 +316,24 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         homeActivityActions = this;
         gpsTracker = new GPSTracker(getApplicationContext());
         notificationAction = this;
+        goingTo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b){
+//                    Toast.makeText(HomeActivity.this, "focus", Toast.LENGTH_SHORT).show();
+                    scrollViewResults.setVisibility(View.VISIBLE);
+                    location.setVisibility(View.GONE);
+                }
+            }
+        });
+        goingTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Toast.makeText(HomeActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+                scrollViewResults.setVisibility(View.VISIBLE);
+                location.setVisibility(View.GONE);
+            }
+        });
         setNavigationMenus();
 //        replaceFragment(new MoovFragment(), false, FragmentTransaction.TRANSIT_ENTER_MASK, "MoovFragment");
 //        if (shouldAskPermission()) {
@@ -732,14 +775,20 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @OnClick(R.id.changeLocation)
     public void changeLocationClick(){
         cardViewRideDetails.setVisibility(View.GONE);
-        locations.setVisibility(View.VISIBLE);
+        cardLocations.setVisibility(View.VISIBLE);
+        scrollViewResults.setVisibility(View.VISIBLE);
+//        locations.setVisibility(View.VISIBLE);
+//        location.setVisibility(View.GONE);
 
     }
 
     @OnClick(R.id.changeDestination)
     public void changeDestinationClick(){
         cardViewRideDetails.setVisibility(View.GONE);
-        locations.setVisibility(View.VISIBLE);
+        cardLocations.setVisibility(View.VISIBLE);
+        scrollViewResults.setVisibility(View.VISIBLE);
+//        locations.setVisibility(View.VISIBLE);
+//        location.setVisibility(View.GONE);
     }
 
 
@@ -787,6 +836,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         autoCompleteDestination.setThreshold(1);
         autoCompleteDestination.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                location.setVisibility(View.GONE);
+                searchResultsTv.setVisibility(View.VISIBLE);
+                searchResults.setVisibility(View.VISIBLE);
                 if (count > 3){
                     isTypingOnDestination = true;
                     placesTask = new PlacesTask();
@@ -797,6 +849,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // TODO Auto-generated method stub
+
             }
 
             public void afterTextChanged(Editable s) {
@@ -807,7 +860,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         autoCompleteLocation.setThreshold(1);
         autoCompleteLocation.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+//                location.setVisibility(View.GONE);
+                searchResultsTv.setVisibility(View.VISIBLE);
+                searchResults.setVisibility(View.VISIBLE);
                     if (count > 3){
                         isTypingOnDestination = false;
                         placesTask = new PlacesTask();
@@ -863,6 +918,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //                    e.printStackTrace();
 //                    edCity.setText(edCity.getText().toString());
 //                }
+
                 autoCompleteDestination.setSelection(autoCompleteDestination.getText().toString().length());
                 isDropDownSelected = true;
             }
@@ -1124,9 +1180,28 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                         public void OnLocationClicked(HashMap<String, String> selectedLocation) {
                             autoCompleteDestination.setText(selectedLocation.get("description"));
                             recyclerViewLocation.setVisibility(View.GONE);
-                            scrollViewResults.setVisibility(View.GONE);
+                            scrollViewResults.setBackgroundColor(getResources().getColor(R.color.transparent));
+                            recyclerViewLocation.setVisibility(View.GONE);
                             isDropDownSelected = true;
                             isDropDownSelectedLocation = true;
+                            searchResultsTv.setVisibility(View.GONE);
+                            searchResults.setVisibility(View.GONE);
+                            cardLocations.setVisibility(View.GONE);
+
+
+//                            new stuff
+                            currentStep = 2;
+                            cardViewNext.setVisibility(View.GONE);
+                            cbPool.setVisibility(View.GONE);
+                            cardViewRideDetails.setVisibility(View.VISIBLE);
+                            cardViewMove.setVisibility(View.VISIBLE);
+                            tvBookFutureRide.setVisibility(View.VISIBLE);
+                            locations.setVisibility(View.GONE);
+                            tvLocationName.setText(autoCompleteLocation.getText().toString());
+                            tvDestinationName.setText(autoCompleteDestination.getText().toString());
+                            setSeatSpinner();
+                            setUpSeatListeners();
+                            scrollViewResults.setVisibility(View.GONE);
 //                            tvSearch.setVisibility(View.GONE);
                         }
                     });
@@ -1147,8 +1222,28 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             isDropDownSelected = true;
                             isDropDownSelectedLocation = true;
                             recyclerViewLocation.setVisibility(View.GONE);
-                            scrollViewResults.setVisibility(View.GONE);
+//                            searchResultsTv.setVisibility(View.GONE);
+//                            searchResults.setVisibility(View.GONE);
+                            scrollViewResults.setBackgroundColor(getResources().getColor(R.color.transparent));
+//                            scrollViewResults.setVisibility(View.GONE);
 //                            tvSearch.setVisibility(View.GONE);
+                            searchResultsTv.setVisibility(View.GONE);
+                            searchResults.setVisibility(View.GONE);
+                            if (!TextUtils.isEmpty(autoCompleteDestination.getText().toString())){
+                                currentStep = 2;
+                                cardViewNext.setVisibility(View.GONE);
+                                cbPool.setVisibility(View.GONE);
+                                cardViewRideDetails.setVisibility(View.VISIBLE);
+                                cardViewMove.setVisibility(View.VISIBLE);
+                                tvBookFutureRide.setVisibility(View.VISIBLE);
+                                locations.setVisibility(View.GONE);
+                                tvLocationName.setText(autoCompleteLocation.getText().toString());
+                                tvDestinationName.setText(autoCompleteDestination.getText().toString());
+                                setSeatSpinner();
+                                setUpSeatListeners();
+                                scrollViewResults.setVisibility(View.GONE);
+                            }
+
                         }
                     });
 
