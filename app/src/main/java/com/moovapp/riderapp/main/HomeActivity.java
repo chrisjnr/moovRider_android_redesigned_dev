@@ -1,6 +1,7 @@
 package com.moovapp.riderapp.main;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -188,6 +190,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @BindView(R.id.tvMoov)
     TextView tvMoov;
 
+    @BindView(R.id.searchDestination)
+    ImageView searchDestination;
+
     @BindView(R.id.tvRiderName)
     TextView tvRiderName;
     @BindView(R.id.imgRiderImage)
@@ -222,8 +227,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     TextView tvLocationName;
     @BindView(R.id.changeDestination)
     ImageView changeDestination;
-    @BindView(R.id.changeLocation)
-    ImageView changeLocation;
+//    @BindView(R.id.changeLocation)
+//    ImageView changeLocation;
     @BindView(R.id.scrollViewResults)
     LinearLayout scrollViewResults;
 
@@ -284,7 +289,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     public int seatNumber = 1;
     public TextView tvSeatNumber;
     public EditText goingTo;
-    private CardView location;
+    private LinearLayout location;
 //    public TextView tvSearch;
 
 
@@ -321,17 +326,31 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             public void onFocusChange(View view, boolean b) {
                 if (b){
 //                    Toast.makeText(HomeActivity.this, "focus", Toast.LENGTH_SHORT).show();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                     scrollViewResults.setVisibility(View.VISIBLE);
                     location.setVisibility(View.GONE);
+                    searchResultsTv.setVisibility(View.GONE);
+                    searchResults.setVisibility(View.GONE);
+                    autoCompleteLocation.clearFocus();
+                    autoCompleteDestination.requestFocus();
+                    currentStep = 9;
                 }
             }
         });
         goingTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(HomeActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                 scrollViewResults.setVisibility(View.VISIBLE);
                 location.setVisibility(View.GONE);
+                searchResultsTv.setVisibility(View.GONE);
+                searchResults.setVisibility(View.GONE);
+                autoCompleteLocation.clearFocus();
+                autoCompleteDestination.requestFocus();
+                currentStep = 9;
             }
         });
         setNavigationMenus();
@@ -385,6 +404,21 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+
+//
+    @OnClick(R.id.searchDestination)
+    public void searchDestination(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        scrollViewResults.setVisibility(View.VISIBLE);
+        location.setVisibility(View.GONE);
+        searchResultsTv.setVisibility(View.GONE);
+        searchResults.setVisibility(View.GONE);
+        autoCompleteLocation.clearFocus();
+        autoCompleteDestination.requestFocus();
     }
 
     @OnClick(R.id.tvBookFutureRide)
@@ -655,7 +689,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         increaseSeats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (seatNumber == 9){
+                if (seatNumber == 7){
                     return;
                 }
                 seatNumber++;
@@ -742,9 +776,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             tvDestinationName.setText(autoCompleteDestination.getText().toString());
             setSeatSpinner();
             setUpSeatListeners();
+        }if (currentStep == 9){
+            scrollViewResults.setVisibility(View.GONE);
+            location.setVisibility(View.VISIBLE);
+            searchResultsTv.setVisibility(View.GONE);
+            searchResults.setVisibility(View.GONE);
+            currentStep = 0;
         }
 
-        super.onBackPressed();
+//        super.onBackPressed();
 
     }
 
@@ -772,15 +812,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     }
 
 
-    @OnClick(R.id.changeLocation)
-    public void changeLocationClick(){
-        cardViewRideDetails.setVisibility(View.GONE);
-        cardLocations.setVisibility(View.VISIBLE);
-        scrollViewResults.setVisibility(View.VISIBLE);
-//        locations.setVisibility(View.VISIBLE);
-//        location.setVisibility(View.GONE);
-
-    }
+//    @OnClick(R.id.changeLocation)
+//    public void changeLocationClick(){
+//        cardViewRideDetails.setVisibility(View.GONE);
+//        cardLocations.setVisibility(View.VISIBLE);
+//        scrollViewResults.setVisibility(View.VISIBLE);
+////        locations.setVisibility(View.VISIBLE);
+////        location.setVisibility(View.GONE);
+//
+//    }
 
     @OnClick(R.id.changeDestination)
     public void changeDestinationClick(){
@@ -840,6 +880,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 searchResultsTv.setVisibility(View.VISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
                 if (count > 3){
+                    scrollViewResults.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
+//                    Toast.makeText(HomeActivity.this, "3 and above", Toast.LENGTH_SHORT).show();
                     isTypingOnDestination = true;
                     placesTask = new PlacesTask();
                     placesTask.execute(s.toString());
@@ -864,6 +906,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 searchResultsTv.setVisibility(View.VISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
                     if (count > 3){
+                        scrollViewResults.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
+//                        Toast.makeText(HomeActivity.this, "3 and above", Toast.LENGTH_SHORT).show();
                         isTypingOnDestination = false;
                         placesTask = new PlacesTask();
                         placesTask.execute(s.toString());
@@ -1190,6 +1234,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
 
 //                            new stuff
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(autoCompleteDestination.getWindowToken(),0);
                             currentStep = 2;
                             cardViewNext.setVisibility(View.GONE);
                             cbPool.setVisibility(View.GONE);
@@ -1337,10 +1383,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
             try {
                 isDropDownSelectedLocation = true;
+                tvLocationName.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
                 autoCompleteLocation.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
             } catch (Exception e) {
                 e.printStackTrace();
                 try {
+                    tvLocationName.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
                     autoCompleteLocation.setText(addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
                     isDropDownSelectedLocation = true;
                 } catch (Exception e1) {
@@ -1762,12 +1810,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             } else {
                                 showRequestSuccessDialog("Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
                                 currentStep = 1;
-                                cardViewNext.setVisibility(View.VISIBLE);
-                                cbPool.setVisibility(View.VISIBLE);
-                                locations.setVisibility(View.VISIBLE);
+//                                cardViewNext.setVisibility(View.VISIBLE);
+//                                cbPool.setVisibility(View.VISIBLE);
+                                location.setVisibility(View.VISIBLE);
                                 cardViewRideDetails.setVisibility(View.GONE);
-                                cardViewMove.setVisibility(View.GONE);
-                                tvBookFutureRide.setVisibility(View.GONE);
+//                                cardViewMove.setVisibility(View.GONE);
+//                                tvBookFutureRide.setVisibility(View.GONE);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -56,121 +56,370 @@
             android:layout_height="wrap_content">
 
 
+
+
             <LinearLayout
                 android:visibility="gone"
                 android:layout_alignParentBottom="true"
                 android:padding="10dp"
                 android:id="@+id/cardViewRideDetails"
-                android:background="@color/white"
+                android:background="@drawable/card_view_corner_white"
                 android:orientation="vertical"
                 android:layout_margin="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <android.support.v7.widget.CardView
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="20dp"
+                    app:cardCornerRadius="20dp"
                     app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
+
                     <LinearLayout
-                        android:padding="10dp"
                         android:weightSum="6"
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-                        <ImageView
-                            android:layout_margin="4dp"
-                            android:layout_gravity="center"
-                            android:background="#0000"
-                            android:src="@mipmap/my_location_icon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            />
-                        <LinearLayout
-                            android:layout_weight="6"
-                            android:orientation="vertical"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false">
 
-                            <TextView
-                                android:padding="4dp"
-                                android:layout_width="wrap_content"
-                                android:text="@string/dummy_pickup"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:id="@+id/tvLocationName"
-                                android:padding="4dp"
-                                android:layout_width="wrap_content"
-                                tools:text="@string/dummy_location"
-                                android:textStyle="bold"
-                                android:fontFamily="@font/lato_black"
-                                android:layout_height="wrap_content" />
+                        <LinearLayout
+                            android:padding="6dp"
+                            android:layout_weight=".5"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+                            <ImageView
+                                android:layout_marginLeft="8dp"
+                                android:src="@drawable/left"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
                         </LinearLayout>
 
 
-                        <ImageView
-                            android:id="@+id/changeLocation"
-                            android:layout_margin="4dp"
-                            android:layout_gravity="center"
-                            android:background="#0000"
-                            android:src="@drawable/ic_add"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp" />
-                    </LinearLayout>
-                </android.support.v7.widget.CardView>
-                <android.support.v7.widget.CardView
-                    android:layout_marginBottom="15dp"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                        <LinearLayout
+                            android:layout_gravity="center_vertical"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical"
+                            android:layout_weight="5.5"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent">
+
+                            <LinearLayout
+                                android:background="@color/white"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <LinearLayout
+                                    android:weightSum="6"
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <LinearLayout
+                                        android:layout_marginBottom="8dp"
+                                        android:layout_marginLeft="8dp"
+                                        android:layout_marginRight="8dp"
+                                        android:layout_weight="5"
+                                        android:orientation="vertical"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent">
+                                        <TextView
+                                            android:paddingTop="8dp"
+                                            android:layout_marginLeft="4dp"
+                                            android:layout_marginRight="4dp"
+                                            android:textSize="9sp"
+                                            android:textColor="#b9b9bb"
+                                            android:layout_width="wrap_content"
+                                            android:text="@string/dummy_pickup"
+                                            android:layout_height="wrap_content" />
+                                        <TextView
+                                            android:layout_marginLeft="4dp"
+                                            android:layout_marginRight="4dp"
+                                            android:id="@+id/tvLocationName"
+                                            android:layout_width="match_parent"
+                                            tools:text="@string/dummy_location"
+                                            android:maxLines="1"
+                                            android:textStyle="bold"
+                                            android:fontFamily="@font/lato_black"
+                                            android:layout_height="wrap_content" />
+                                    </LinearLayout>
+
+                                    <!--<LinearLayout-->
+                                        <!--android:layout_margin="5dp"-->
+                                        <!--android:gravity="center_horizontal|center_vertical"-->
+                                        <!--android:layout_weight="1"-->
+                                        <!--android:layout_width="0dp"-->
+                                        <!--android:layout_height="match_parent">-->
+
+                                        <!--<ImageView-->
+                                            <!--android:layout_gravity="center_horizontal|center_vertical"-->
+                                            <!--android:id="@+id/changeLocation"-->
+                                            <!--android:layout_margin="4dp"-->
+                                            <!--android:background="#0000"-->
+                                            <!--android:src="@drawable/ic_add"-->
+                                            <!--android:layout_width="20dp"-->
+                                            <!--android:layout_height="match_parent" />-->
+                                    <!--</LinearLayout>-->
+
+
+
+                                </LinearLayout>
+
+
+
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_marginBottom="4dp"
+                                android:background="@color/white"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <LinearLayout
+                                    android:weightSum="6"
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <LinearLayout
+                                        android:layout_marginLeft="8dp"
+                                        android:layout_marginRight="8dp"
+                                        android:layout_weight="5.7"
+                                        android:orientation="vertical"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent">
+                                        <View
+                                            android:layout_marginLeft="4dp"
+                                            android:layout_marginRight="4dp"
+                                            android:layout_marginBottom="1dp"
+                                            android:layout_marginTop="3dp"
+                                            android:layout_width="match_parent"
+                                            android:layout_height=".5dp"
+                                            android:background="@color/gray"/>
+
+                                    </LinearLayout>
+
+
+
+
+
+                                    <!--<ImageView-->
+                                    <!--android:id="@+id/changeDestination"-->
+                                    <!--android:layout_margin="4dp"-->
+                                    <!--android:layout_gravity="center"-->
+                                    <!--android:background="#0000"-->
+                                    <!--android:src="@drawable/ic_edit_new"-->
+                                    <!--android:layout_width="30dp"-->
+                                    <!--android:layout_height="30dp" />-->
+
+                                </LinearLayout>
+
+
+
+                            </LinearLayout>
+
+
+
                     <LinearLayout
-                        android:padding="10dp"
-                        android:weightSum="6"
-                        android:orientation="horizontal"
+                        android:layout_marginBottom="4dp"
+                        android:background="@color/white"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <ImageView
-                            android:layout_margin="4dp"
-                            android:layout_gravity="center"
-                            android:background="#0000"
-                            android:src="@mipmap/destination_location"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            />
-                        <LinearLayout
-                            android:layout_weight="6"
-                            android:orientation="vertical"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content">
 
-                            <TextView
-                                android:padding="4dp"
-                                android:layout_width="wrap_content"
-                                android:text="Destination Location"
-                                android:layout_height="wrap_content" />
-                            <TextView
-                                android:id="@+id/tvDestinationName"
-                                android:padding="4dp"
-                                android:layout_width="wrap_content"
-                                tools:text="Name Of Destination"
-                                android:textStyle="bold"
-                                android:fontFamily="@font/lato_black"
-                                android:layout_height="wrap_content" />
+                                <LinearLayout
+                                    android:weightSum="6"
+                                    android:orientation="horizontal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent">
+                                    <LinearLayout
+                                        android:layout_marginBottom="8dp"
+                                        android:layout_marginTop="6dp"
+                                        android:layout_marginLeft="8dp"
+                                        android:layout_marginRight="8dp"
+                                        android:layout_weight="5"
+                                        android:orientation="vertical"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent">
+                                        <TextView
+                                            android:paddingTop="4dp"
+                                            android:textSize="9sp"
+                                            android:layout_marginLeft="4dp"
+                                            android:layout_marginRight="4dp"
+                                            android:textColor="#b9b9bb"
+                                            android:layout_width="wrap_content"
+                                            android:text="Destination Location"
+                                            android:layout_height="wrap_content" />
+                                        <TextView
+                                            android:layout_marginLeft="4dp"
+                                            android:layout_marginRight="4dp"
+                                            android:id="@+id/tvDestinationName"
+                                            android:maxLines="1"
+                                            android:layout_width="match_parent"
+                                            tools:text="Name Of Destination"
+                                            android:textStyle="bold"
+                                            android:fontFamily="@font/lato_black"
+                                            android:layout_height="wrap_content" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:layout_weight=".5"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent">
+
+                                        <ImageView
+                                            android:id="@+id/changeDestination"
+                                            android:layout_gravity="left|center_vertical"
+                                            android:background="#0000"
+                                            android:src="@drawable/ic_edit_new"
+                                            android:layout_width="20dp"
+                                            android:layout_height="20dp" />
+                                    </LinearLayout>
+
+
+
+                                    <!--<ImageView-->
+                                    <!--android:id="@+id/changeDestination"-->
+                                    <!--android:layout_margin="4dp"-->
+                                    <!--android:layout_gravity="center"-->
+                                    <!--android:background="#0000"-->
+                                    <!--android:src="@drawable/ic_edit_new"-->
+                                    <!--android:layout_width="30dp"-->
+                                    <!--android:layout_height="30dp" />-->
+
+                                </LinearLayout>
+
+
+
+                    </LinearLayout>
+
+
+
+
+
+                            <!--<android.support.v7.widget.CardView-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:layout_marginBottom="4dp"-->
+                            <!--app:cardBackgroundColor="@color/white"-->
+                            <!--app:cardCornerRadius="5dp"-->
+                            <!--android:layout_width="match_parent"-->
+                            <!--android:layout_height="0dp">-->
+                            <!--<TextView-->
+                            <!--android:text="hahahahahahah"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content" />-->
+                            <!--</android.support.v7.widget.CardView>-->
+
+
+
                         </LinearLayout>
 
 
-                        <ImageView
-                            android:id="@+id/changeDestination"
-                            android:layout_margin="4dp"
-                            android:layout_gravity="center"
-                            android:background="#0000"
-                            android:src="@mipmap/edit_icon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp" />
+
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
+
+
+
+
+                <!-- <LinearLayout
+                        android:weightSum="2"
+                        android:layout_weight="5"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <android.support.v7.widget.CardView
+                            android:layout_weight="1"
+                            android:layout_marginBottom="4dp"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardCornerRadius="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp">
+                            <LinearLayout
+                                android:weightSum="6"
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+                                <LinearLayout
+                                    android:layout_weight="6"
+                                    android:orientation="vertical"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent">
+
+                                    <TextView
+
+                                        android:layout_width="wrap_content"
+                                        android:text="@string/dummy_pickup"
+                                        android:layout_height="wrap_content" />
+                                    <TextView
+                                        android:id="@+id/tvLocationName"
+                                        android:layout_width="wrap_content"
+                                        tools:text="@string/dummy_location"
+                                        android:textStyle="bold"
+                                        android:fontFamily="@font/lato_black"
+                                        android:layout_height="wrap_content" />
+                                </LinearLayout>
+
+
+                                <ImageView
+                                    android:id="@+id/changeLocation"
+                                    android:layout_margin="4dp"
+                                    android:layout_gravity="center"
+                                    android:background="#0000"
+                                    android:src="@drawable/ic_add"
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp" />
+                            </LinearLayout>
+                        </android.support.v7.widget.CardView>
+                        <android.support.v7.widget.CardView
+                            android:layout_weight="1"
+                            android:layout_marginBottom="4dp"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardCornerRadius="5dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp">
+                            <LinearLayout
+                                android:weightSum="6"
+                                android:orientation="horizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+                                <LinearLayout
+                                    android:layout_weight="6"
+                                    android:orientation="vertical"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent">
+
+                                    <TextView
+                                        android:padding="4dp"
+                                        android:layout_width="wrap_content"
+                                        android:text="Destination Location"
+                                        android:layout_height="wrap_content" />
+                                    <TextView
+                                        android:id="@+id/tvDestinationName"
+                                        android:padding="2dp"
+                                        android:layout_width="wrap_content"
+                                        tools:text="Name Of Destination"
+                                        android:textStyle="bold"
+                                        android:fontFamily="@font/lato_black"
+                                        android:layout_height="wrap_content" />
+                                </LinearLayout>
+
+
+                                <ImageView
+                                    android:id="@+id/changeDestination"
+                                    android:layout_margin="4dp"
+                                    android:layout_gravity="center"
+                                    android:background="#0000"
+                                    android:src="@drawable/ic_edit_new"
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp" />
+                            </LinearLayout>
+                        </android.support.v7.widget.CardView>
+                    </LinearLayout>-->
+
+
+
+
 
                 <android.support.v7.widget.CardView
                     android:background="@drawable/border_gray"
@@ -220,28 +469,31 @@
 
                 <android.support.v7.widget.CardView
                     android:background="@drawable/border_gray"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
+                    app:cardCornerRadius="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <LinearLayout
                         android:weightSum="8"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="match_parent">
 
                         <ImageView
                             android:padding="8dp"
                             android:layout_gravity="center_vertical"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-                            android:src="@mipmap/seat"/>
+                            android:src="@drawable/ic_seat"/>
 
                         <TextView
                             android:padding="8dp"
                             android:layout_weight="5"
                             android:layout_gravity="center_vertical"
                             android:layout_width="0dp"
+                            android:textSize="12sp"
                             android:layout_height="wrap_content"
                             android:text="Number of Seats"/>
 
@@ -250,8 +502,9 @@
                             android:layout_weight="1"
                             android:background="@drawable/border_gray"
                             android:text="-"
+                            android:textColor="#bbbbbb"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             />
 
                         <TextView
@@ -270,8 +523,9 @@
                             android:layout_weight="1"
                             android:background="@drawable/border_gray"
                             android:text="+"
+                            android:textColor="#bbbbbb"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             />
 
                     </LinearLayout>
@@ -281,9 +535,11 @@
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
-                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="16dp"
                     app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="5dp"
+                    app:cardCornerRadius="8dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <LinearLayout
@@ -303,17 +559,19 @@
                             android:padding="8dp"
                             android:text="Estimated Fare"
                             android:layout_weight="5"
+                            android:textSize="12sp"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
+                            android:gravity="center_vertical"
+                            android:layout_height="match_parent" />
 
                         <LinearLayout
-                            android:background="@drawable/border_gray"
                             android:layout_weight="3"
                             android:weightSum="2"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent">
                             <TextView
                                 android:padding="8dp"
+                                android:visibility="invisible"
                                 android:textColor="@color/black"
                                 android:textStyle="bold"
                                 android:text="\u20a6"
@@ -322,15 +580,18 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:gravity="end" />
+                                android:gravity="end|center_vertical" />
                             <TextView
                                 android:id="@+id/tvAmount"
-                                android:padding="4dp"
-                                android:textColor="@color/black"
+                                android:padding="8dp"
+                                android:textColor="@color/pink"
                                 android:textStyle="bold"
-                                android:text="80000"
+                                tools:text="80000"
+                                android:gravity="center_vertical"
                                 android:layout_gravity="center_vertical"
-                                android:layout_weight="2"
+                                android:layout_weight="1"
+                                android:autoSizeTextType="uniform"
+                                android:maxLines="1"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content" />
                         </LinearLayout>
@@ -348,7 +609,7 @@
                     app:cardBackgroundColor="@color/buttons"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="16dp"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="7dp">
 
@@ -382,105 +643,123 @@
 
             <LinearLayout
                 android:visibility="gone"
-                android:background="@color/semi_transparent"
+                android:background="@color/transparent"
                 android:id="@+id/scrollViewResults"
-                android:layout_marginTop="10dp"
                 android:weightSum="5"
                 android:orientation="vertical"
                 android:layout_above="@id/anchor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.v7.widget.CardView
-                    android:id="@+id/cardLocations"
-                    android:layout_margin="16dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardBackgroundColor="@color/white"
+                <LinearLayout
+                    android:background="@color/semi_transparent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <LinearLayout
-                        android:weightSum="6"
-                        android:orientation="horizontal"
+                    <android.support.v7.widget.CardView
+                        app:cardElevation="10dp"
+                        android:id="@+id/cardLocations"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardBackgroundColor="@color/white"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
-
-                        <ImageView
-                            android:paddingTop="20dp"
-                            android:paddingBottom="20dp"
-                            android:layout_weight="1"
-                            android:src="@drawable/left"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content" />
-
                         <LinearLayout
-                            android:orientation="vertical"
-                            android:layout_weight="5"
-                            android:weightSum="2"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent">
-                            <com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView
-                                android:background="@drawable/border_white"
+                            android:weightSum="6"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+
+                            <ImageView
+                                android:paddingTop="20dp"
+                                android:paddingBottom="20dp"
                                 android:layout_weight="1"
-                                android:padding="8dp"
-                                android:textColor="@color/yellow"
-                                android:hint="Current Location"
-                                android:id="@+id/autoCompleteLocation"
-                                android:gravity="center_vertical"
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp" />
+                                android:src="@drawable/left"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content" />
 
                             <LinearLayout
-                                android:weightSum="5"
-                                android:layout_weight="1"
-                                android:layout_width="match_parent"
-                                android:layout_height="0dp">
+                                android:orientation="vertical"
+                                android:layout_weight="5"
+                                android:weightSum="2"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent">
                                 <com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView
-                                    android:drawablePadding="15dp"
+                                    android:maxLines="1"
+                                    android:inputType="text"
                                     android:background="@drawable/border_white"
-                                    android:gravity="center_vertical"
-                                    android:padding="8dp"
-                                    android:layout_weight="4"
-                                    android:id="@+id/autoCompleteDestination"
-                                    android:hint="Covenant University"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent" />
-
-                                <ImageView
-                                    android:padding="4dp"
-                                    android:layout_gravity="center_vertical"
                                     android:layout_weight="1"
-                                    android:src="@drawable/ic_add"
-                                    android:layout_width="0dp"
-                                    android:layout_height="30dp" />
+                                    android:padding="8dp"
+                                    android:textColor="#ffa944"
+                                    android:hint="Current Location"
+                                    android:id="@+id/autoCompleteLocation"
+                                    android:gravity="center_vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp" />
+
+                                <View
+                                    android:background="@color/gray"
+                                    android:layout_width="match_parent"
+                                    android:layout_weight=".01"
+                                    android:layout_height="0dp"/>
+
+                                <LinearLayout
+                                    android:weightSum="5"
+                                    android:layout_weight="1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="0dp">
+                                    <com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView
+                                        android:maxLines="1"
+                                        android:inputType="text"
+                                        android:drawablePadding="15dp"
+                                        android:background="@drawable/border_white"
+                                        android:gravity="center_vertical"
+                                        android:padding="8dp"
+                                        android:layout_weight="5"
+                                        android:textColor="@color/gray"
+                                        android:fontFamily="@font/lato_regular"
+                                        android:id="@+id/autoCompleteDestination"
+                                        android:hint="e.g Cafeteria"
+                                        android:layout_width="0dp"
+                                        android:layout_height="match_parent" />
+
+                                </LinearLayout>
+
+
+
                             </LinearLayout>
-
-
-
                         </LinearLayout>
-                    </LinearLayout>
-                </android.support.v7.widget.CardView>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
+
+
 
 
 
                 <TextView
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    android:paddingTop="15dp"
+                    android:paddingLeft="45dp"
+                    android:paddingRight="45dp"
                     android:id="@+id/searchResultsTv"
                     android:background="@color/semi_transparent"
-                    android:layout_weight="0.35"
+                    android:layout_weight="0.8"
                     android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:textColor="#78849E"
+                    android:textSize="12sp"
+                    android:textColor="#ced0d3"
                     android:textAllCaps="true"
                     android:text="Search Results" />
 
                 <ScrollView
+                    android:paddingLeft="45dp"
+                    android:paddingRight="45dp"
                     android:id="@+id/searchResults"
                     android:background="@color/semi_transparent"
-                    android:layout_weight="4.6"
+                    android:layout_weight="3.7"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:overScrollMode="always"
@@ -490,8 +769,6 @@
                     android:fadeScrollbars="false"
                     android:scrollbars="vertical">
                     <android.support.v7.widget.RecyclerView
-                        android:paddingLeft="20dp"
-                        android:paddingRight="20dp"
                         android:id="@+id/recycler_location"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
@@ -505,22 +782,12 @@
             </LinearLayout>
 
 
-            <!--<View-->
-                <!--android:layout_above="@id/locations"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="50dp"/>-->
-
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:layout_above="@id/anchor"
-                app:cardCornerRadius="25dp"
-                android:layout_margin="5dp"
-                app:cardBackgroundColor="@color/semi_transparent"
                 android:id="@+id/location"
                 android:layout_width="match_parent"
-                android:layout_height="150dp">
+                android:layout_height="450dp">
                 <LinearLayout
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
@@ -551,21 +818,24 @@
 
                             <com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView
                                 android:maxLines="1"
-                                android:inputType="textCapSentences"
+                                android:inputType="text"
                                 android:id="@+id/goingTo"
                                 android:layout_weight="6.5"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:background="@color/white"
-                                android:hint="Where Are you going to ?"
-                                android:padding="10dp"
+                                android:hint="Going where ?"
                                 android:dropDownAnchor="@id/llMapMainLayout"
                                 android:imeOptions="actionNext"
-                                android:paddingRight="15dp"
+                                android:paddingLeft="25dp"
+                                android:paddingRight="25dp"
                                 android:textColor="@color/black" />
 
 
                             <ImageView
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:id="@+id/searchDestination"
                                 android:layout_gravity="center_vertical"
                                 android:layout_weight=".5"
                                 android:layout_width="40dp"
@@ -580,7 +850,7 @@
                 </LinearLayout>
 
 
-            </android.support.v7.widget.CardView>
+            </LinearLayout>
             <android.support.v7.widget.CardView
                 android:visibility="gone"
                 android:layout_marginTop="60dp"
