@@ -43,6 +43,7 @@ import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PartMap;
@@ -178,7 +179,7 @@ public interface ApiInterface {
                                          @Field("current_lat") String current_lat,
                                          @Field("current_long") String current_long);
 
-    @FormUrlEncoded
+    @Headers({"Content-Type: application/json"})
     @POST("ride/book_future")
     Call<BookFutureRideResponseModel> bookFutureRide(@Field("userid") String userid,
                                                      @Field("from") String from,

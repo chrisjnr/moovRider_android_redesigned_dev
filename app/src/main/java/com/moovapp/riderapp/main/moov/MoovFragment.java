@@ -94,9 +94,9 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
     CheckBox cbPool;
     @BindView(R.id.layoutCurrentRider)
     View layoutCurrentRider;
-    @BindView(R.id.spinnerUniversity)
-    Spinner spinnerUniversity;
-    @BindView(R.id.spinnerSeats)
+//    @BindView(R.id.spinnerUniversity)
+//    Spinner spinnerUniversity;
+//    @BindView(R.id.spinnerSeats)
     Spinner spinnerSeats;
     @BindView(R.id.tvAmount)
     TextView tvAmount;
@@ -600,61 +600,61 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
     }
 
     private void callViewCollegeListApi() {
-        if (cd.isConnectingToInternet()) {
-            try {
-                myProgressDialog.setProgress(false);
-                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<ViewCollegesResponseModel> call = apiService.viewColleges("ride/view_colleges/" + appPrefes.getData(Constants.USER_ID));
-                call.enqueue(new retrofit2.Callback<ViewCollegesResponseModel>() {
-                    @Override
-                    public void onResponse(Call<ViewCollegesResponseModel> call, Response<ViewCollegesResponseModel> response) {
-                        myProgressDialog.dismissProgress();
-                        try {
-                            if (!response.body().isStatus()) {
-                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
-                            } else {
-                                List<String> collegeList = new ArrayList<>();
-                                final List<String> collegeIdList = new ArrayList<>();
-                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
-                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
-                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
-                                }
-                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, collegeList);
-                                spinnerUniversity.setAdapter(collegeAdapter);
-                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                        selectedCollegeId = collegeIdList.get(i);
-                                        callViewRideCostApi();
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                    }
-                                });
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            showServerErrorAlert(getContext(), LIST_COLLEGES_API);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ViewCollegesResponseModel> call, Throwable t) {
-                        myProgressDialog.dismissProgress();
-                        System.out.println("t.toString : " + t.toString());
-                        showServerErrorAlert(getContext(), LIST_COLLEGES_API);
-                    }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                myProgressDialog.dismissProgress();
-                showServerErrorAlert(getContext(), LIST_COLLEGES_API);
-            }
-        } else {
-            showNoInternetAlert(getContext(), LIST_COLLEGES_API);
-        }
+//        if (cd.isConnectingToInternet()) {
+//            try {
+//                myProgressDialog.setProgress(false);
+//                ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+//                Call<ViewCollegesResponseModel> call = apiService.viewColleges("ride/view_colleges/" + appPrefes.getData(Constants.USER_ID));
+//                call.enqueue(new retrofit2.Callback<ViewCollegesResponseModel>() {
+//                    @Override
+//                    public void onResponse(Call<ViewCollegesResponseModel> call, Response<ViewCollegesResponseModel> response) {
+//                        myProgressDialog.dismissProgress();
+//                        try {
+//                            if (!response.body().isStatus()) {
+//                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+//                            } else {
+//                                List<String> collegeList = new ArrayList<>();
+//                                final List<String> collegeIdList = new ArrayList<>();
+//                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
+//                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
+//                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
+//                                }
+//                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(getActivity(), R.layout.white_spinner_list_item, R.id.title, collegeList);
+//                                spinnerUniversity.setAdapter(collegeAdapter);
+//                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                    @Override
+//                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                                        selectedCollegeId = collegeIdList.get(i);
+//                                        callViewRideCostApi();
+//                                    }
+//
+//                                    @Override
+//                                    public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//                                    }
+//                                });
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                            showServerErrorAlert(getContext(), LIST_COLLEGES_API);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<ViewCollegesResponseModel> call, Throwable t) {
+//                        myProgressDialog.dismissProgress();
+//                        System.out.println("t.toString : " + t.toString());
+//                        showServerErrorAlert(getContext(), LIST_COLLEGES_API);
+//                    }
+//                });
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                myProgressDialog.dismissProgress();
+//                showServerErrorAlert(getContext(), LIST_COLLEGES_API);
+//            }
+//        } else {
+//            showNoInternetAlert(getContext(), LIST_COLLEGES_API);
+//        }
     }
 
     private void callViewRideCostApi() {

@@ -40,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Response;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Manuel Chris-Ogar on 1/23/2019.
  */
 public class SignIn extends LMTFragment  {
 
@@ -162,6 +162,8 @@ public class SignIn extends LMTFragment  {
                                 appPrefes.SaveData(Constants.ACCESS_TOKEN, response.body().getData().getAccess_token());
                                 appPrefes.SaveData(Constants.USER_PROFILE_PIC, response.body().getData().getUser_pic_url());
                                 appPrefes.SaveDataBoolean(Constants.USER_LOGGED_IN_STATUS, true);
+                                appPrefes.SaveData(Constants.USER_UNIVERSITY, response.body().getData().getInstitution_name());
+                                appPrefes.SaveIntData(Constants.USER_UNIVERSITY_ID, response.body().getData().getInstitution_id());
                                 Intent intent = new Intent(getActivity(), HomeActivity.class);
                                 startActivity(intent);
                                 mainActivity.finish();

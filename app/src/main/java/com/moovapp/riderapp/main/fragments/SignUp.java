@@ -61,7 +61,7 @@ import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Manuel Chris-Ogar on 1/23/2019.
  */
 public class SignUp extends LMTFragment implements Validator.ValidationListener {
 

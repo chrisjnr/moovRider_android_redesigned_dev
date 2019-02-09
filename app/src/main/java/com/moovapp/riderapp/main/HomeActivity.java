@@ -1,7 +1,8 @@
 package com.moovapp.riderapp.main;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,26 +17,32 @@ import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ahmadrosid.lib.drawroutemap.DrawMarker;
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
 import com.github.ornolfr.ratingview.RatingView;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,9 +60,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.maps.android.PolyUtil;
 import com.moovapp.riderapp.R;
-import com.moovapp.riderapp.main.moov.MoovFragment;
+import com.moovapp.riderapp.main.fragments.LocationAdapter;
 import com.moovapp.riderapp.main.moov.NotificationAction;
 import com.moovapp.riderapp.main.paymentHistory.PaymentHistoryFragment;
 import com.moovapp.riderapp.main.previousRides.PreviousRidesFragment;
@@ -80,9 +89,7 @@ import com.moovapp.riderapp.utils.retrofit.responseModels.CancelRideResponseMode
 import com.moovapp.riderapp.utils.retrofit.responseModels.RideSearchResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewCollegesResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewCurrentRideResponseModel;
-import com.moovapp.riderapp.utils.retrofit.responseModels.ViewProfileResponseModel;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewWalletBalanceResponseModel;
-import com.moovapp.riderapp.utils.spinnerAdapter.WhiteSpinnerAdapter;
 import com.squareup.picasso.Picasso;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
@@ -97,7 +104,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -138,7 +144,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     private final int VIEW_CURRENT_RIDE_API = 9;
     private final int VIEW_PROFILE_API = 10;
 
-
+//
     @BindView(R.id.navigationView)
     NavigationView navigationView;
     @BindView(R.id.drawerLayout)
@@ -152,12 +158,21 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @BindView(R.id.container)
     FrameLayout container;
 
+    @BindView(R.id.cardLocations)
+    CardView cardLocations;
+
+    @BindView(R.id.searchResultsTv)
+    TextView searchResultsTv;
+
+    @BindView(R.id.searchResults)
+    ScrollView searchResults;
+
     @BindView(R.id.autoCompleteDestination)
     CustomAutoCompleteTextView autoCompleteDestination;
     @BindView(R.id.autoCompleteLocation)
     CustomAutoCompleteTextView autoCompleteLocation;
     @BindView(R.id.cardViewRideDetails)
-    CardView cardViewRideDetails;
+    LinearLayout cardViewRideDetails;
     @BindView(R.id.cardViewMove)
     CardView cardViewMove;
     @BindView(R.id.cardViewNext)
@@ -166,14 +181,17 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     CheckBox cbPool;
     @BindView(R.id.layoutCurrentRider)
     View layoutCurrentRider;
-    @BindView(R.id.spinnerUniversity)
-    Spinner spinnerUniversity;
-    @BindView(R.id.spinnerSeats)
-    Spinner spinnerSeats;
+//    @BindView(R.id.spinnerUniversity)
+//    Spinner spinnerUniversity;
+//    @BindView(R.id.spinnerSeats)
+//    Spinner spinnerSeats;
     @BindView(R.id.tvAmount)
     TextView tvAmount;
     @BindView(R.id.tvMoov)
     TextView tvMoov;
+
+    @BindView(R.id.searchDestination)
+    ImageView searchDestination;
 
     @BindView(R.id.tvRiderName)
     TextView tvRiderName;
@@ -181,11 +199,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     ImageView imgRiderImage;
     @BindView(R.id.tvCarModel)
     TextView tvCarModel;
-    @BindView(R.id.rating1)
-    RatingView rating1;
-    @BindView(R.id.tvRiderPhone)
-    TextView tvRiderPhone;
-    @BindView(R.id.tvDistance)
+//    @BindView(R.id.rating1)
+//    RatingView rating1;
+//    @BindView(R.id.tvRiderPhone)
+//    TextView tvRiderPhone;
+//    @BindView(R.id.tvDistance)
     TextView tvDistance;
     @BindView(R.id.tvCarNumber)
     TextView tvCarNumber;
@@ -193,8 +211,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     TextView tvEta;
     @BindView(R.id.tvCancelRide)
     TextView tvCancelRide;
-    @BindView(R.id.tvNoTrips)
-    TextView tvNoTrips;
+//    @BindView(R.id.tvNoTrips)
+//    TextView tvNoTrips;
     @BindView(R.id.llFutureRideDetails)
     LinearLayout llFutureRideDetails;
     @BindView(R.id.tvBookFutureRide)
@@ -203,6 +221,19 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     TextView tvDate;
     @BindView(R.id.tvTime)
     TextView tvTime;
+    @BindView(R.id.tvDestinationName)
+    TextView tvDestinationName;
+    @BindView(R.id.tvLocationName)
+    TextView tvLocationName;
+    @BindView(R.id.changeDestination)
+    ImageView changeDestination;
+//    @BindView(R.id.changeLocation)
+//    ImageView changeLocation;
+    @BindView(R.id.scrollViewResults)
+    LinearLayout scrollViewResults;
+
+
+
 
     private PlacesTask placesTask;
     private ParserTask parserTask;
@@ -225,6 +256,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     public static NotificationAction notificationAction;
 
+    private TextView welcomeText;
     private LinearLayout llMoovNav;
     private RelativeLayout llRidesNav;
     private LinearLayout llExpandedViewRides;
@@ -249,6 +281,16 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     Marker destinationLocationMarker;
     private boolean isDraw1stPolyLine = false;
     private int remainingTime = 10;
+    public RecyclerView recyclerViewLocation;
+    public LocationAdapter locationAdapter;
+    public CardView locations;
+    public Button increaseSeats;
+    public Button decreaseSeats;
+    public int seatNumber = 1;
+    public TextView tvSeatNumber;
+    public EditText goingTo;
+    private LinearLayout location;
+//    public TextView tvSearch;
 
 
     @Override
@@ -257,10 +299,60 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Users");
         setContentView(R.layout.home_activity);
+        location = findViewById(R.id.location);
+        goingTo = findViewById(R.id.goingTo);
+        tvSeatNumber = findViewById(R.id.tvSeatNumber);
+        recyclerViewLocation = findViewById(R.id.recycler_location);
+        DividerItemDecoration divider = new
+                DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL);
+        divider.setDrawable(
+                ContextCompat.getDrawable(this, R.drawable.line_divider)
+        );
+        recyclerViewLocation.addItemDecoration(divider);
+        increaseSeats = findViewById(R.id.increaseSeats);
+        decreaseSeats = findViewById(R.id.decreaseSeats);
+        locations = findViewById(R.id.locations);
+//        tvSearch = findViewById(R.id.tvSearch);
+        recyclerViewLocation.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewLocation.setHasFixedSize(true);
+        welcomeText = findViewById(R.id.welcomeText);
         ButterKnife.bind(this);
         homeActivityActions = this;
         gpsTracker = new GPSTracker(getApplicationContext());
         notificationAction = this;
+        goingTo.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b){
+//                    Toast.makeText(HomeActivity.this, "focus", Toast.LENGTH_SHORT).show();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                    scrollViewResults.setVisibility(View.VISIBLE);
+                    location.setVisibility(View.GONE);
+                    searchResultsTv.setVisibility(View.GONE);
+                    searchResults.setVisibility(View.GONE);
+                    autoCompleteLocation.clearFocus();
+                    autoCompleteDestination.requestFocus();
+                    currentStep = 9;
+                }
+            }
+        });
+        goingTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(HomeActivity.this, "clicked", Toast.LENGTH_SHORT).show();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                scrollViewResults.setVisibility(View.VISIBLE);
+                location.setVisibility(View.GONE);
+                searchResultsTv.setVisibility(View.GONE);
+                searchResults.setVisibility(View.GONE);
+                autoCompleteLocation.clearFocus();
+                autoCompleteDestination.requestFocus();
+                currentStep = 9;
+            }
+        });
         setNavigationMenus();
 //        replaceFragment(new MoovFragment(), false, FragmentTransaction.TRANSIT_ENTER_MASK, "MoovFragment");
 //        if (shouldAskPermission()) {
@@ -314,6 +406,21 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         }
     }
 
+
+
+//
+    @OnClick(R.id.searchDestination)
+    public void searchDestination(){
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        scrollViewResults.setVisibility(View.VISIBLE);
+        location.setVisibility(View.GONE);
+        searchResultsTv.setVisibility(View.GONE);
+        searchResults.setVisibility(View.GONE);
+        autoCompleteLocation.clearFocus();
+        autoCompleteDestination.requestFocus();
+    }
+
     @OnClick(R.id.tvBookFutureRide)
     public void tvBookFutureRideClick() {
         if (tvBookFutureRide.getText().toString().contains("Schedule")) {
@@ -340,6 +447,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 Picasso.get().load(appPrefes.getData(Constants.USER_PROFILE_PIC)).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(profileImage);
             }
             tvUserName.setText(appPrefes.getData(Constants.USER_FIRST_NAME));
+            welcomeText.setText("Hey "+ appPrefes.getData(Constants.USER_FIRST_NAME));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -540,6 +648,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             if (appPrefes.getData(Constants.USER_PROFILE_PIC).length() > 3) {
                 Picasso.get().load(appPrefes.getData(Constants.USER_PROFILE_PIC)).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(profileImage);
             }
+            welcomeText.setText("Hey, "+ appPrefes.getData(Constants.USER_FIRST_NAME));
             tvUserName.setText(appPrefes.getData(Constants.USER_FIRST_NAME));
         } catch (Exception e) {
             e.printStackTrace();
@@ -575,30 +684,108 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         }
     }
 
-
-    private void setSeatSpinner() {
-        List<String> seats = new ArrayList<>();
-        seats.add("1");
-        seats.add("2");
-        seats.add("3");
-        seats.add("4");
-        seats.add("5");
-        seats.add("6");
-        seats.add("7");
-        seats.add("8");
-        WhiteSpinnerAdapter seatAdapter = new WhiteSpinnerAdapter(this, R.layout.white_spinner_list_item, R.id.title, seats);
-        spinnerSeats.setAdapter(seatAdapter);
-        spinnerSeats.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void setUpSeatListeners(){
+//        callViewRideCostApi();
+        increaseSeats.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                callViewRideCostApi();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onClick(View view) {
+                if (seatNumber == 7){
+                    return;
+                }
+                seatNumber++;
+                tvSeatNumber.setText(String.valueOf(seatNumber));
 
             }
         });
+
+        decreaseSeats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (seatNumber < 2){
+                    return;
+                }
+                seatNumber--;
+                tvSeatNumber.setText(String.valueOf(seatNumber));
+            }
+        });
+
+        tvSeatNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                callViewRideCostApi();
+            }
+        });
+    }
+
+
+    private void setSeatSpinner() {
+//        setUpSeatListeners();
+        callViewRideCostApi();
+//        List<String> seats = new ArrayList<>();
+//        seats.add("1");
+//        seats.add("2");
+//        seats.add("3");
+//        seats.add("4");
+//        seats.add("5");
+//        seats.add("6");
+//        seats.add("7");
+//        seats.add("8");
+//        WhiteSpinnerAdapter seatAdapter = new WhiteSpinnerAdapter(this, R.layout.white_spinner_list_item, R.id.title, seats);
+//        spinnerSeats.setAdapter(seatAdapter);
+//        spinnerSeats.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                callViewRideCostApi();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        if (currentStep == 2){
+            cardViewNext.setVisibility(View.VISIBLE);
+            cbPool.setVisibility(View.VISIBLE);
+            cardViewRideDetails.setVisibility(View.GONE);
+            cardViewMove.setVisibility(View.GONE);
+            tvBookFutureRide.setVisibility(View.GONE);
+        }if (currentStep == 3){
+            locations.setVisibility(View.VISIBLE);
+            cardViewNext.setVisibility(View.GONE);
+            cbPool.setVisibility(View.GONE);
+            cardViewRideDetails.setVisibility(View.VISIBLE);
+            cardViewMove.setVisibility(View.VISIBLE);
+            tvBookFutureRide.setVisibility(View.VISIBLE);
+            locations.setVisibility(View.GONE);
+            tvLocationName.setText(autoCompleteLocation.getText().toString());
+            tvDestinationName.setText(autoCompleteDestination.getText().toString());
+            setSeatSpinner();
+            setUpSeatListeners();
+        }if (currentStep == 9){
+            scrollViewResults.setVisibility(View.GONE);
+            location.setVisibility(View.VISIBLE);
+            searchResultsTv.setVisibility(View.GONE);
+            searchResults.setVisibility(View.GONE);
+            currentStep = 0;
+        }
+
+//        super.onBackPressed();
+
     }
 
     @OnClick(R.id.cardViewNext)
@@ -613,11 +800,35 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 cardViewRideDetails.setVisibility(View.VISIBLE);
                 cardViewMove.setVisibility(View.VISIBLE);
                 tvBookFutureRide.setVisibility(View.VISIBLE);
+                locations.setVisibility(View.GONE);
+                tvLocationName.setText(autoCompleteLocation.getText().toString());
+                tvDestinationName.setText(autoCompleteDestination.getText().toString());
                 setSeatSpinner();
+                setUpSeatListeners();
             }
         } else {
             Toast.makeText(getApplicationContext(), "Please choose locations", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+//    @OnClick(R.id.changeLocation)
+//    public void changeLocationClick(){
+//        cardViewRideDetails.setVisibility(View.GONE);
+//        cardLocations.setVisibility(View.VISIBLE);
+//        scrollViewResults.setVisibility(View.VISIBLE);
+////        locations.setVisibility(View.VISIBLE);
+////        location.setVisibility(View.GONE);
+//
+//    }
+
+    @OnClick(R.id.changeDestination)
+    public void changeDestinationClick(){
+        cardViewRideDetails.setVisibility(View.GONE);
+        cardLocations.setVisibility(View.VISIBLE);
+        scrollViewResults.setVisibility(View.VISIBLE);
+//        locations.setVisibility(View.VISIBLE);
+//        location.setVisibility(View.GONE);
     }
 
 
@@ -633,6 +844,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //            cardViewMove.setVisibility(View.GONE);
         } else {
             currentStep = 3;
+            locations.setVisibility(View.GONE);
 //            cardViewMove.setVisibility(View.GONE);
 //            cardViewRideDetails.setVisibility(View.GONE);
             if (isFutureRide) {
@@ -653,16 +865,54 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             showAlertDialog("Cancel Ride", "Your ride is 5 minutes away, you will be charged a cancellation fee. Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
         } else {
             showAlertDialog("Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
+            if(cancelledTrip){
+                locations.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
     public void inItAutoCompleteLocation() {
         autoCompleteDestination.setThreshold(1);
         autoCompleteDestination.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                isTypingOnDestination = true;
-                placesTask = new PlacesTask();
-                placesTask.execute(s.toString());
+//                location.setVisibility(View.GONE);
+                searchResultsTv.setVisibility(View.VISIBLE);
+                searchResults.setVisibility(View.VISIBLE);
+                if (count > 3){
+                    scrollViewResults.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
+//                    Toast.makeText(HomeActivity.this, "3 and above", Toast.LENGTH_SHORT).show();
+                    isTypingOnDestination = true;
+                    placesTask = new PlacesTask();
+                    placesTask.execute(s.toString());
+                }
+
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+
+            }
+
+            public void afterTextChanged(Editable s) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        autoCompleteLocation.setThreshold(1);
+        autoCompleteLocation.addTextChangedListener(new TextWatcher() {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                location.setVisibility(View.GONE);
+                searchResultsTv.setVisibility(View.VISIBLE);
+                searchResults.setVisibility(View.VISIBLE);
+                    if (count > 3){
+                        scrollViewResults.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
+//                        Toast.makeText(HomeActivity.this, "3 and above", Toast.LENGTH_SHORT).show();
+                        isTypingOnDestination = false;
+                        placesTask = new PlacesTask();
+                        placesTask.execute(s.toString());
+                    }
+
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -674,20 +924,30 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             }
         });
 
-        autoCompleteLocation.setThreshold(1);
-        autoCompleteLocation.addTextChangedListener(new TextWatcher() {
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                isTypingOnDestination = false;
-                placesTask = new PlacesTask();
-                placesTask.execute(s.toString());
-            }
+        autoCompleteLocation.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus){
+                    recyclerViewLocation.setVisibility(View.GONE);
+                    scrollViewResults.setVisibility(View.GONE);
+                }else{
+                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                    scrollViewResults.setVisibility(View.VISIBLE);
 
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // TODO Auto-generated method stub
+                }
             }
+        });
 
-            public void afterTextChanged(Editable s) {
-                // TODO Auto-generated method stub
+        autoCompleteDestination.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b){
+                    recyclerViewLocation.setVisibility(View.GONE);
+                    scrollViewResults.setVisibility(View.GONE);
+                }else{
+                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                    scrollViewResults.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -702,6 +962,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //                    e.printStackTrace();
 //                    edCity.setText(edCity.getText().toString());
 //                }
+
                 autoCompleteDestination.setSelection(autoCompleteDestination.getText().toString().length());
                 isDropDownSelected = true;
             }
@@ -717,6 +978,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.GONE);
+//                    tvSearch.setVisibility(View.GONE);
                 }
             }
 
@@ -734,6 +997,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+//                    tvSearch.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -762,6 +1027,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.GONE);
+//                    tvSearch.setVisibility(View.GONE);
                 }
             }
 
@@ -780,6 +1047,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     cardViewRideDetails.setVisibility(View.GONE);
                     cardViewMove.setVisibility(View.GONE);
                     tvBookFutureRide.setVisibility(View.GONE);
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+//                    tvSearch.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -948,13 +1217,86 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 int[] to = new int[]{android.R.id.text1};
                 adapter = new SimpleAdapter(getApplicationContext(), result, R.layout.simple_spinner_dropdown_item, from, to);
                 if (isTypingOnDestination) {
-                    autoCompleteDestination.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+//                    autoCompleteDestination.setAdapter(adapter);
+                    locationAdapter = new LocationAdapter(result, new LocationAdapter.ListItemClickListener() {
+                        @Override
+                        public void OnLocationClicked(HashMap<String, String> selectedLocation) {
+                            autoCompleteDestination.setText(selectedLocation.get("description"));
+                            recyclerViewLocation.setVisibility(View.GONE);
+                            scrollViewResults.setBackgroundColor(getResources().getColor(R.color.transparent));
+                            recyclerViewLocation.setVisibility(View.GONE);
+                            isDropDownSelected = true;
+                            isDropDownSelectedLocation = true;
+                            searchResultsTv.setVisibility(View.GONE);
+                            searchResults.setVisibility(View.GONE);
+                            cardLocations.setVisibility(View.GONE);
+
+
+//                            new stuff
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(autoCompleteDestination.getWindowToken(),0);
+                            currentStep = 2;
+                            cardViewNext.setVisibility(View.GONE);
+                            cbPool.setVisibility(View.GONE);
+                            cardViewRideDetails.setVisibility(View.VISIBLE);
+                            cardViewMove.setVisibility(View.VISIBLE);
+                            tvBookFutureRide.setVisibility(View.VISIBLE);
+                            locations.setVisibility(View.GONE);
+                            tvLocationName.setText(autoCompleteLocation.getText().toString());
+                            tvDestinationName.setText(autoCompleteDestination.getText().toString());
+                            setSeatSpinner();
+                            setUpSeatListeners();
+                            scrollViewResults.setVisibility(View.GONE);
+//                            tvSearch.setVisibility(View.GONE);
+                        }
+                    });
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                    recyclerViewLocation.setAdapter(locationAdapter);
+                    locationAdapter.notifyDataSetChanged();
+//                    Log.d("onPostExecute", "onPostExecute: "+ result.get(0).toString());
+//                    recyclerViewLocation.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
                     System.out.println("atvvv" + autoCompleteDestination.getText().toString());
                     getLatLng(autoCompleteDestination.getText().toString());
                 } else {
-                    autoCompleteLocation.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
+//                    recyclerViewLocation.setVisibility(View.VISIBLE);
+                    locationAdapter = new LocationAdapter(result, new LocationAdapter.ListItemClickListener() {
+                        @Override
+                        public void OnLocationClicked(HashMap<String, String> selectedLocation) {
+                            autoCompleteLocation.setText(selectedLocation.get("description"));
+                            isDropDownSelected = true;
+                            isDropDownSelectedLocation = true;
+                            recyclerViewLocation.setVisibility(View.GONE);
+//                            searchResultsTv.setVisibility(View.GONE);
+//                            searchResults.setVisibility(View.GONE);
+                            scrollViewResults.setBackgroundColor(getResources().getColor(R.color.transparent));
+//                            scrollViewResults.setVisibility(View.GONE);
+//                            tvSearch.setVisibility(View.GONE);
+                            searchResultsTv.setVisibility(View.GONE);
+                            searchResults.setVisibility(View.GONE);
+                            if (!TextUtils.isEmpty(autoCompleteDestination.getText().toString())){
+                                currentStep = 2;
+                                cardViewNext.setVisibility(View.GONE);
+                                cbPool.setVisibility(View.GONE);
+                                cardViewRideDetails.setVisibility(View.VISIBLE);
+                                cardViewMove.setVisibility(View.VISIBLE);
+                                tvBookFutureRide.setVisibility(View.VISIBLE);
+                                locations.setVisibility(View.GONE);
+                                tvLocationName.setText(autoCompleteLocation.getText().toString());
+                                tvDestinationName.setText(autoCompleteDestination.getText().toString());
+                                setSeatSpinner();
+                                setUpSeatListeners();
+                                scrollViewResults.setVisibility(View.GONE);
+                            }
+
+                        }
+                    });
+
+                    recyclerViewLocation.setAdapter(locationAdapter);
+                    locationAdapter.notifyDataSetChanged();
+//                    autoCompleteLocation.setAdapter(adapter);
+//                    adapter.notifyDataSetChanged();
                     System.out.println("atvvv" + autoCompleteLocation.getText().toString());
                     getLatLng(autoCompleteLocation.getText().toString());
                 }
@@ -1041,10 +1383,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
             try {
                 isDropDownSelectedLocation = true;
+                tvLocationName.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
                 autoCompleteLocation.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
             } catch (Exception e) {
                 e.printStackTrace();
                 try {
+                    tvLocationName.setText(addresses.get(0).getFeatureName() + ", " + addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
                     autoCompleteLocation.setText(addresses.get(0).getLocality() + ", " + addresses.get(0).getAdminArea());
                     isDropDownSelectedLocation = true;
                 } catch (Exception e1) {
@@ -1078,37 +1422,37 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     private void setRiderDetails(ViewCurrentRideResponseModel.DataEntity data) {
         layoutCurrentRider.setVisibility(View.VISIBLE);
-        tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
-        tvCarModel.setText(data.getDriver_details().getCar_model());
-        tvNoTrips.setText("No of trips: ");
+        tvRiderName.setText(data.getDriverDetails().getFirstName() + " " + data.getDriverDetails().getLastName());
+        tvCarModel.setText(data.getDriverDetails().getCarModel());
+//        tvNoTrips.setText("No of trips: ");
 //        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-        rating1.setRating(Float.parseFloat(data.getDriver_details().getRatings() + ""));
-        tvRiderPhone.setText(data.getDriver_details().getPhone());
+//        rating1.setRating(Float.parseFloat(data.getDriverDetails().getRatings() + ""));
+//        tvRiderPhone.setText(data.getDriverDetails().getPhone());
 //        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
-        tvDistance.setText("2 Km");
-        tvCarNumber.setText(data.getDriver_details().getVehicle_no());
+//        tvDistance.setText("2 Km");
+        tvCarNumber.setText(data.getDriverDetails().getVehicleNo());
 //        tvEta.setText(data.getDistance_to_drive_details().getTime());
         tvEta.setText("15 Min");
 
 
         try {
-            if (data.getDriver_details().getImage().length() > 3) {
-                Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
+            if (data.getDriverDetails().getImage().length() > 3) {
+                Picasso.get().load(data.getDriverDetails().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        double lat1 = Double.parseDouble(data.getPoly_lines().getStart().getLat().substring(0, 9));
-        double long1 = Double.parseDouble(data.getPoly_lines().getStart().getLng().substring(0, 9));
+        double lat1 = Double.parseDouble(data.getPolyLines().getStart().getLat().toString().substring(0, data.getPolyLines().getStart().getLat().toString().length()-1));
+        double long1 = Double.parseDouble(data.getPolyLines().getStart().getLng().toString().substring(0, data.getPolyLines().getStart().getLng().toString().length()-1));
         mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(lat1, long1)));
-        List<LatLng> decodedPath = PolyUtil.decode(data.getPoly_line());
+        List<LatLng> decodedPath = PolyUtil.decode(data.getPolyLine());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat1, long1), 12));
 
-        double lat2 = Double.parseDouble(data.getPoly_lines().getEnd().getLat().substring(0, 9));
-        double long2 = Double.parseDouble(data.getPoly_lines().getEnd().getLng().substring(0, 9));
+        double lat2 = Double.parseDouble(data.getPolyLines().getEnd().getLat().toString().substring(0, data.getPolyLines().getEnd().getLat().toString().length()-1));
+        double long2 = Double.parseDouble(data.getPolyLines().getEnd().getLng().toString().substring(0, data.getPolyLines().getEnd().getLng().toString().length()-1));
 
         LatLng origin = new LatLng(lat2, long2);
         LatLng destination = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
@@ -1118,7 +1462,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
 
 
-        myRef.child(data.getDriver_details().getDriver_id() + "").addValueEventListener(new ValueEventListener() {
+        myRef.child(data.getDriverDetails().getDriverId() + "").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -1144,10 +1488,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         layoutCurrentRider.setVisibility(View.VISIBLE);
         tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
         tvCarModel.setText(data.getDriver_details().getCar_model());
-        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-        rating1.setRating(data.getDriver_details().getRatings());
-        tvRiderPhone.setText(data.getDriver_details().getPhone());
-        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
+//        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
+//        rating1.setRating(data.getDriver_details().getRatings());
+//        tvRiderPhone.setText(data.getDriver_details().getPhone());
+//        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
         tvCarNumber.setText(data.getDriver_details().getVehicle_no());
         tvEta.setText(data.getDistance_to_drive_details().getTime());
 
@@ -1249,7 +1593,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     System.out.println("HAHAHAHA: " + distanceInMeters);
                     remainingTime = (int) ((distanceInMeters / 650));
                     tvEta.setText(((int) ((distanceInMeters / 650)) + 1) + " Min");
-                    tvDistance.setText(((int) (distanceInMeters / 1000)) + " Km");
+//                    tvDistance.setText(((int) (distanceInMeters / 1000)) + " Km");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1277,35 +1621,35 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             if (!response.body().isStatus()) {
                                 Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
-                                List<String> collegeList = new ArrayList<>();
-                                int p = 0;
-                                final List<String> collegeIdList = new ArrayList<>();
-                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
-                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
-                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
-                                    if (response.body().getData().getUser_institute() == response.body().getData().getDetails().get(i).getId()) {
-                                        p = i;
-                                    }
-                                }
-                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(HomeActivity.this, R.layout.white_spinner_list_item, R.id.title, collegeList);
-                                spinnerUniversity.setAdapter(collegeAdapter);
-                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                                    @Override
-                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                                        selectedCollegeId = collegeIdList.get(i);
-                                        callViewRideCostApi();
-                                    }
-
-                                    @Override
-                                    public void onNothingSelected(AdapterView<?> adapterView) {
-
-                                    }
-                                });
-                                try {
-                                    spinnerUniversity.setSelection(p);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+//                                List<String> collegeList = new ArrayList<>();
+//                                int p = 0;
+//                                final List<String> collegeIdList = new ArrayList<>();
+//                                for (int i = 0; i < response.body().getData().getDetails().size(); i++) {
+//                                    collegeList.add(response.body().getData().getDetails().get(i).getName());
+//                                    collegeIdList.add(response.body().getData().getDetails().get(i).getId() + "");
+//                                    if (response.body().getData().getUser_institute() == response.body().getData().getDetails().get(i).getId()) {
+//                                        p = i;
+//                                    }
+//                                }
+//                                WhiteSpinnerAdapter collegeAdapter = new WhiteSpinnerAdapter(HomeActivity.this, R.layout.white_spinner_list_item, R.id.title, collegeList);
+//                                spinnerUniversity.setAdapter(collegeAdapter);
+//                                spinnerUniversity.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                                    @Override
+//                                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                                        selectedCollegeId = collegeIdList.get(i);
+//                                        callViewRideCostApi();
+//                                    }
+//
+//                                    @Override
+//                                    public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//                                    }
+//                                });
+//                                try {
+//                                    spinnerUniversity.setSelection(p);
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1341,10 +1685,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 }
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-                Call<RideSearchResponseModel> call = apiService.rideSearch("ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + spinnerSeats.getSelectedItem() + "/" + poolRiding);
+                Call<RideSearchResponseModel> call = apiService.rideSearch("ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + String.valueOf(seatNumber) + "/" + poolRiding);
                 call.enqueue(new retrofit2.Callback<RideSearchResponseModel>() {
                     @Override
                     public void onResponse(Call<RideSearchResponseModel> call, Response<RideSearchResponseModel> response) {
+                        Log.d("response", "onResponse: "+response.raw());
+                        Log.d("response", "onResponse: "+response.body().getMessage());
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
@@ -1434,11 +1780,16 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<BookRideResponseModel> call = apiService.bookRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
                         fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
-                        toLat + "", toLong + "", poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                        toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), appPrefes.getData(Constants.USER_UNIVERSITY_ID), tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + "");
+                Log.d("params", "callBookRideApi: "+ appPrefes.getData(Constants.USER_ID) +","+ autoCompleteLocation.getText().toString().replaceAll(" ", "+")+","+
+                        fromLat +","+ fromLong +","+ autoCompleteDestination.getText().toString().replaceAll(" ", "+")+","+
+                        toLat+","+ toLong +","+ poolRiding+","+ String.valueOf(seatNumber)+","+ appPrefes.getData(Constants.USER_UNIVERSITY_ID)+","+ tvAmount.getText().toString()+","+ gpsTracker.getLatitude()  +","+ gpsTracker.getLongitude());
+
                 call.enqueue(new retrofit2.Callback<BookRideResponseModel>() {
                     @Override
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
                         myProgressDialog.dismissProgress();
+                        Log.e("response", "onResponse: "+ response.raw() );
                         try {
                             if (response.body().isStatus()) {
                                 setRiderDetails(response.body().getData());
@@ -1459,11 +1810,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             } else {
                                 showRequestSuccessDialog("Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
                                 currentStep = 1;
-                                cardViewNext.setVisibility(View.VISIBLE);
-                                cbPool.setVisibility(View.VISIBLE);
+//                                cardViewNext.setVisibility(View.VISIBLE);
+//                                cbPool.setVisibility(View.VISIBLE);
+                                location.setVisibility(View.VISIBLE);
                                 cardViewRideDetails.setVisibility(View.GONE);
-                                cardViewMove.setVisibility(View.GONE);
-                                tvBookFutureRide.setVisibility(View.GONE);
+//                                cardViewMove.setVisibility(View.GONE);
+//                                tvBookFutureRide.setVisibility(View.GONE);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1473,6 +1825,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
                     @Override
                     public void onFailure(Call<BookRideResponseModel> call, Throwable t) {
+                        Log.e("response", "onResponse: "+ t.getLocalizedMessage() );
                         myProgressDialog.dismissProgress();
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(BOOK_RIDE_API);
@@ -1502,7 +1855,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<BookFutureRideResponseModel> call = apiService.bookFutureRide(appPrefes.getData(Constants.USER_ID), autoCompleteLocation.getText().toString().replaceAll(" ", "+"),
                         fromLat + "", fromLong + "", autoCompleteDestination.getText().toString().replaceAll(" ", "+"),
-                        toLat + "", toLong + "", poolRiding, spinnerSeats.getSelectedItem().toString(), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + ""
+                        toLat + "", toLong + "", poolRiding, String.valueOf(seatNumber), selectedCollegeId, tvAmount.getText().toString(), gpsTracker.getLatitude() + "", gpsTracker.getLongitude() + ""
                         , tvDate.getText().toString(), tvTime.getText().toString());
                 call.enqueue(new retrofit2.Callback<BookFutureRideResponseModel>() {
                     @Override
@@ -1523,10 +1876,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 tvTime.setText("");
                                 tvBookFutureRide.setText("Schedule a ride");
                                 llFutureRideDetails.setVisibility(View.GONE);
+                                locations.setVisibility(View.VISIBLE);
                                 Toast.makeText(HomeActivity.this, "Ride booked!", Toast.LENGTH_SHORT).show();
                             } else {
                                 showRequestSuccessDialog("Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
                                 currentStep = 1;
+                                locations.setVisibility(View.VISIBLE);
                                 cardViewNext.setVisibility(View.VISIBLE);
                                 cbPool.setVisibility(View.VISIBLE);
                                 cardViewRideDetails.setVisibility(View.GONE);
@@ -1535,6 +1890,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                            locations.setVisibility(View.VISIBLE);
                             showServerErrorAlert(BOOK_FUTURE_RIDE_API);
                         }
                     }
@@ -1566,6 +1922,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<CancelRideResponseModel> call = apiService.cancelRide("rides/cancel/" + currentRideId + "/" + freeOrPaid);
+                Log.d("response", "rides/cancel/" + currentRideId + "/" + freeOrPaid);
                 call.enqueue(new retrofit2.Callback<CancelRideResponseModel>() {
                     @Override
                     public void onResponse(Call<CancelRideResponseModel> call, Response<CancelRideResponseModel> response) {
@@ -1622,23 +1979,28 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 call.enqueue(new retrofit2.Callback<ViewCurrentRideResponseModel>() {
                     @Override
                     public void onResponse(Call<ViewCurrentRideResponseModel> call, Response<ViewCurrentRideResponseModel> response) {
+                        Log.d("current_ride", "onResponse: "+appPrefes.getData(Constants.USER_ID));
+                        Log.d("current_ride", "onResponse: "+response.raw());
                         myProgressDialog.dismissProgress();
                         try {
-                            if (response.body().isStatus()) {
+                            if (response.body().getStatus()) {
                                 boolean isLiveRide = false;
+//                                Log.d("current_ride_exc", "length "+response.body().getData().size());
                                 for (int i = 0; i < response.body().getData().size(); i++) {
-                                    if (response.body().getData().get(i).getRide_type().equals("live")) {
+                                    Log.d("current_ride_exc", "each i "+i);
+                                    if (response.body().getData().get(i).getRideType().equals("live")) {
                                         setRiderDetails(response.body().getData().get(i));
-                                        currentRideId = response.body().getData().get(i).getRide_id() + "";
+                                        currentRideId = response.body().getData().get(i).getRideId() + "";
                                         cardViewMove.setVisibility(View.GONE);
                                         tvBookFutureRide.setVisibility(View.GONE);
                                         cardViewRideDetails.setVisibility(View.GONE);
                                         cardViewNext.setVisibility(View.GONE);
                                         cbPool.setVisibility(View.GONE);
-                                        toLat = Double.parseDouble(response.body().getData().get(i).getPoly_lines().getEnd().getLat().substring(0, 9));
-                                        toLong = Double.parseDouble(response.body().getData().get(i).getPoly_lines().getEnd().getLng().substring(0, 9));
+//                                        Log.d("current_ride_exc", "each i "+i);
+                                        toLat = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLat().toString().substring(0, response.body().getData().get(i).getPolyLines().getEnd().getLat().toString().length()-1));
+                                        toLong = Double.parseDouble(response.body().getData().get(i).getPolyLines().getEnd().getLng().toString().substring(0, response.body().getData().get(i).getPolyLines().getEnd().getLng().toString().length()-1));
                                     }
-                                    if (response.body().getData().get(i).getRide_type().equals("live")) {
+                                    if (response.body().getData().get(i).getRideType().equals("live")) {
                                         isLiveRide = true;
                                     }
                                 }
@@ -1655,6 +2017,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                         destinationLocationMarker.remove();
                                         destinationLocationMarker = null;
                                     } catch (Exception e) {
+                                        Log.d("current_ride_exc1", "onResponse: "+e.getLocalizedMessage());
                                         e.printStackTrace();
                                     }
                                     cbPool.setChecked(true);
@@ -1662,6 +2025,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             } else {
                             }
                         } catch (Exception e) {
+                            Log.d("current_ride_exc2", "onResponse: "+e.getLocalizedMessage());
                             e.printStackTrace();
                             showServerErrorAlert(VIEW_CURRENT_RIDE_API);
                         }
@@ -1670,12 +2034,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     @Override
                     public void onFailure(Call<ViewCurrentRideResponseModel> call, Throwable t) {
                         myProgressDialog.dismissProgress();
+//                        Log.d("failed", "onResponse: "+appPrefes.getData(Constants.USER_ID));
+                        Log.d("failed", "onResponse: "+t.getLocalizedMessage());
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(VIEW_CURRENT_RIDE_API);
                     }
                 });
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d("current_ride_fail_exc", "onResponse: "+e.getLocalizedMessage());
                 myProgressDialog.dismissProgress();
                 showServerErrorAlert(VIEW_CURRENT_RIDE_API);
             }

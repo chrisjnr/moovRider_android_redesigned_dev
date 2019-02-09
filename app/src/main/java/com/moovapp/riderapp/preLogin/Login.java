@@ -1,5 +1,7 @@
 package com.moovapp.riderapp.preLogin;
-
+/**
+ * Created by Manuel Chris-Ogar on 1/10/2019.
+ */
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -169,7 +171,8 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
                     @Override
                     public void onResponse(Call<SocialLoginResponseModel> call, Response<SocialLoginResponseModel> response) {
                         myProgressDialog.dismissProgress();
-//                        Log.d(TAG, "onResponse: "+ response.body().toString());
+//                        Log.d(TAG, "onResponse: "+ response.body());
+//                        Log.d(TAG, "onResponse: "+ response.raw().body());
 //                        Log.e("response", "onResponse: "+response.body().getData().getUser_details().getWallet_balance() );
 //                        Log.e("response", "onResponse: "+response.body().getData().getUser_details().getU_first_name() );
                         try {
