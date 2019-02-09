@@ -325,7 +325,6 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             @Override
             public void onFocusChange(View view, boolean b) {
                 if (b){
-//                    Toast.makeText(HomeActivity.this, "focus", Toast.LENGTH_SHORT).show();
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                     scrollViewResults.setVisibility(View.VISIBLE);
