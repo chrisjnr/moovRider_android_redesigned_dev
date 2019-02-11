@@ -6,7 +6,12 @@ import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,11 +19,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.design.widget.NavigationView;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -55,6 +63,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -234,7 +243,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
 
 
-
+    public FirebaseAuth mAuth;
     private PlacesTask placesTask;
     private ParserTask parserTask;
     private Geocoder mGeocoder;
@@ -876,9 +885,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         autoCompleteDestination.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 //                location.setVisibility(View.GONE);
+//                Toast.makeText(HomeActivity.this, "changed", Toast.LENGTH_SHORT).show();
                 searchResultsTv.setVisibility(View.VISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
-                if (count > 3){
+                if (s.length() > 3){
                     scrollViewResults.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
 //                    Toast.makeText(HomeActivity.this, "3 and above", Toast.LENGTH_SHORT).show();
                     isTypingOnDestination = true;
@@ -904,7 +914,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //                location.setVisibility(View.GONE);
                 searchResultsTv.setVisibility(View.VISIBLE);
                 searchResults.setVisibility(View.VISIBLE);
-                    if (count > 3){
+//                Toast.makeText(HomeActivity.this, "location", Toast.LENGTH_SHORT).show();
+                    if (s.length() > 3){
                         scrollViewResults.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
 //                        Toast.makeText(HomeActivity.this, "3 and above", Toast.LENGTH_SHORT).show();
                         isTypingOnDestination = false;
@@ -1419,10 +1430,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     }
 
 
-    private void setRiderDetails(ViewCurrentRideResponseModel.DataEntity data) {
+    private void setRiderDetails(final ViewCurrentRideResponseModel.DataEntity data) {
         layoutCurrentRider.setVisibility(View.VISIBLE);
         tvRiderName.setText(data.getDriverDetails().getFirstName() + " " + data.getDriverDetails().getLastName());
-        tvCarModel.setText(data.getDriverDetails().getCarModel());
+//        tvCarModel.setText(data.getDriverDetails().getCarModel());
 //        tvNoTrips.setText("No of trips: ");
 //        tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
 //        rating1.setRating(Float.parseFloat(data.getDriverDetails().getRatings() + ""));
@@ -1430,17 +1441,18 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //        tvDistance.setText(data.getDistance_to_drive_details().getDistance());
 //        tvDistance.setText("2 Km");
         tvCarNumber.setText(data.getDriverDetails().getVehicleNo());
-//        tvEta.setText(data.getDistance_to_drive_details().getTime());
-        tvEta.setText("15 Min");
+//        Toast.makeText(this, "details", Toast.LENGTH_SHORT).show();
+//        Log.e("response", "setRiderDetails: "+data.getDriveDetais().getTime().toString() );
+//        tvEta.setText(String.valueOf(data.getDriveDetais().getDistance()));
+//        tvEta.setText("15 Min");
 
-
-        try {
-            if (data.getDriverDetails().getImage().length() > 3) {
-                Picasso.get().load(data.getDriverDetails().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            if (data.getDriverDetails().getImage().length() > 3) {
+//                Picasso.get().load(data.getDriverDetails().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         double lat1 = Double.parseDouble(data.getPolyLines().getStart().getLat().toString().substring(0, data.getPolyLines().getStart().getLat().toString().length()-1));
         double long1 = Double.parseDouble(data.getPolyLines().getStart().getLng().toString().substring(0, data.getPolyLines().getStart().getLng().toString().length()-1));
@@ -1460,6 +1472,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         getWindowManager().getDefaultDisplay().getSize(displaySize);
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
 
+//        Log.d("HAHAHA", "Value is: " + data.getDriverDetails().getDriverId());
 
         myRef.child(data.getDriverDetails().getDriverId() + "").addValueEventListener(new ValueEventListener() {
             @Override
@@ -1467,8 +1480,20 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 try {
-                    Driver driver = dataSnapshot.getValue(Driver.class);
-                    Log.d("HAHAHA", "Value is: " + driver);
+//                    long lat = dataSnapshot.getChildrenCount();
+                    Double angleX = dataSnapshot.child("angleX").getValue(Double.class);
+                    Double lat = dataSnapshot.child("lat").getValue(Double.class);
+                    Double longt = dataSnapshot.child("longt").getValue(Double.class);
+                    Driver driver = new Driver();
+                    driver.setAngleX(angleX);
+                    driver.setLat(String.valueOf(lat));
+                    driver.setLongt(String.valueOf(longt));
+                    driver.setId(data.getDriverDetails().getDriverId());
+
+//                    Driver driver =(Driver) dataSnapshot.getValue(Driver.class);
+//                    Log.d("HAHAHA", "Value is: " + angleX);
+//                    Log.d("HAHAHA", "Value is: " + lat);
+//                    Log.d("HAHAHA", "Value is: " + longt);
                     showDriverOnMap(driver);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1540,14 +1565,50 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     int tt = 0;
 
+    public static Bitmap getBItmapFromDrawable(Context context, @DrawableRes int drawableId) {
+        Drawable drawable = AppCompatResources.getDrawable(context, drawableId);
+
+
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+
+        } else if (drawable instanceof VectorDrawableCompat || drawable instanceof VectorDrawable) {
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+
+            return bitmap;
+        } else {
+            throw new IllegalArgumentException("unsupported drawable type");
+        }
+    }
+
     private void showDriverOnMap(Driver driver) {
         try {
+            Log.d("dest", "showDriverOnMap: "+ String.valueOf(driver.getLat()) + ",,, " +  String.valueOf(driver.getLongt()));
             if (destinationLocationMarker == null) {
-                destinationLocationMarker = mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())))
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.map_car_icon)));
+
+//
+//                destinationLocationMarker = mMap.addMarker(new MarkerOptions()
+//                        .position(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())))
+//                        .icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(HomeActivity.this, R.drawable.map_car_icon_new))));
+//                destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
+
+
+                MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+                markerOptions.position(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
+////        markerOptions.draggable(true);
+////        markerOptions.title("Current Position");
+////        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                destinationLocationMarker = mMap.addMarker(markerOptions);
                 destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
+
             } else {
+                destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+//                destinationLocationMarkermarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
                 destinationLocationMarker.setPosition(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
                 destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
             }
@@ -1580,7 +1641,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     e.printStackTrace();
                 }
             }
-            if (tt == 0) {
+            if (tt < 5) {
                 try {
                     Location location1 = new Location("");
                     location1.setLatitude(gpsTracker.getLatitude());
@@ -1789,6 +1850,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
                         myProgressDialog.dismissProgress();
                         Log.e("response", "onResponse: "+ response.raw() );
+                        Log.e("response", "onResponse: "+ response.body().isStatus() );
                         try {
                             if (response.body().isStatus()) {
                                 setRiderDetails(response.body().getData());
@@ -1796,7 +1858,6 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 cardViewMove.setVisibility(View.GONE);
                                 tvBookFutureRide.setVisibility(View.GONE);
                                 cardViewRideDetails.setVisibility(View.GONE);
-
                                 mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(fromLat, fromLong)));
 
@@ -1986,7 +2047,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 boolean isLiveRide = false;
 //                                Log.d("current_ride_exc", "length "+response.body().getData().size());
                                 for (int i = 0; i < response.body().getData().size(); i++) {
-                                    Log.d("current_ride_exc", "each i "+i);
+//                                    Log.d("current_ride_exc", "each i "+i);
                                     if (response.body().getData().get(i).getRideType().equals("live")) {
                                         setRiderDetails(response.body().getData().get(i));
                                         currentRideId = response.body().getData().get(i).getRideId() + "";

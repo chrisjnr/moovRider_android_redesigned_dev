@@ -166,7 +166,7 @@ public class Login extends LMTBaseActivity implements View.OnClickListener{
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<SocialLoginResponseModel> call = apiService.socialLogin(loginType, id, "android", appPrefes.getData(Constants.DEVICE_TOKEN), "2.0");
-
+                Log.d("social", "callSocialLoginApi: "+appPrefes.getData(Constants.DEVICE_TOKEN));
                 call.enqueue(new retrofit2.Callback<SocialLoginResponseModel>() {
                     @Override
                     public void onResponse(Call<SocialLoginResponseModel> call, Response<SocialLoginResponseModel> response) {
