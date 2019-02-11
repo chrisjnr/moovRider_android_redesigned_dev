@@ -43,14 +43,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:textColor="#423751"
+                    android:textColor="@color/lighter_black"
                     android:id="@+id/tvRiderName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="Kelechi"/>
 
                 <TextView
-                    android:textColor="#D9DBE1"
+                    android:textColor="@color/light_gray_color"
                     android:text="4.5 Stars"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -106,14 +106,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content">
                 <TextView
-                    android:textColor="#423751"
+                    android:textColor="@color/lighter_black"
                     android:id="@+id/tvCarModel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Toyota Camry"/>
 
                 <TextView
-                    android:textColor="#D9DBE1"
+                    android:textColor="@color/light_gray_color"
                     android:text="Silver"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
