@@ -267,7 +267,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     private TextView welcomeText;
     private LinearLayout llMoovNav;
-    private RelativeLayout llRidesNav;
+    private LinearLayout llRidesNav;
     private LinearLayout llExpandedViewRides;
     private LinearLayout llUpcommingRidesNav;
     private LinearLayout llPreviousRidesNav;
@@ -484,7 +484,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         profileImage = (CircleImageView) headerView.findViewById(R.id.profileImage);
         tvUserName = (TextView) headerView.findViewById(R.id.tvUserName);
         llMoovNav = (LinearLayout) headerView.findViewById(R.id.llMoovNav);
-        llRidesNav = (RelativeLayout) headerView.findViewById(R.id.llRidesNav);
+        llRidesNav = (LinearLayout) headerView.findViewById(R.id.llRidesNav);
         imgRidesArrow = (ImageView) headerView.findViewById(R.id.imgRidesArrow);
         llExpandedViewRides = (LinearLayout) headerView.findViewById(R.id.llExpandedViewRides);
         llUpcommingRidesNav = (LinearLayout) headerView.findViewById(R.id.llUpcommingRidesNav);
