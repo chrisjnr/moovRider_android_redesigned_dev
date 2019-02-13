@@ -86,6 +86,8 @@ import com.moovapp.riderapp.preLogin.LoginActivity;
 import com.moovapp.riderapp.utils.Constants;
 import com.moovapp.riderapp.utils.GPSTracker;
 import com.moovapp.riderapp.utils.LMTBaseActivity;
+import com.moovapp.riderapp.utils.LatLngInterpolator;
+import com.moovapp.riderapp.utils.MarkerAnimation;
 import com.moovapp.riderapp.utils.myGlobalFunctions.DpToPx;
 import com.moovapp.riderapp.utils.myGlobalFunctions.ExpandOrCollapseViews;
 import com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView;
@@ -1607,9 +1609,13 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
 
             } else {
+                LatLng driverPosition = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
+//                LatLng driverPosition = new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt()));
+                MarkerAnimation.animateMarkerToGB(destinationLocationMarker, driverPosition, new LatLngInterpolator.Spherical());
                 destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+//                Toast.makeText(this, "mmovement", Toast.LENGTH_SHORT).show();
 //                destinationLocationMarkermarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
-                destinationLocationMarker.setPosition(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
+//                destinationLocationMarker.setPosition(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
                 destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
             }
             if (!isDraw1stPolyLine) {

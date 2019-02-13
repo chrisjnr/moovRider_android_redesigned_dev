@@ -69,13 +69,15 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:drawablePadding="5dp"
+                    android:drawableLeft="@drawable/ic_directions_car_24px"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
                     android:gravity="center_vertical"
                     android:text="Moov"
                     android:textColor="@color/blackLite"
-                    android:textSize="15dp" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <View
