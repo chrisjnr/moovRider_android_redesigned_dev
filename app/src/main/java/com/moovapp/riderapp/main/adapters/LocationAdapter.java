@@ -1,4 +1,4 @@
-package com.moovapp.riderapp.main.fragments;
+package com.moovapp.riderapp.main.adapters;
 
 /**
  * Created by Manuel Chris-Ogar on 1/23/2019.

@@ -1,8 +1,6 @@
 package com.moovapp.riderapp.main;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.MediaRouteButton;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -45,14 +43,12 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
-import com.github.ornolfr.ratingview.RatingView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -69,11 +65,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.maps.android.PolyUtil;
 import com.moovapp.riderapp.R;
-import com.moovapp.riderapp.main.fragments.LocationAdapter;
+import com.moovapp.riderapp.TripsFragment;
+import com.moovapp.riderapp.main.adapters.LocationAdapter;
 import com.moovapp.riderapp.main.moov.NotificationAction;
 import com.moovapp.riderapp.main.paymentHistory.PaymentHistoryFragment;
 import com.moovapp.riderapp.main.previousRides.PreviousRidesFragment;
@@ -538,7 +533,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 currentFragment = "UpcomingRidesFragment";
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
-                delayFlow(new UpcomingRidesFragment(), "UpcomingRidesFragment");
+                String upcoming = "previous";
+//                Intent i = new Intent(HomeActivity.this, TripsFragment.class);
+//                i.putExtra("firstTab", upcoming);
+//                startActivity(i);
+                Bundle args = new Bundle();
+                args.putString("firstTab", upcoming);
+                TripsFragment tripsFragment = new TripsFragment();
+                tripsFragment.setArguments(args);
+                delayFlow(tripsFragment, "UpcomingRidesFragment");
                 changeMenuBackgroundColor();
             }
         });
@@ -549,7 +552,12 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 currentFragment = "PreviousRidesFragment";
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
-                delayFlow(new PreviousRidesFragment(), "PreviousRidesFragment");
+                String upcoming = "previous";
+                Bundle args = new Bundle();
+                args.putString("firstTab", upcoming);
+                TripsFragment tripsFragment = new TripsFragment();
+                tripsFragment.setArguments(args);
+                delayFlow(tripsFragment, "PreviousRidesFragment");
                 changeMenuBackgroundColor();
             }
         });
@@ -1609,11 +1617,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
 
             } else {
-                LatLng driverPosition = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
-//                LatLng driverPosition = new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt()));
+                LatLng driverPosition = new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt()));
                 MarkerAnimation.animateMarkerToGB(destinationLocationMarker, driverPosition, new LatLngInterpolator.Spherical());
                 destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
-//                Toast.makeText(this, "mmovement", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "mmovement", Toast.LENGTH_SHORT).show();
 //                destinationLocationMarkermarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
 //                destinationLocationMarker.setPosition(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
                 destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));

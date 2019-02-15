@@ -1,4 +1,4 @@
-package com.moovapp.riderapp.main.fragments;
+package com.moovapp.riderapp.main.adapters;
 /**
  * Created by Manuel Chris-Ogar on 1/23/2019.
  */
@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.text.TextUtils;
+
+import com.moovapp.riderapp.main.fragments.SignIn;
+import com.moovapp.riderapp.main.fragments.SignUp;
 
 import java.util.Map;
 

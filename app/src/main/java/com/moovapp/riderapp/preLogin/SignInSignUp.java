@@ -5,13 +5,11 @@ package com.moovapp.riderapp.preLogin;
 import android.content.Context;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 
 import com.moovapp.riderapp.R;
-import com.moovapp.riderapp.main.fragments.PagerAdapter;
+import com.moovapp.riderapp.main.adapters.PagerAdapter;
 import com.moovapp.riderapp.utils.LMTBaseActivity;
 
 import java.util.Map;
@@ -20,7 +18,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SignInSignUp extends LMTBaseActivity {
 
-    String firstTab;
+    private String firstTab;
     Map<String, String> registrationDetails;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
