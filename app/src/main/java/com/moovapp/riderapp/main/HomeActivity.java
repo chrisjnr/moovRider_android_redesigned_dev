@@ -10,6 +10,10 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -17,6 +21,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.DrawableRes;
 import android.support.design.widget.NavigationView;
 import android.support.graphics.drawable.VectorDrawableCompat;
@@ -35,6 +40,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -245,6 +252,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     private ParserTask parserTask;
     private Geocoder mGeocoder;
 
+    private LatLng driverOldLocation;
+
     public GPSTracker gpsTracker;
 
     private boolean isDropDownSelected = false;
@@ -296,6 +305,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     public TextView tvSeatNumber;
     public EditText goingTo;
     private LinearLayout location;
+    private SensorManager mySensorManager;
 //    public TextView tvSearch;
 
 
@@ -1481,17 +1491,16 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         Point displaySize = new Point();
         getWindowManager().getDefaultDisplay().getSize(displaySize);
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, displaySize.x, 250, 30));
-
 //        Log.d("HAHAHA", "Value is: " + data.getDriverDetails().getDriverId());
 
-        myRef.child(data.getDriverDetails().getDriverId() + "").addValueEventListener(new ValueEventListener() {
+        myRef.child("49").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 try {
 //                    long lat = dataSnapshot.getChildrenCount();
-                    Double angleX = dataSnapshot.child("angleX").getValue(Double.class);
+                    float angleX = dataSnapshot.child("angleX").getValue(float.class);
                     Double lat = dataSnapshot.child("lat").getValue(Double.class);
                     Double longt = dataSnapshot.child("longt").getValue(Double.class);
                     Driver driver = new Driver();
@@ -1501,9 +1510,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     driver.setId(data.getDriverDetails().getDriverId());
 
 //                    Driver driver =(Driver) dataSnapshot.getValue(Driver.class);
-//                    Log.d("HAHAHA", "Value is: " + angleX);
-//                    Log.d("HAHAHA", "Value is: " + lat);
-//                    Log.d("HAHAHA", "Value is: " + longt);
+                    Log.d("HAHAHA", "Value is: " + angleX);
+                    Log.d("HAHAHA", "Value is: " + lat);
+                    Log.d("HAHAHA", "Value is: " + longt);
                     showDriverOnMap(driver);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1594,6 +1603,74 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         }
     }
 
+    private float bearingBetweenLocations(LatLng latLng1,LatLng latLng2) {
+
+        double PI = 3.14159;
+        double lat1 = latLng1.latitude * PI / 180;
+        double long1 = latLng1.longitude * PI / 180;
+        double lat2 = latLng2.latitude * PI / 180;
+        double long2 = latLng2.longitude * PI / 180;
+
+        double dLon = (long2 - long1);
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+
+        double brng = Math.atan2(y, x);
+
+        brng = Math.toDegrees(brng);
+        brng = (brng + 360) % 360;
+        return (float) brng;
+//        return brng;
+    }
+
+    boolean isMarkerRotating;
+
+    private void rotateMarker(final Marker marker, final float toRotation) {
+        if(!isMarkerRotating) {
+            final Handler handler = new Handler();
+            final long start = SystemClock.uptimeMillis();
+            final float startRotation = marker.getRotation();
+            final long duration = 1000;
+
+            final Interpolator interpolator = new LinearInterpolator();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    isMarkerRotating = true;
+
+                    long elapsed = SystemClock.uptimeMillis() - start;
+                    float t = interpolator.getInterpolation((float) elapsed / duration);
+
+                    float rot = t * toRotation + (1 - t) * startRotation;
+
+                    marker.setRotation(-rot > 180 ? rot / 2 : rot);
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16);
+                    } else {
+                        isMarkerRotating = false;
+                    }
+                }
+            });
+        }
+    }
+
+    public float getAngle(LatLng comimgFrom, LatLng goingTo){
+
+//        com.google.maps.android.geometry.Point point = new com.google.maps.android.geometry.Point(comimgFrom.latitude, comimgFrom.longitude);
+
+        float angle =  (float) Math.toDegrees(Math.atan2(goingTo.longitude - comimgFrom.longitude , goingTo.latitude - comimgFrom.latitude));
+
+        if (angle < 0){
+            angle += 360;
+        }
+
+        return angle;
+    }
+
     private void showDriverOnMap(Driver driver) {
         try {
             Log.d("dest", "showDriverOnMap: "+ String.valueOf(driver.getLat()) + ",,, " +  String.valueOf(driver.getLongt()));
@@ -1604,8 +1681,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //                        .position(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())))
 //                        .icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(HomeActivity.this, R.drawable.map_car_icon_new))));
 //                destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
-
-
+                driverOldLocation = new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt()));
                 MarkerOptions markerOptions = new MarkerOptions();
 //        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
@@ -1614,16 +1690,25 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 ////        markerOptions.title("Current Position");
 ////        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
                 destinationLocationMarker = mMap.addMarker(markerOptions);
-                destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
+                destinationLocationMarker.setFlat(true);
+//                rotateMarker(destinationLocationMarker);
+//                destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
 
             } else {
                 LatLng driverPosition = new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt()));
+//                float rotationAngleX = bearingBetweenLocations(driverOldLocation, driverPosition);
+//                rotateMarker(destinationLocationMarker,rotationAngleX);
                 MarkerAnimation.animateMarkerToGB(destinationLocationMarker, driverPosition, new LatLngInterpolator.Spherical());
                 destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+                float rotationAngleX = getAngle(driverOldLocation, driverPosition);
+                destinationLocationMarker.setFlat(true);
+                destinationLocationMarker.setRotation(rotationAngleX);
+                Toast.makeText(this, ""+rotationAngleX, Toast.LENGTH_SHORT).show();
+                Log.d("rotate", "showDriverOnMap: "+ rotationAngleX);
                 Toast.makeText(this, "mmovement", Toast.LENGTH_SHORT).show();
 //                destinationLocationMarkermarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
 //                destinationLocationMarker.setPosition(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
-                destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
+//                destinationLocationMarker.setRotation(Float.parseFloat(driver.getAngleX() + ""));
             }
             if (!isDraw1stPolyLine) {
                 try {
