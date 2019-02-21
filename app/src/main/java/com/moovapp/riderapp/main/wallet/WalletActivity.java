@@ -78,7 +78,7 @@ public class WalletActivity extends LMTBaseActivity {
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
-        setContentView(R.layout.wallet_activity);
+        setContentView(R.layout.wallet_layout);
         ButterKnife.bind(this);
         callViewWalletBalanceApi();
         callListBanksApi();

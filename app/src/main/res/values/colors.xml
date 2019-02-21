@@ -12,6 +12,7 @@
     <color name="whiteLite">#70f2eded</color>
     <color name="whiteTransparent">#55f2eded</color>
     <color name="milk_transparent">#85fafcfb</color>
+    <color name="lighter_black">#423751</color>
     <color name="black">#000000</color>
     <color name="whiteGray">#F7F7FA</color>
     <color name="blackLite">#494949</color>
@@ -37,4 +38,5 @@
 
     <color name="colorRouteLine">#2162fc</color>
     <color name="search_results_color">#F7F7FA</color>
+    <color name="light_gray_color">#D9DBE1</color>
 </resources>

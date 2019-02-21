@@ -76,6 +76,16 @@ public class ViewPreviousRidesResponseModel implements Serializable{
         private int ride_trip_id;
         private int ride_driver_id;
         private String ride_booked_on;
+
+        public String getRide_type() {
+            return ride_type;
+        }
+
+        public void setRide_type(String ride_type) {
+            this.ride_type = ride_type;
+        }
+
+        private String ride_type;
         private String ride_booked_on_date;
         private String ride_booked_on_time;
         private String ride_amount;

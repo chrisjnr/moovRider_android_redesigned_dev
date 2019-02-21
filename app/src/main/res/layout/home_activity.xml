@@ -55,7 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
-                        android:text="Moov"
+                        android:text="moov"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18dp" />
 
@@ -115,7 +115,7 @@
             android:scrollbarSize="0dp"
             android:scrollbars="none"
             app:elevation="0dp"
-            app:headerLayout="@layout/navigation_view"
+            app:headerLayout="@layout/navigation_view_new"
             app:itemTextColor="@color/white"
             app:layout_scrollFlags="snap" />
 
