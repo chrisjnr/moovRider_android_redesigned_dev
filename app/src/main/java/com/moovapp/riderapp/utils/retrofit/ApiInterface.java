@@ -178,8 +178,8 @@ public interface ApiInterface {
                                          @Field("amount") String amount,
                                          @Field("current_lat") String current_lat,
                                          @Field("current_long") String current_long);
-
-    @Headers({"Content-Type: application/json"})
+    @FormUrlEncoded
+//    @Headers({"Content-Type: application/json"})
     @POST("ride/book_future")
     Call<BookFutureRideResponseModel> bookFutureRide(@Field("userid") String userid,
                                                      @Field("from") String from,

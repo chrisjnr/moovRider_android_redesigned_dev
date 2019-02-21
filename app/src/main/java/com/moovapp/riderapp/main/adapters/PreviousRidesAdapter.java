@@ -1,6 +1,7 @@
 package com.moovapp.riderapp.main.adapters;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,10 +20,16 @@ import java.util.List;
 public class PreviousRidesAdapter extends RecyclerView.Adapter<PreviousRidesAdapter.PreviousRidesViewHolder> {
 
     List<ViewPreviousRidesResponseModel.DataEntity> objects;
+    private ListItemClick listItemClickListener;
+
+    public interface ListItemClick{
+        void clickedTrip( ViewPreviousRidesResponseModel.DataEntity tripDetails );
+    }
 
 
-    public PreviousRidesAdapter(List<ViewPreviousRidesResponseModel.DataEntity> object){
+    public PreviousRidesAdapter(List<ViewPreviousRidesResponseModel.DataEntity> object,ListItemClick listItemClickListeners ){
         this.objects = object;
+        this.listItemClickListener = listItemClickListeners;
     }
     @NonNull
     @Override
@@ -34,10 +41,17 @@ public class PreviousRidesAdapter extends RecyclerView.Adapter<PreviousRidesAdap
     @Override
     public void onBindViewHolder(@NonNull PreviousRidesAdapter.PreviousRidesViewHolder holder, int position) {
         Log.d("ride", "onBindViewHolder: "+objects.size());
-        ViewPreviousRidesResponseModel.DataEntity currentTrip = objects.get(position);
+        final ViewPreviousRidesResponseModel.DataEntity currentTrip = objects.get(position);
         holder.previousRideDestination.setText(currentTrip.getRide_to());
-        Log.d("ride", "onBindViewHolder: "+currentTrip.getRide_booked_on_date());
+        Log.d("ride", "onBindViewHolder: "+currentTrip.getRide_booked_on_time());
         holder.previousRideLocation.setText(currentTrip.getRide_from());
+        holder.previousRideTime.setText(currentTrip.getRide_booked_on_time());
+        holder.rateTrip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listItemClickListener.clickedTrip(currentTrip);
+            }
+        });
     }
 
     @Override
@@ -52,6 +66,7 @@ public class PreviousRidesAdapter extends RecyclerView.Adapter<PreviousRidesAdap
         public TextView  previousRideLocation;
         public TextView  previousRideDestination;
         public TextView  previousRideTime;
+        private CardView rateTrip;
 
         public PreviousRidesViewHolder(View itemView) {
             super(itemView);
@@ -61,7 +76,7 @@ public class PreviousRidesAdapter extends RecyclerView.Adapter<PreviousRidesAdap
             previousRideLocation = itemView.findViewById(R.id.previousRideLocation);
             previousRideDestination = itemView.findViewById(R.id.previousRideDestination);
             previousRideTime = itemView.findViewById(R.id.previousRideTime);
-
+            rateTrip = itemView.findViewById(R.id.rateTrip);
         }
     }
 }

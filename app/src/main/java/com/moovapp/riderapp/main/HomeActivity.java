@@ -245,6 +245,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     @BindView(R.id.scrollViewResults)
     LinearLayout scrollViewResults;
 
+    @BindView(R.id.autocompleteLayout)
+    LinearLayout autocompleteLayout;
 
 
     public FirebaseAuth mAuth;
@@ -349,6 +351,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                     searchResults.setVisibility(View.GONE);
                     autoCompleteLocation.clearFocus();
                     autoCompleteDestination.requestFocus();
+                    autocompleteLayout.setVisibility(View.VISIBLE);
                     currentStep = 9;
                 }
             }
@@ -365,6 +368,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 searchResults.setVisibility(View.GONE);
                 autoCompleteLocation.clearFocus();
                 autoCompleteDestination.requestFocus();
+                autocompleteLayout.setVisibility(View.VISIBLE);
                 currentStep = 9;
             }
         });
@@ -623,27 +627,27 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         llSettingsNav.setBackgroundColor(getResources().getColor(R.color.white));
         switch (currentFragment) {
             case "MoovFragment":
-                tvTitle.setText("Moov");
+                tvTitle.setText("moov");
                 llMoovNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
             case "UpcomingRidesFragment":
-                tvTitle.setText("Upcoming Rides");
+                tvTitle.setText("upcoming rides");
                 llUpcommingRidesNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
             case "PreviousRidesFragment":
-                tvTitle.setText("Previous Rides");
+                tvTitle.setText("previous rides");
                 llPreviousRidesNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
             case "PaymentHistoryFragment":
-                tvTitle.setText("Payment History");
+                tvTitle.setText("payment history");
                 llPaymentHistoryNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
             case "TalkToUsFragment":
-                tvTitle.setText("Talk To Us");
+                tvTitle.setText("talk to us");
                 llTalkToUsNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
             case "SettingsFragment":
-                tvTitle.setText("Settings");
+                tvTitle.setText("settings");
                 llSettingsNav.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLite));
                 break;
         }
@@ -872,7 +876,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //            cardViewMove.setVisibility(View.GONE);
         } else {
             currentStep = 3;
-            locations.setVisibility(View.GONE);
+//            locations.setVisibility(View.GONE);
 //            cardViewMove.setVisibility(View.GONE);
 //            cardViewRideDetails.setVisibility(View.GONE);
             if (isFutureRide) {
@@ -893,9 +897,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             showAlertDialog("Cancel Ride", "Your ride is 5 minutes away, you will be charged a cancellation fee. Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
         } else {
             showAlertDialog("Cancel Ride", "Do you really want to cancel the ride?", "Yes", "No", CANCEL_TRIP_DIALOG);
-            if(cancelledTrip){
-                locations.setVisibility(View.VISIBLE);
-            }
+//            callCancelRideApi();
         }
 
     }
@@ -1258,9 +1260,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             recyclerViewLocation.setVisibility(View.GONE);
                             isDropDownSelected = true;
                             isDropDownSelectedLocation = true;
-                            searchResultsTv.setVisibility(View.GONE);
-                            searchResults.setVisibility(View.GONE);
-                            cardLocations.setVisibility(View.GONE);
+                            searchResultsTv.setVisibility(View.INVISIBLE);
+                            searchResults.setVisibility(View.INVISIBLE);
+                            cardLocations.setVisibility(View.INVISIBLE);
 
 
 //                            new stuff
@@ -1303,8 +1305,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             scrollViewResults.setBackgroundColor(getResources().getColor(R.color.transparent));
 //                            scrollViewResults.setVisibility(View.GONE);
 //                            tvSearch.setVisibility(View.GONE);
-                            searchResultsTv.setVisibility(View.GONE);
-                            searchResults.setVisibility(View.GONE);
+                            searchResultsTv.setVisibility(View.INVISIBLE);
+                            searchResults.setVisibility(View.INVISIBLE);
                             if (!TextUtils.isEmpty(autoCompleteDestination.getText().toString())){
                                 currentStep = 2;
                                 cardViewNext.setVisibility(View.GONE);
@@ -2034,21 +2036,21 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 tvTime.setText("");
                                 tvBookFutureRide.setText("Schedule a ride");
                                 llFutureRideDetails.setVisibility(View.GONE);
-                                locations.setVisibility(View.VISIBLE);
+                                locations.setVisibility(View.GONE);
                                 Toast.makeText(HomeActivity.this, "Ride booked!", Toast.LENGTH_SHORT).show();
                             } else {
                                 showRequestSuccessDialog("Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
                                 currentStep = 1;
-                                locations.setVisibility(View.VISIBLE);
+                                locations.setVisibility(View.GONE);
                                 cardViewNext.setVisibility(View.VISIBLE);
-                                cbPool.setVisibility(View.VISIBLE);
+                                cbPool.setVisibility(View.GONE);
                                 cardViewRideDetails.setVisibility(View.GONE);
                                 cardViewMove.setVisibility(View.GONE);
                                 tvBookFutureRide.setVisibility(View.GONE);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            locations.setVisibility(View.VISIBLE);
+                            location.setVisibility(View.VISIBLE);
                             showServerErrorAlert(BOOK_FUTURE_RIDE_API);
                         }
                     }
@@ -2090,20 +2092,25 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                                 showRequestSuccessDialog("Success", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
                                 currentRideId = "";
                                 currentStep = 1;
-                                cardViewNext.setVisibility(View.VISIBLE);
-                                cbPool.setVisibility(View.VISIBLE);
+//                                cardViewNext.setVisibility(View.VISIBLE);
+//                                cbPool.setVisibility(View.VISIBLE);
                                 layoutCurrentRider.setVisibility(View.GONE);
                                 isDraw1stPolyLine = false;
                                 mMap.clear();
+                                location.setVisibility(View.VISIBLE);
                                 try {
                                     destinationLocationMarker.remove();
                                     destinationLocationMarker = null;
+                                    cancelledTrip = true;
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                                 cbPool.setChecked(true);
                             } else {
                                 showServerErrorAlert(CANCEL_TRIP_API);
+                            }
+                            if(cancelledTrip){
+                                location.setVisibility(View.VISIBLE);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -2148,6 +2155,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 //                                    Log.d("current_ride_exc", "each i "+i);
                                     if (response.body().getData().get(i).getRideType().equals("live")) {
                                         setRiderDetails(response.body().getData().get(i));
+                                        Log.d("current_ride", "onResponse: "+response.body().getData().get(i).getDriverDetails().getFirstName());
                                         currentRideId = response.body().getData().get(i).getRideId() + "";
                                         cardViewMove.setVisibility(View.GONE);
                                         tvBookFutureRide.setVisibility(View.GONE);
@@ -2244,6 +2252,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         switch (apiCode) {
             case CANCEL_TRIP_DIALOG:
                 callCancelRideApi();
+                Toast.makeText(this, "ok clicked", Toast.LENGTH_SHORT).show();
                 break;
             case DIALOG_LOGOUT:
                 appPrefes.clearData();

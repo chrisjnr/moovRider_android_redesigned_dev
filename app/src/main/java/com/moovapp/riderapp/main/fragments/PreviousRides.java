@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +68,14 @@ public class PreviousRides extends LMTFragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
         dataEntityList = new ArrayList<>();
-        previousRidesAdapter = new PreviousRidesAdapter(dataEntityList);
+        previousRidesAdapter = new PreviousRidesAdapter(dataEntityList, new PreviousRidesAdapter.ListItemClick() {
+            @Override
+            public void clickedTrip(ViewPreviousRidesResponseModel.DataEntity tripDetails) {
+                Intent intent = new Intent(getActivity(), RateDriverActivity.class);
+                intent.putExtra("Details", (Serializable) tripDetails);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -75,7 +83,7 @@ public class PreviousRides extends LMTFragment {
         appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
         callViewPreviousRideApi();
         return view;
-    }
+            }
 
     private void callViewPreviousRideApi() {
         if (cd.isConnectingToInternet()) {
@@ -89,10 +97,22 @@ public class PreviousRides extends LMTFragment {
                         myProgressDialog.dismissProgress();
                         try {
                             if (response.body().isStatus()) {
-                                dataEntityList.clear();
-                                dataEntityList.addAll(response.body().getData());
-                                recyclerView.setAdapter(previousRidesAdapter);
-                                previousRidesAdapter.notifyDataSetChanged();
+
+                                for (ViewPreviousRidesResponseModel.DataEntity dataEntity : response.body().getData()){
+                                    if (!TextUtils.equals(dataEntity.getRide_type(), "upcoming")){
+                                        Log.d("ridetype", "onResponse: "+dataEntity.getRide_type());
+                                        dataEntityList.clear();
+                                        dataEntityList.add(dataEntity);
+                                    }
+                                }if (dataEntityList.size() != 0){
+                                    recyclerView.setAdapter(previousRidesAdapter);
+                                    previousRidesAdapter.notifyDataSetChanged();
+                                }else{
+                                    tvNoRides.setVisibility(View.VISIBLE);
+                                    recyclerView.setVisibility(View.GONE);
+                                }
+
+
                             } else {
                                 tvNoRides.setVisibility(View.VISIBLE);
                                 recyclerView.setVisibility(View.GONE);

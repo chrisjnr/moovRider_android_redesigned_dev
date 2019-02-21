@@ -150,10 +150,7 @@ public class LMTBaseActivity extends AppCompatActivity implements NetworkChangeR
     }
 
     public void onClickAlertOkButton(int apiCode) {
-        Toast.makeText(this, "ok clicked", Toast.LENGTH_SHORT).show();
-        if (apiCode == 7){
-            cancelledTrip = true;
-        }
+
 
     }
 
