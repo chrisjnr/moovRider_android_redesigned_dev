@@ -537,7 +537,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 viewMoov.setVisibility(View.VISIBLE);
                 callViewCurrentRideApi();
 //                delayFlow(new MoovFragment(), "MoovFragment");
-                changeMenuBackgroundColor();
+//                changeMenuBackgroundColor();
             }
         });
         llUpcommingRidesNav.setOnClickListener(new View.OnClickListener() {
@@ -556,7 +556,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 TripsFragment tripsFragment = new TripsFragment();
                 tripsFragment.setArguments(args);
                 delayFlow(tripsFragment, "UpcomingRidesFragment");
-                changeMenuBackgroundColor();
+//                changeMenuBackgroundColor();
             }
         });
         llPreviousRidesNav.setOnClickListener(new View.OnClickListener() {
@@ -572,7 +572,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 TripsFragment tripsFragment = new TripsFragment();
                 tripsFragment.setArguments(args);
                 delayFlow(tripsFragment, "PreviousRidesFragment");
-                changeMenuBackgroundColor();
+//                changeMenuBackgroundColor();
             }
         });
         llPaymentHistoryNav.setOnClickListener(new View.OnClickListener() {
@@ -583,7 +583,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 delayFlow(new PaymentHistoryFragment(), "PaymentHistoryFragment");
-                changeMenuBackgroundColor();
+//                changeMenuBackgroundColor();
             }
         });
         llTalkToUsNav.setOnClickListener(new View.OnClickListener() {
@@ -594,7 +594,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 delayFlow(new TalkToUsFragment(), "TalkToUsFragment");
-                changeMenuBackgroundColor();
+//                changeMenuBackgroundColor();
             }
         });
         llSettingsNav.setOnClickListener(new View.OnClickListener() {
@@ -605,7 +605,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 delayFlow(new SettingsFragment(), "SettingsFragment");
-                changeMenuBackgroundColor();
+//                changeMenuBackgroundColor();
             }
         });
         llLogoutNav.setOnClickListener(new View.OnClickListener() {
@@ -755,6 +755,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             @Override
             public void afterTextChanged(Editable editable) {
                 callViewRideCostApi();
+                currentStep = 2;
             }
         });
     }
@@ -789,32 +790,52 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
-        if (currentStep == 2){
-            cardViewNext.setVisibility(View.VISIBLE);
-            cbPool.setVisibility(View.VISIBLE);
-            cardViewRideDetails.setVisibility(View.GONE);
-            cardViewMove.setVisibility(View.GONE);
-            tvBookFutureRide.setVisibility(View.GONE);
-        }if (currentStep == 3){
-            locations.setVisibility(View.VISIBLE);
-            cardViewNext.setVisibility(View.GONE);
-            cbPool.setVisibility(View.GONE);
-            cardViewRideDetails.setVisibility(View.VISIBLE);
-            cardViewMove.setVisibility(View.VISIBLE);
-            tvBookFutureRide.setVisibility(View.VISIBLE);
-            locations.setVisibility(View.GONE);
-            tvLocationName.setText(autoCompleteLocation.getText().toString());
-            tvDestinationName.setText(autoCompleteDestination.getText().toString());
-            setSeatSpinner();
-            setUpSeatListeners();
-        }if (currentStep == 9){
-            scrollViewResults.setVisibility(View.GONE);
-            location.setVisibility(View.VISIBLE);
-            searchResultsTv.setVisibility(View.GONE);
-            searchResults.setVisibility(View.GONE);
-            currentStep = 0;
+
+        switch (currentStep){
+            case 2:
+                cardViewNext.setVisibility(View.VISIBLE);
+                cbPool.setVisibility(View.VISIBLE);
+                cardViewRideDetails.setVisibility(View.GONE);
+                cardViewMove.setVisibility(View.GONE);
+                tvBookFutureRide.setVisibility(View.GONE);
+                goingTo.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                locations.setVisibility(View.VISIBLE);
+                cardViewNext.setVisibility(View.GONE);
+                cbPool.setVisibility(View.GONE);
+                cardViewRideDetails.setVisibility(View.VISIBLE);
+                cardViewMove.setVisibility(View.VISIBLE);
+                tvBookFutureRide.setVisibility(View.VISIBLE);
+                locations.setVisibility(View.GONE);
+                tvLocationName.setText(autoCompleteLocation.getText().toString());
+                tvDestinationName.setText(autoCompleteDestination.getText().toString());
+                goingTo.setVisibility(View.VISIBLE);
+                setSeatSpinner();
+                setUpSeatListeners();
+                break;
+            case 9:
+                scrollViewResults.setVisibility(View.GONE);
+                location.setVisibility(View.VISIBLE);
+                searchResultsTv.setVisibility(View.GONE);
+                searchResults.setVisibility(View.GONE);
+                currentStep = 0;
+                goingTo.setVisibility(View.VISIBLE);
+                break;
+            default:
+                super.onBackPressed();
+                break;
         }
+//        super.onBackPressed();
+//        if (currentStep == 2){
+//
+//        }if (currentStep == 3){
+//
+//        }if (currentStep == 9){
+//
+//        }else{
+//
+//        }
 
 //        super.onBackPressed();
 
@@ -1846,6 +1867,7 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
                 Call<RideSearchResponseModel> call = apiService.rideSearch("ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + String.valueOf(seatNumber) + "/" + poolRiding);
+                Log.d("response", "ride/search/amount/" + autoCompleteLocation.getText().toString().replaceAll(" ", "+") + "/" + autoCompleteDestination.getText().toString().replaceAll(" ", "+") + "/" + String.valueOf(seatNumber) + "/" + poolRiding);
                 call.enqueue(new retrofit2.Callback<RideSearchResponseModel>() {
                     @Override
                     public void onResponse(Call<RideSearchResponseModel> call, Response<RideSearchResponseModel> response) {

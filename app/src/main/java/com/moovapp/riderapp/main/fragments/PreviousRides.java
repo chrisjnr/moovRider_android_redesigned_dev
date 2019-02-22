@@ -99,7 +99,7 @@ public class PreviousRides extends LMTFragment {
                             if (response.body().isStatus()) {
 
                                 for (ViewPreviousRidesResponseModel.DataEntity dataEntity : response.body().getData()){
-                                    if (!TextUtils.equals(dataEntity.getRide_type(), "upcoming")){
+                                    if (!TextUtils.equals(dataEntity.getRide_type(), null)){
                                         Log.d("ridetype", "onResponse: "+dataEntity.getRide_type());
                                         dataEntityList.clear();
                                         dataEntityList.add(dataEntity);

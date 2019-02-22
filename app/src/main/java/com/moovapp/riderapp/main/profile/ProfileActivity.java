@@ -83,8 +83,8 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
     private static final int ASK_CAMERA_WRITE_PERMISSION = 9;
     private static final int PROFILE_EDIT_SUCCESS_DIALOG = 11;
 
-    @BindView(R.id.cardViewEdit)
-    CardView cardViewEdit;
+//    @BindView(R.id.cardViewEdit)
+//    CardView cardViewEdit;
     @BindView(R.id.tvSubmit)
     TextView tvSubmit;
     @NotEmpty(trim = true)
@@ -109,7 +109,6 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
     TextView tvTitle;
     @BindView(R.id.profileImage)
     CircleImageView profileImage;
-
     private File imageFile;
     private File compressedImageFile;
     private String selectedImagePath = "";
@@ -174,7 +173,7 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
     private void disableEditing() {
         tvTitle.setText("Profile");
         isInEditMode = false;
-        cardViewEdit.setVisibility(View.VISIBLE);
+//        cardViewEdit.setVisibility(View.VISIBLE);
         tvSubmit.setVisibility(View.GONE);
         edFirstName.setClickable(false);
         edFirstName.setFocusable(false);
@@ -190,30 +189,30 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
         edPhoneNumber.setFocusable(false);
     }
 
-    @OnClick(R.id.cardViewEdit)
-    public void cardViewEditClick() {
-        tvTitle.setText("Edit Profile");
-        isInEditMode = true;
-        cardViewEdit.setVisibility(View.GONE);
-        tvSubmit.setVisibility(View.VISIBLE);
-        edFirstName.setClickable(true);
-        edFirstName.setFocusable(true);
-        edFirstName.setFocusableInTouchMode(true);
-        edLastName.setClickable(true);
-        edLastName.setFocusable(true);
-        edLastName.setFocusableInTouchMode(true);
-        llUniversity.setVisibility(View.GONE);
-        rlSpinnerUniversity.setVisibility(View.VISIBLE);
-//        edEmail.setClickable(true);
-//        edEmail.setFocusable(true);
-//        edEmail.setFocusableInTouchMode(true);
-//        edUniversity.setClickable(true);
-//        edUniversity.setFocusable(true);
-//        edUniversity.setFocusableInTouchMode(true);
-//        edPhoneNumber.setClickable(true);
-//        edPhoneNumber.setFocusable(true);
-//        edPhoneNumber.setFocusableInTouchMode(true);
-    }
+//    @OnClick(R.id.cardViewEdit)
+//    public void cardViewEditClick() {
+//        tvTitle.setText("Edit Profile");
+//        isInEditMode = true;
+//        cardViewEdit.setVisibility(View.GONE);
+//        tvSubmit.setVisibility(View.VISIBLE);
+//        edFirstName.setClickable(true);
+//        edFirstName.setFocusable(true);
+//        edFirstName.setFocusableInTouchMode(true);
+//        edLastName.setClickable(true);
+//        edLastName.setFocusable(true);
+//        edLastName.setFocusableInTouchMode(true);
+//        llUniversity.setVisibility(View.GONE);
+//        rlSpinnerUniversity.setVisibility(View.VISIBLE);
+////        edEmail.setClickable(true);
+////        edEmail.setFocusable(true);
+////        edEmail.setFocusableInTouchMode(true);
+////        edUniversity.setClickable(true);
+////        edUniversity.setFocusable(true);
+////        edUniversity.setFocusableInTouchMode(true);
+////        edPhoneNumber.setClickable(true);
+////        edPhoneNumber.setFocusable(true);
+////        edPhoneNumber.setFocusableInTouchMode(true);
+//    }
 
     private void setCollegeSpinner() {
         collegeList = new ArrayList<>();
@@ -246,8 +245,8 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
         if (data.getUser_pic_url().trim().length() > 3) {
             Picasso.get().load(data.getUser_pic_url()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(profileImage);
         }
-        edFirstName.setText(data.getUser_details().getFirst_name());
-        edLastName.setText(data.getUser_details().getLast_name());
+        edFirstName.setText(data.getUser_details().getFirst_name()+ " " + data.getUser_details().getLast_name() );
+//        edLastName.setText();
         edEmail.setText(data.getUser_details().getEmail());
         edUniversity.setText(data.getUser_details().getInstitution_name());
         edPhoneNumber.setText(data.getUser_details().getPhone_country() + data.getUser_details().getPhone());

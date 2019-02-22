@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    android:background="@color/grayLitest"
+    android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="290dp"
@@ -13,7 +13,7 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:background="@drawable/top"
+            android:background="#494751"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             >
@@ -31,31 +31,24 @@
                 android:id="@+id/profileImage"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_marginRight="20dp"
                 android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
+                android:layout_centerHorizontal="true"
                 android:layout_gravity="center"
                 android:src="@mipmap/user_placeholder"
                 app:civ_border_color="@color/colorAccent"
-                app:civ_border_width="2dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="20dp" />
+                app:civ_border_width="2dp" />
 
             <TextView
                 android:layout_below="@id/profileImage"
                 android:id="@+id/tvUserName"
-                android:layout_alignParentRight="true"
                 android:layout_width="wrap_content"
                 android:maxLines="1"
-                android:layout_marginRight="20dp"
+                android:layout_centerHorizontal="true"
                 android:layout_height="wrap_content"
-                android:textAlignment="textEnd"
                 android:text="------ -------"
                 android:textColor="@color/white"
                 android:textSize="12sp"
-                android:gravity="end"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="20dp" />
+                />
 
 
 
@@ -70,7 +63,7 @@
 
 
         <LinearLayout
-            android:background="@color/grayLitest"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
@@ -82,7 +75,6 @@
                 android:id="@+id/llMoovNav"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:background="@color/colorPrimaryLite"
                 android:orientation="horizontal">
 
                 <TextView
@@ -92,9 +84,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
                     android:gravity="center_vertical"
-                    android:text="Moov"
+                    android:text="moov"
                     android:textColor="@color/blackLite"
-                    android:textSize="15sp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <!--<View-->
@@ -103,6 +95,8 @@
                 <!--android:background="@color/grayLitest" />-->
 
             <LinearLayout
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="20dp"
                 android:weightSum="4"
                 android:id="@+id/llRidesNav"
                 android:layout_width="match_parent"
@@ -117,9 +111,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
                     android:gravity="center_vertical"
-                    android:text="Trips"
+                    android:text="trips"
                     android:textColor="@color/blackLite"
-                    android:textSize="15dp"
+                    android:textSize="20sp"
                     android:drawableStart="@drawable/icon_1"
                     android:layout_marginStart="7dp" />
 
@@ -155,10 +149,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="22dp"
+                        android:layout_marginLeft="35dp"
                         android:gravity="center_vertical"
-                        android:textColor="@color/blackLite"
-                        android:text="Upcoming Rides"
+                        android:textColor="@color/grayDark"
+                        android:text="upcoming rides"
                         android:textSize="15dp" />
                 </LinearLayout>
 
@@ -177,10 +171,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="22dp"
-                        android:textColor="@color/blackLite"
-                        android:gravity="center_vertical"
-                        android:text="Previous Rides"
+                        android:layout_marginLeft="35dp"
+                        android:textColor="@color/grayDark"                        android:gravity="center_vertical"
+                        android:text="previous rides"
                         android:textSize="15dp" />
                 </LinearLayout>
 
@@ -192,6 +185,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:visibility="gone"
                 android:id="@+id/llPaymentHistoryNav"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -216,6 +210,7 @@
                 <!--android:background="@color/grayLitest" />-->
 
             <LinearLayout
+                android:layout_marginTop="10dp"
                 android:id="@+id/llTalkToUsNav"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -228,9 +223,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
                     android:gravity="center_vertical"
-                    android:text="Contact Us"
+                    android:text="contact us"
                     android:textColor="@color/blackLite"
-                    android:textSize="15dp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <!--<View-->
@@ -239,6 +234,7 @@
                 <!--android:background="@color/grayLitest" />-->
 
             <LinearLayout
+                android:layout_marginTop="20dp"
                 android:id="@+id/llSettingsNav"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
@@ -251,9 +247,9 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="7dp"
                     android:gravity="center_vertical"
-                    android:text="Settings"
+                    android:text="settings"
                     android:textColor="@color/blackLite"
-                    android:textSize="15dp" />
+                    android:textSize="20sp" />
             </LinearLayout>
 
             <!--<View-->

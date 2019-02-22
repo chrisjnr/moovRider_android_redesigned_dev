@@ -8,6 +8,8 @@
     android:orientation="vertical">
 
     <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:drawableLeft="@drawable/ic_reset"
         android:drawablePadding="5dp"
         android:id="@+id/tvResetPassword"
@@ -27,6 +29,8 @@
         android:background="@color/grayLite" />
 
     <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:drawableLeft="@drawable/ic_phone"
         android:drawablePadding="5dp"
         android:id="@+id/tvResetNumber"
@@ -65,6 +69,8 @@
         <!--android:background="@color/grayLite" />-->
 
     <TextView
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:drawableLeft="@drawable/ic_logout"
         android:drawablePadding="5dp"
         android:id="@+id/tvLogout"
