@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -510,6 +511,8 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
                 map.put("userid", userid);
 
                 Call<UpdateProfilePicResponseModel> call = apiService.updateProfilePic(map);
+
+                Log.d("profile", "callUpdateProfilePicApi: "+ map.toString());
                 call.enqueue(new Callback<UpdateProfilePicResponseModel>() {
                     @Override
                     public void onResponse(Call<UpdateProfilePicResponseModel> call, Response<UpdateProfilePicResponseModel> response) {
@@ -528,6 +531,8 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
                         } catch (Exception e) {
                             e.printStackTrace();
                             showServerErrorAlert(UPDATE_PROFILE_PIC_API);
+                            Log.d("profilerespr", "callUpdateProfilePicApi: "+ response.raw());
+                            Log.d("profilerepe", "callUpdateProfilePicApi: "+ e.toString());
                         }
                     }
 
@@ -536,6 +541,7 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
                         myProgressDialog.dismissProgress();
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(UPDATE_PROFILE_PIC_API);
+                        Log.d("profilef", "callUpdateProfilePicApi: "+ t.toString());
                     }
                 });
             } catch (Exception e) {

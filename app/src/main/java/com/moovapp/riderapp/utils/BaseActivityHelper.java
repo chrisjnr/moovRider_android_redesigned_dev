@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,56 +15,57 @@ import android.widget.TextView;
 import com.moovapp.riderapp.R;
 import com.moovapp.riderapp.utils.progress.MyProgressDialog;
 
-import retrofit2.http.GET;
+import java.util.List;
 
+/**
+ * Created by Manuel Chris-Ogar on 2/28/2019.
+ */
 
-public class LMTFragment extends Fragment implements NetworkChangeReceiver.Internet {
+public class BaseActivityHelper extends AppCompatActivity implements NetworkChangeReceiver.Internet {
     public AppPreferences appPrefes;
     public ProgressDialog progressDialog;
     public ConnectionDetector cd;
     public MyProgressDialog myProgressDialog;
-    public LMTBaseActivity  mainActivity;
-
-//    @Override
-//    protected void onCreate(Bundle arg0) {
-//        // Show status bar
-//        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        super.onCreate(arg0);
-//        progressDialog = new ProgressDialog(getContext());
-//        progressDialog.setIndeterminate(true);
-//        progressDialog.setCancelable(false);
-//        progressDialog.setMessage("Loading...");
-//        appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
-//        cd = new ConnectionDetector(getContext());
-//        myProgressDialog = new MyProgressDialog(getActivity());
-//        NetworkChangeReceiver.internet = this;
-//    }
-
-
-    public boolean onBackPressed() {
-        return false;
-    }
-
+    public TextView tvOk;
+    public boolean cancelledTrip;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onBackPressed() {
+        List fragmentList = getSupportFragmentManager().getFragments();
 
-        mainActivity = (LMTBaseActivity) getActivity();
-        mainActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        super.onCreate(savedInstanceState);
-        progressDialog = new ProgressDialog(getContext());
+        boolean handled = false;
+        for (int i= 0; i<fragmentList.size(); i++){
+            if(fragmentList.get(i) instanceof LMTFragment) {
+                handled = ((LMTFragment)fragmentList.get(i)).onBackPressed();
+
+                if(handled) {
+                    break;
+                }
+            }
+
+        if(!handled) {
+            super.onBackPressed();
+        }
+    }
+    }
+
+    @Override
+    protected void onCreate(Bundle arg0) {
+        // Show status bar
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        super.onCreate(arg0);
+        progressDialog = new ProgressDialog(this);
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Loading...");
-        appPrefes = new AppPreferences(getContext(), getResources().getString(R.string.app_name));
-        cd = new ConnectionDetector(getContext());
-        myProgressDialog = new MyProgressDialog(getActivity());
+        appPrefes = new AppPreferences(this, getResources().getString(R.string.app_name));
+        cd = new ConnectionDetector(this);
+        myProgressDialog = new MyProgressDialog(this);
         NetworkChangeReceiver.internet = this;
     }
 
     public void showNoInternetAlert(final int apiCode) {
-        final Dialog dialog = new Dialog(getContext());
+        final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_no_internet);
@@ -90,7 +90,7 @@ public class LMTFragment extends Fragment implements NetworkChangeReceiver.Inter
     }
 
     public void showServerErrorAlert(final int apiCode) {
-        final Dialog dialog = new Dialog(getContext());
+        final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_server_error);
@@ -115,7 +115,7 @@ public class LMTFragment extends Fragment implements NetworkChangeReceiver.Inter
     }
 
     public void showRequestSuccessDialog(String title, String message, String button, final int code) {
-        final Dialog dialog = new Dialog(getContext());
+        final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_popup);
@@ -138,7 +138,7 @@ public class LMTFragment extends Fragment implements NetworkChangeReceiver.Inter
     }
 
     public void showAlertDialog(String title, String message, String okButton, String cancelButton, final int code) {
-        final Dialog dialog = new Dialog(getContext());
+        final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_alert);
@@ -146,7 +146,7 @@ public class LMTFragment extends Fragment implements NetworkChangeReceiver.Inter
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         final TextView tvTitle = (TextView) dialog.findViewById(R.id.tvTitle);
         final TextView tvMessage = (TextView) dialog.findViewById(R.id.tvMessage);
-        final TextView tvOk = (TextView) dialog.findViewById(R.id.tvOk);
+        tvOk = (TextView) dialog.findViewById(R.id.tvOk);
         final TextView tvCancel = (TextView) dialog.findViewById(R.id.tvCancel);
         tvTitle.setText(title);
         tvMessage.setText(message);
@@ -169,10 +169,12 @@ public class LMTFragment extends Fragment implements NetworkChangeReceiver.Inter
     }
 
     public void retryApiCall(int apiCode) {
+        // TODO: 1/9/2019 retry api code
 
     }
 
     public void onClickAlertOkButton(int apiCode) {
+
 
     }
 
@@ -185,5 +187,4 @@ public class LMTFragment extends Fragment implements NetworkChangeReceiver.Inter
 
     }
 }
-
 

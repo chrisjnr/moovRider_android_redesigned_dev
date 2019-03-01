@@ -364,8 +364,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
                 scrollViewResults.setVisibility(View.VISIBLE);
                 location.setVisibility(View.GONE);
-                searchResultsTv.setVisibility(View.GONE);
-                searchResults.setVisibility(View.GONE);
+//                cardLocations.setVisibility(View.VISIBLE);
+//                searchResultsTv.setVisibility(View.GONE);
+//                searchResults.setVisibility(View.GONE);
                 autoCompleteLocation.clearFocus();
                 autoCompleteDestination.requestFocus();
                 autocompleteLayout.setVisibility(View.VISIBLE);
@@ -535,7 +536,11 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 currentFragment = "MoovFragment";
                 container.setVisibility(View.GONE);
                 viewMoov.setVisibility(View.VISIBLE);
+                goingTo.setVisibility(View.VISIBLE);
+                location.setVisibility(View.VISIBLE);
                 callViewCurrentRideApi();
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //                delayFlow(new MoovFragment(), "MoovFragment");
 //                changeMenuBackgroundColor();
             }
@@ -548,6 +553,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 String upcoming = "previous";
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //                Intent i = new Intent(HomeActivity.this, TripsFragment.class);
 //                i.putExtra("firstTab", upcoming);
 //                startActivity(i);
@@ -572,6 +579,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 TripsFragment tripsFragment = new TripsFragment();
                 tripsFragment.setArguments(args);
                 delayFlow(tripsFragment, "PreviousRidesFragment");
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //                changeMenuBackgroundColor();
             }
         });
@@ -583,6 +592,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 delayFlow(new PaymentHistoryFragment(), "PaymentHistoryFragment");
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //                changeMenuBackgroundColor();
             }
         });
@@ -594,6 +605,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 delayFlow(new TalkToUsFragment(), "TalkToUsFragment");
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //                changeMenuBackgroundColor();
             }
         });
@@ -605,6 +618,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 container.setVisibility(View.VISIBLE);
                 viewMoov.setVisibility(View.GONE);
                 delayFlow(new SettingsFragment(), "SettingsFragment");
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 //                changeMenuBackgroundColor();
             }
         });
@@ -612,6 +627,8 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
             @Override
             public void onClick(View view) {
                 drawerLayout.closeDrawers();
+                InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 showAlertDialog("Logout", "Do you really want log out?", "Logout", "Cancel", DIALOG_LOGOUT);
             }
         });
@@ -794,11 +811,14 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         switch (currentStep){
             case 2:
                 cardViewNext.setVisibility(View.VISIBLE);
+                location.setVisibility(View.VISIBLE);
                 cbPool.setVisibility(View.VISIBLE);
+                scrollViewResults.setVisibility(View.GONE);
                 cardViewRideDetails.setVisibility(View.GONE);
                 cardViewMove.setVisibility(View.GONE);
                 tvBookFutureRide.setVisibility(View.GONE);
                 goingTo.setVisibility(View.VISIBLE);
+                currentStep = 0;
                 break;
             case 3:
                 locations.setVisibility(View.VISIBLE);
@@ -813,6 +833,13 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                 goingTo.setVisibility(View.VISIBLE);
                 setSeatSpinner();
                 setUpSeatListeners();
+                break;
+            case 7:
+                cardViewRideDetails.setVisibility(View.GONE);
+                cardLocations.setVisibility(View.VISIBLE);
+                goingTo.setVisibility(View.GONE);
+                scrollViewResults.setVisibility(View.VISIBLE);
+                currentStep = 2;
                 break;
             case 9:
                 scrollViewResults.setVisibility(View.GONE);
@@ -879,7 +906,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     public void changeDestinationClick(){
         cardViewRideDetails.setVisibility(View.GONE);
         cardLocations.setVisibility(View.VISIBLE);
+        goingTo.setVisibility(View.GONE);
         scrollViewResults.setVisibility(View.VISIBLE);
+        currentStep = 2;
 //        locations.setVisibility(View.VISIBLE);
 //        location.setVisibility(View.GONE);
     }
@@ -1286,10 +1315,10 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                             cardLocations.setVisibility(View.INVISIBLE);
 
 
-//                            new stuff
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(autoCompleteDestination.getWindowToken(),0);
-                            currentStep = 2;
+//                           Hide Keyboard after Selection
+                            InputMethodManager imm = (InputMethodManager)HomeActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(autoCompleteDestination.getWindowToken(), 0);
+                            currentStep = 7;
                             cardViewNext.setVisibility(View.GONE);
                             cbPool.setVisibility(View.GONE);
                             cardViewRideDetails.setVisibility(View.VISIBLE);
@@ -1991,17 +2020,19 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
 
                             } else {
                                 showRequestSuccessDialog("Oops!", response.body().getMessage(), "Okay", SEARCH_FAILED_DAILOG);
-                                currentStep = 1;
+                                currentStep = 7;
 //                                cardViewNext.setVisibility(View.VISIBLE);
 //                                cbPool.setVisibility(View.VISIBLE);
-                                location.setVisibility(View.VISIBLE);
-                                cardViewRideDetails.setVisibility(View.GONE);
+//                                location.setVisibility(View.VISIBLE);
+//                                goingTo.setVisibility(View.VISIBLE);
+//                                cardViewRideDetails.setVisibility(View.GONE);
 //                                cardViewMove.setVisibility(View.GONE);
 //                                tvBookFutureRide.setVisibility(View.GONE);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                             showServerErrorAlert(BOOK_RIDE_API);
+                            currentStep = 7;
                         }
                     }
 
@@ -2011,15 +2042,18 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
                         myProgressDialog.dismissProgress();
                         System.out.println("t.toString : " + t.toString());
                         showServerErrorAlert(BOOK_RIDE_API);
+                        currentStep = 7;
                     }
                 });
             } catch (Exception e) {
                 e.printStackTrace();
                 myProgressDialog.dismissProgress();
                 showServerErrorAlert(BOOK_RIDE_API);
+                currentStep = 7;
             }
         } else {
             showNoInternetAlert(BOOK_RIDE_API);
+            currentStep = 7;
         }
     }
 
