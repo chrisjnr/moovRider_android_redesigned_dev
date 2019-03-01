@@ -240,6 +240,9 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
     TextView tvLocationName;
     @BindView(R.id.changeDestination)
     ImageView changeDestination;
+
+    @BindView(R.id.changeDestinationLayout)
+    LinearLayout changeDestinationLayout;
 //    @BindView(R.id.changeLocation)
 //    ImageView changeLocation;
     @BindView(R.id.scrollViewResults)
@@ -911,6 +914,15 @@ public class HomeActivity extends LMTBaseActivity implements HomeActivityActions
         currentStep = 2;
 //        locations.setVisibility(View.VISIBLE);
 //        location.setVisibility(View.GONE);
+    }
+
+    @OnClick(R.id.changeDestinationLayout)
+    public void setChangeDestinationLayoutClick(){
+        cardViewRideDetails.setVisibility(View.GONE);
+        cardLocations.setVisibility(View.VISIBLE);
+        goingTo.setVisibility(View.GONE);
+        scrollViewResults.setVisibility(View.VISIBLE);
+        currentStep = 2;
     }
 
 
