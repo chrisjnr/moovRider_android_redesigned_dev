@@ -57,6 +57,7 @@
             </LinearLayout>
 
             <RelativeLayout
+                android:visibility="gone"
                 android:layout_weight="1.5"
                 android:layout_width="0dp"
                 android:layout_height="match_parent">
@@ -93,6 +94,7 @@
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivDriverCar"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:src="@drawable/avatar2"
                 android:layout_weight="1"
@@ -113,6 +115,7 @@
                     android:text="Toyota Camry"/>
 
                 <TextView
+                    android:id="@+id/tvCarColor"
                     android:textColor="@color/light_gray_color"
                     android:text="Silver"
                     android:layout_width="wrap_content"

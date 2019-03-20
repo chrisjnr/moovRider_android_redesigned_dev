@@ -90,6 +90,7 @@ public class PreviousRides extends LMTFragment {
             try {
                 myProgressDialog.setProgress(false);
                 ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+                Log.d("ridetype", "onResponse: rides");
                 Call<ViewPreviousRidesResponseModel> call = apiService.viewPreviousRide("view/rides/user/" + appPrefes.getData(Constants.USER_ID));
                 call.enqueue(new retrofit2.Callback<ViewPreviousRidesResponseModel>() {
                     @Override
@@ -99,11 +100,11 @@ public class PreviousRides extends LMTFragment {
                             if (response.body().isStatus()) {
 
                                 for (ViewPreviousRidesResponseModel.DataEntity dataEntity : response.body().getData()){
-                                    if (!TextUtils.equals(dataEntity.getRide_type(), null)){
-                                        Log.d("ridetype", "onResponse: "+dataEntity.getRide_type());
-                                        dataEntityList.clear();
+//                                    if (!TextUtils.equals(dataEntity.getRide_type(), null)){
+//                                        Log.d("ridetype", "onResponse: "+dataEntity.getRide_type());
+//                                        dataEntityList.clear();
                                         dataEntityList.add(dataEntity);
-                                    }
+//                                    }
                                 }if (dataEntityList.size() != 0){
                                     recyclerView.setAdapter(previousRidesAdapter);
                                     previousRidesAdapter.notifyDataSetChanged();

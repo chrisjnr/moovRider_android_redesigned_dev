@@ -95,7 +95,7 @@ public class ViewPreviousRidesResponseModel implements Serializable{
         private int ride_seats;
         private String ride_from;
         private String ride_to;
-        private String driver_data;
+        private DriverDataDTO driver_data;
 
         public int getRide_id() {
             return ride_id;
@@ -201,11 +201,11 @@ public class ViewPreviousRidesResponseModel implements Serializable{
             this.ride_to = ride_to;
         }
 
-        public String getDriver_data() {
+        public DriverDataDTO getDriver_data() {
             return driver_data;
         }
 
-        public void setDriver_data(String driver_data) {
+        public void setDriver_data(DriverDataDTO driver_data) {
             this.driver_data = driver_data;
         }
     }

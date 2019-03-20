@@ -465,6 +465,7 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
                                 appPrefes.SaveData(Constants.USER_UNIVERSITY, response.body().getData().getUser_details().getInstitution_name());
                                 appPrefes.SaveData(Constants.USER_UNIVERSITY_ID, response.body().getData().getUser_details().getInstitution_id()+"");
                                 setValues(response.body().getData());
+                                Log.d("profile", "onResponse: "+response.body().getData().getUser_pic_url());
                                 callListCollegesApi();
                             } else {
                                 showServerErrorAlert(VIEW_PROFILE_API);
@@ -502,15 +503,15 @@ public class ProfileActivity extends LMTBaseActivity implements Validator.Valida
                 Map<String, RequestBody> map = new HashMap<>();
                 if (imageFile != null) {
                     RequestBody file = RequestBody.create(MediaType.parse("image/*"), imageFile);
-                    map.put("image\"; filename=\"LIJOGAL" + i1 + ".jpg\" ", file);
+                    map.put("image\"; filename=\"profile_image" + i1 + ".jpg\" ", file);
                 } else {
                     RequestBody jobseekerImage = RequestBody.create(MediaType.parse("text/plain"), "");
                     map.put("image", jobseekerImage);
                 }
-                RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), appPrefes.getData(Constants.USER_ID));
-                map.put("userid", userid);
+//                RequestBody userid = RequestBody.create(MediaType.parse("text/plain"), appPrefes.getData(Constants.USER_ID));
+//                map.put("userid", userid);
 
-                Call<UpdateProfilePicResponseModel> call = apiService.updateProfilePic(map);
+                Call<UpdateProfilePicResponseModel> call = apiService.updateProfilePic(appPrefes.getData(Constants.USER_ID) , map);
 
                 Log.d("profile", "callUpdateProfilePicApi: "+ map.toString());
                 call.enqueue(new Callback<UpdateProfilePicResponseModel>() {

@@ -373,10 +373,35 @@ public class ViewCurrentRideResponseModel {
         private String dob;
         @SerializedName("ratings")
         @Expose
-        private Integer ratings;
+        private double ratings;
         @SerializedName("wallet_balance")
         @Expose
         private String walletBalance;
+
+        public String getCar_colour() {
+            return car_colour;
+        }
+
+        public void setCar_colour(String car_colour) {
+            this.car_colour = car_colour;
+        }
+
+        public String getCar_image() {
+            return car_image;
+        }
+
+        public void setCar_image(String car_image) {
+            this.car_image = car_image;
+        }
+
+        @SerializedName("car_colour")
+        @Expose
+        private String car_colour;
+
+        @SerializedName("car_image")
+        @Expose
+        private String car_image;
+
         @SerializedName("image")
         @Expose
         private String image;
@@ -517,11 +542,11 @@ public class ViewCurrentRideResponseModel {
             this.dob = dob;
         }
 
-        public Integer getRatings() {
+        public double getRatings() {
             return ratings;
         }
 
-        public void setRatings(Integer ratings) {
+        public void setRatings(double ratings) {
             this.ratings = ratings;
         }
 

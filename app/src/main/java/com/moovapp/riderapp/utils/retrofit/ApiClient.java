@@ -18,7 +18,7 @@ public class ApiClient {
     public static Retrofit getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
-                    .baseUrl(Constants.BASE_URL)
+                    .baseUrl(Constants.HEROKU_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(new NullOnEmptyConverterFactory())
                     .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().serializeNulls().create()))

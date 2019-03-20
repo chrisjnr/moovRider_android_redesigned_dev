@@ -47,6 +47,7 @@ import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PartMap;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.Url;
 
@@ -140,8 +141,10 @@ public interface ApiInterface {
     Call<ViewProfileResponseModel> viewProfile(@Url String url);
 
     @Multipart
-    @POST("update/profile_pic")
-    Call<UpdateProfilePicResponseModel> updateProfilePic(@PartMap Map<String, RequestBody> params);
+    @POST("update/profile_pic/{id}")
+    Call<UpdateProfilePicResponseModel> updateProfilePic(
+            @Path("id") String id,
+            @PartMap Map<String, RequestBody> params);
 
     @FormUrlEncoded
     @POST("update/profile")
