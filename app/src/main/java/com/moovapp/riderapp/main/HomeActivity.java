@@ -51,8 +51,10 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -108,6 +110,7 @@ import com.moovapp.riderapp.main.talkToUs.TalkToUsFragment;
 import com.moovapp.riderapp.main.upcomingRides.UpcomingRidesFragment;
 import com.moovapp.riderapp.main.wallet.WalletActivity;
 import com.moovapp.riderapp.preLogin.LoginActivity;
+import com.moovapp.riderapp.utils.Compass;
 import com.moovapp.riderapp.utils.Constants;
 import com.moovapp.riderapp.utils.GPSTracker;
 import com.moovapp.riderapp.utils.LMTBaseActivity;
@@ -356,6 +359,9 @@ GoogleApiClient.ConnectionCallbacks,
     private LocationManager locationManager;
     Handler handler;
     private boolean foundDriver = false;
+    private Compass compass;
+
+    private float currentAzimuth;
 //    public TextView tvSearch;
 
 
@@ -455,8 +461,69 @@ GoogleApiClient.ConnectionCallbacks,
         callViewCollegeListApi();
         callViewCurrentRideApi();
         checkLocation();
+        setupCompass();
 //        callCurrentRideApi();
     }
+
+    private void setupCompass() {
+        compass = new Compass(this);
+        Compass.CompassListener cl = getCompassListener();
+        compass.setListener(cl);
+    }
+
+    private Compass.CompassListener getCompassListener() {
+        return new Compass.CompassListener() {
+            @Override
+            public void onNewAzimuth(final float azimuth) {
+                // UI updates only in UI thread
+                // https://stackoverflow.com/q/11140285/444966
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (onaTrip){
+                            adjustArrow(azimuth);
+                        }
+
+                    }
+                });
+            }
+        };
+    }
+
+    private void adjustArrow(float azimuth) {
+        currentAzimuth =   azimuth;
+        Log.d("rotate",""+currentAzimuth);
+        if (onaTrip && destinationLocationMarker == null && mCurrLocationMarker!=null){
+//            Log.d("rotate", "will set rotation from " + currentAzimuth + " to "
+//                    + azimuth);
+//
+//            Animation an = new RotateAnimation(-currentAzimuth, -azimuth,
+//                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+//                    0.5f);
+//            currentAzimuth = azimuth;
+//
+//            an.setDuration(500);
+//            an.setRepeatCount(0);
+//            an.setFillAfter(true);
+            Toast.makeText(HomeActivity.this, "Rotate", Toast.LENGTH_SHORT).show();
+            mCurrLocationMarker.setRotation(azimuth);
+        }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        compass.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        compass.stop();
+    }
+
+
 
     private void checkLocation() {
         if (gpsTracker.getLongitude() > 0) {
@@ -503,7 +570,7 @@ GoogleApiClient.ConnectionCallbacks,
                     == PackageManager.PERMISSION_GRANTED) {
                 try {
                     LatLng myLocation = new LatLng(gpsTracker.getLatitude(), gpsTracker.getLongitude());
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 8));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myLocation, 15));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -566,6 +633,7 @@ GoogleApiClient.ConnectionCallbacks,
         if (isNotEnoughBalance) {
             callViewWalletBalanceApi();
         }
+        compass.start();
     }
 
     @OnClick(R.id.cardViewWallet)
@@ -1946,36 +2014,7 @@ GoogleApiClient.ConnectionCallbacks,
 
     boolean isMarkerRotating;
 
-    private void rotateMarker(final Marker marker, final float toRotation) {
-        if(!isMarkerRotating) {
-            final Handler handler = new Handler();
-            final long start = SystemClock.uptimeMillis();
-            final float startRotation = marker.getRotation();
-            final long duration = 1000;
 
-            final Interpolator interpolator = new LinearInterpolator();
-
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    isMarkerRotating = true;
-
-                    long elapsed = SystemClock.uptimeMillis() - start;
-                    float t = interpolator.getInterpolation((float) elapsed / duration);
-
-                    float rot = t * toRotation + (1 - t) * startRotation;
-
-                    marker.setRotation(-rot > 180 ? rot / 2 : rot);
-                    if (t < 1.0) {
-                        // Post again 16ms later.
-                        handler.postDelayed(this, 16);
-                    } else {
-                        isMarkerRotating = false;
-                    }
-                }
-            });
-        }
-    }
 
     public float getAngle(LatLng comimgFrom, LatLng goingTo){
 
@@ -2119,7 +2158,8 @@ GoogleApiClient.ConnectionCallbacks,
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
-                                Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Error Loading List, \nPlease Check Your Network Connection", Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
 //                                List<String> collegeList = new ArrayList<>();
 //                                int p = 0;
@@ -2195,7 +2235,8 @@ GoogleApiClient.ConnectionCallbacks,
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
-                                Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Error booking A Ride.\nPlease try again later." + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(getApplicationContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 tvAmount.setText(response.body().getData().getAmount() + "");
                                 if (Double.parseDouble(response.body().getData().getAmount() + "") > Double.parseDouble(appPrefes.getData(Constants.WALLET_BALANCE))) {
@@ -2337,6 +2378,11 @@ GoogleApiClient.ConnectionCallbacks,
                                                         goingTo.setVisibility(View.VISIBLE);
                                                         autoCompleteLocation.setText("");
                                                         autoCompleteDestination.setText("");
+                                                        try {
+                                                            getCityNameByCoordinates(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                                        } catch (IOException e) {
+                                                            e.printStackTrace();
+                                                        }
                                                         mMap.clear();
                                                         ViewPreviousRidesResponseModel.DataEntity tripDetails = new ViewPreviousRidesResponseModel.DataEntity ();
                                                         tripDetails.setRide_trip_id(Integer.valueOf(currentTripId));
@@ -2589,43 +2635,7 @@ GoogleApiClient.ConnectionCallbacks,
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                     //                                        db listener for the ride
-//                                                    ridesRef.child(currentRideId + "").addValueEventListener(new ValueEventListener() {
-//                                                        @Override
-//                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-////
-//                                                            boolean tripStatus = dataSnapshot.child("status").getValue(boolean.class);
-//                                                            boolean hasStartedRide = dataSnapshot.child("startedRide").getValue(boolean.class);
-//                                                            if (!tripStatus){
-////                                            trip has ended show Dialog
-//                                                                showRequestSuccessDialog("Oops!", "The Driver Cancelled the Trip", "Okay", SEARCH_FAILED_DAILOG);
-//                                                                currentStep = 7;
-//                                                                cardViewRideDetails.setVisibility(View.GONE);
-//                                                                layoutCurrentRider.setVisibility(View.GONE);
-//                                                                location.setVisibility(View.VISIBLE);
-//                                                                goingTo.setVisibility(View.VISIBLE);
-//                                                                autoCompleteLocation.setText("");
-//                                                                autoCompleteDestination.setText("");
-//                                                                mMap.clear();
-//                                                            }else if (hasStartedRide){
-//                                                                Toast.makeText(HomeActivity.this, "Trip has Started", Toast.LENGTH_SHORT).show();
-//                                                                currentStep = 7;
-//                                                                cardViewRideDetails.setVisibility(View.GONE);
-//                                                                layoutCurrentRider.setVisibility(View.GONE);
-////                                            location.setVisibility(View.VISIBLE);
-////                                            goingTo.setVisibility(View.VISIBLE);
-//                                                                autoCompleteLocation.setText("");
-//                                                                autoCompleteDestination.setText("");
-////                                            mMap.clear();
-//                                                            }
 //
-//
-//                                                        @Override
-//                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                                        }
-//                                                    });
-//
-//                                                }
                                                 boolean tripStatus = dataSnapshot.child("status").getValue(boolean.class);
                                                 boolean hasStartedRide = dataSnapshot.child("startedRide").getValue(boolean.class);
                                                 boolean startedRide = dataSnapshot.child("startedRide").getValue(boolean.class);
@@ -2660,6 +2670,11 @@ GoogleApiClient.ConnectionCallbacks,
                                                     layoutCurrentRider.setVisibility(View.GONE);
                                                     location.setVisibility(View.VISIBLE);
                                                     goingTo.setVisibility(View.VISIBLE);
+                                                    try {
+                                                        getCityNameByCoordinates(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                                                    } catch (IOException e) {
+                                                        e.printStackTrace();
+                                                    }
                                                     autoCompleteLocation.setText("");
                                                     autoCompleteDestination.setText("");
                                                     mMap.clear();
@@ -2844,10 +2859,21 @@ GoogleApiClient.ConnectionCallbacks,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        boolean isNetworkEnabled = locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        boolean isGPSEnabled = locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+        if (isGPSEnabled){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATES,this);
+        }else{
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    MIN_TIME_BW_UPDATES,
+                    MIN_DISTANCE_CHANGE_FOR_UPDATES,this);
+        }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                MIN_TIME_BW_UPDATES,
-                MIN_DISTANCE_CHANGE_FOR_UPDATES,this);
+
 //        mLocationRequest = new LocationRequest();
 //        mLocationRequest.setInterval(1000);
 //        mLocationRequest.setFastestInterval(1000);
@@ -2876,6 +2902,40 @@ GoogleApiClient.ConnectionCallbacks,
         return distance / 1000;
     }
 
+    private void rotateMarker(final Marker marker, final float toRotation) {
+        if(!isMarkerRotating) {
+            final Handler handler = new Handler();
+            final long start = SystemClock.uptimeMillis();
+            final float startRotation = marker.getRotation();
+            final long duration = 2000;
+
+            final Interpolator interpolator = new LinearInterpolator();
+
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    isMarkerRotating = true;
+
+                    long elapsed = SystemClock.uptimeMillis() - start;
+                    float t = interpolator.getInterpolation((float) elapsed / duration);
+
+                    float rot = t * toRotation + (1 - t) * startRotation;
+
+                    float bearing =  -rot > 180 ? rot / 2 : rot;
+
+                    marker.setRotation(bearing);
+
+                    if (t < 1.0) {
+                        // Post again 16ms later.
+                        handler.postDelayed(this, 16);
+                    } else {
+                        isMarkerRotating = false;
+                    }
+                }
+            });
+        }
+    }
+
     @Override
     public void onLocationChanged(Location location) {
 
@@ -2895,20 +2955,25 @@ GoogleApiClient.ConnectionCallbacks,
 
 
         LatLng latLng = new LatLng(location.getLatitude() , location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(latLng);
 //        markerOptions.title("Current Location");
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
 
         if (onaTrip){
+            if (destinationLocationMarker != null){
+                destinationLocationMarker.remove();
+            }
+            MarkerOptions markerOptions = new MarkerOptions();
 //            markerOptions = new MarkerOptions();
 //        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
-//            markerOptions.position(latLng);
+            markerOptions.position(latLng).flat(true);
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mCurrLocationMarker = mMap.addMarker(markerOptions);
+//            mCurrLocationMarker.setRotation(currentAzimuth);
 //            mMap.animateCamera(CameraUpdateFactory.zoomBy(8));
         }else{
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));

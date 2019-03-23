@@ -4,6 +4,8 @@ package com.moovapp.riderapp;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.crashlytics.android.answers.Answers;
+import io.fabric.sdk.android.Fabric;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -15,6 +17,7 @@ public class Application extends android.app.Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Answers());
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/Lato-Bold.ttf")
                 .setFontAttrId(R.attr.fontPath)

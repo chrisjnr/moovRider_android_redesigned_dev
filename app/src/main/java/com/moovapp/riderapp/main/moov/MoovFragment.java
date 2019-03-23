@@ -165,7 +165,7 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
         inItAutoCompleteLocation();
         setAutoCompleteTextViewListners();
         callViewCollegeListApi();
-        Toast.makeText(getContext(), "createView", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "createView", Toast.LENGTH_SHORT).show();
         return view;
     }
 
@@ -683,7 +683,8 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
-                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.d("Error", "onResponse: "+ response.body().getMessage());
+//                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 tvAmount.setText(response.body().getData().getAmount() + "");
                                 if (Double.parseDouble(response.body().getData().getAmount() + "") > Double.parseDouble(appPrefes.getData(Constants.WALLET_BALANCE))) {
