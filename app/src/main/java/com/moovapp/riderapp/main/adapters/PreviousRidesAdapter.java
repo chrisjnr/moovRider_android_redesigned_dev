@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.moovapp.riderapp.R;
 import com.moovapp.riderapp.utils.retrofit.responseModels.ViewPreviousRidesResponseModel;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +49,24 @@ public class PreviousRidesAdapter extends RecyclerView.Adapter<PreviousRidesAdap
         Log.d("ride", "onBindViewHolder: "+currentTrip.getRide_booked_on_time());
         holder.previousRideLocation.setText(currentTrip.getRide_from());
         holder.previousRideTime.setText(currentTrip.getRide_booked_on_time());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat formatMonth = new SimpleDateFormat("MM");
+        DateFormat formatDay=new SimpleDateFormat("dd");
+        DateFormat formatYear = new SimpleDateFormat("yyyy");
+        try{
+            Date years = simpleDateFormat.parse(currentTrip.getRide_booked_on_date());
+            String day = formatDay.format(years);
+            String month = formatMonth.format(years);
+            String year = formatYear.format(years);
+            holder.prevRideDateNumber.setText(day);
+            holder.prevRideMonth.setText(month);
+            holder.prevRideYear.setText(year);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
         holder.rateTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

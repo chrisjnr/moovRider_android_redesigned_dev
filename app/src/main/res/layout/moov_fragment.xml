@@ -59,7 +59,7 @@
 
 
             <LinearLayout
-                android:visibility="gone"
+               android:visibility="gone"
                 android:layout_alignParentBottom="true"
                 android:padding="10dp"
                 android:id="@+id/cardViewRideDetails"
@@ -113,6 +113,7 @@
                                 android:layout_height="wrap_content">
 
                                 <LinearLayout
+                                    android:id="@+id/changLocationLayout"
                                     android:weightSum="6"
                                     android:orientation="horizontal"
                                     android:layout_width="match_parent"
@@ -221,6 +222,7 @@
 
 
                     <LinearLayout
+                        android:id="@+id/changeDestinationLayout"
                         android:layout_marginBottom="4dp"
                         android:background="@color/white"
                         android:layout_width="match_parent"
@@ -276,39 +278,11 @@
                                     </LinearLayout>
 
 
-
-                                    <!--<ImageView-->
-                                    <!--android:id="@+id/changeDestination"-->
-                                    <!--android:layout_margin="4dp"-->
-                                    <!--android:layout_gravity="center"-->
-                                    <!--android:background="#0000"-->
-                                    <!--android:src="@drawable/ic_edit_new"-->
-                                    <!--android:layout_width="30dp"-->
-                                    <!--android:layout_height="30dp" />-->
-
                                 </LinearLayout>
 
 
 
                     </LinearLayout>
-
-
-
-
-
-                            <!--<android.support.v7.widget.CardView-->
-                            <!--android:layout_weight="1"-->
-                            <!--android:layout_marginBottom="4dp"-->
-                            <!--app:cardBackgroundColor="@color/white"-->
-                            <!--app:cardCornerRadius="5dp"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="0dp">-->
-                            <!--<TextView-->
-                            <!--android:text="hahahahahahah"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content" />-->
-                            <!--</android.support.v7.widget.CardView>-->
-
 
 
                         </LinearLayout>
@@ -317,108 +291,6 @@
 
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
-
-
-
-
-                <!-- <LinearLayout
-                        android:weightSum="2"
-                        android:layout_weight="5"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
-
-                        <android.support.v7.widget.CardView
-                            android:layout_weight="1"
-                            android:layout_marginBottom="4dp"
-                            app:cardBackgroundColor="@color/white"
-                            app:cardCornerRadius="5dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp">
-                            <LinearLayout
-                                android:weightSum="6"
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-                                <LinearLayout
-                                    android:layout_weight="6"
-                                    android:orientation="vertical"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent">
-
-                                    <TextView
-
-                                        android:layout_width="wrap_content"
-                                        android:text="@string/dummy_pickup"
-                                        android:layout_height="wrap_content" />
-                                    <TextView
-                                        android:id="@+id/tvLocationName"
-                                        android:layout_width="wrap_content"
-                                        tools:text="@string/dummy_location"
-                                        android:textStyle="bold"
-                                        android:fontFamily="@font/lato_black"
-                                        android:layout_height="wrap_content" />
-                                </LinearLayout>
-
-
-                                <ImageView
-                                    android:id="@+id/changeLocation"
-                                    android:layout_margin="4dp"
-                                    android:layout_gravity="center"
-                                    android:background="#0000"
-                                    android:src="@drawable/ic_add"
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp" />
-                            </LinearLayout>
-                        </android.support.v7.widget.CardView>
-                        <android.support.v7.widget.CardView
-                            android:layout_weight="1"
-                            android:layout_marginBottom="4dp"
-                            app:cardBackgroundColor="@color/white"
-                            app:cardCornerRadius="5dp"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp">
-                            <LinearLayout
-                                android:weightSum="6"
-                                android:orientation="horizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent">
-                                <LinearLayout
-                                    android:layout_weight="6"
-                                    android:orientation="vertical"
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent">
-
-                                    <TextView
-                                        android:padding="4dp"
-                                        android:layout_width="wrap_content"
-                                        android:text="Destination Location"
-                                        android:layout_height="wrap_content" />
-                                    <TextView
-                                        android:id="@+id/tvDestinationName"
-                                        android:padding="2dp"
-                                        android:layout_width="wrap_content"
-                                        tools:text="Name Of Destination"
-                                        android:textStyle="bold"
-                                        android:fontFamily="@font/lato_black"
-                                        android:layout_height="wrap_content" />
-                                </LinearLayout>
-
-
-                                <ImageView
-                                    android:id="@+id/changeDestination"
-                                    android:layout_margin="4dp"
-                                    android:layout_gravity="center"
-                                    android:background="#0000"
-                                    android:src="@drawable/ic_edit_new"
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp" />
-                            </LinearLayout>
-                        </android.support.v7.widget.CardView>
-                    </LinearLayout>-->
-
-
-
 
 
                 <android.support.v7.widget.CardView
@@ -626,6 +498,7 @@
 
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tvBookFutureRide"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -643,7 +516,8 @@
 
             <LinearLayout
                 android:visibility="gone"
-                android:background="@color/transparent"
+               android:layout_marginTop="45dp"
+                android:background="@color/semi_transparent"
                 android:id="@+id/scrollViewResults"
                 android:weightSum="5"
                 android:orientation="vertical"
@@ -657,7 +531,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <android.support.v7.widget.CardView
-                        app:cardElevation="10dp"
+                        app:cardUseCompatPadding="true"
                         android:id="@+id/cardLocations"
                         android:layout_marginTop="16dp"
                         android:layout_marginLeft="16dp"
@@ -689,7 +563,7 @@
                                 android:layout_height="match_parent">
                                 <com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView
                                     android:maxLines="1"
-                                    android:inputType="text"
+                                    android:inputType="textNoSuggestions"
                                     android:background="@drawable/border_white"
                                     android:layout_weight="1"
                                     android:padding="8dp"
@@ -713,7 +587,7 @@
                                     android:layout_height="0dp">
                                     <com.moovapp.riderapp.utils.placesAutocomplete.CustomAutoCompleteTextView
                                         android:maxLines="1"
-                                        android:inputType="text"
+                                        android:inputType="textNoSuggestions"
                                         android:drawablePadding="15dp"
                                         android:background="@drawable/border_white"
                                         android:gravity="center_vertical"
@@ -757,6 +631,7 @@
 
                 <ScrollView
                     android:paddingLeft="45dp"
+                    android:visibility="invisible"
                     android:paddingRight="45dp"
                     android:id="@+id/searchResults"
                     android:background="@color/semi_transparent"
@@ -797,14 +672,12 @@
 
 
                     <android.support.v7.widget.CardView
+                        app:cardUseCompatPadding="true"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
+                        android:layout_height="match_parent"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        app:cardCornerRadius="25dp"
-                        app:cardElevation="7dp">
+                        app:cardCornerRadius="25dp">
 
                         <LinearLayout
                             android:weightSum="7"
@@ -823,7 +696,7 @@
                                 android:id="@+id/goingTo"
                                 android:layout_weight="6.5"
                                 android:layout_width="0dp"
-                                android:layout_height="match_parent"
+                                android:layout_height="50dp"
                                 android:background="@color/white"
                                 android:hint="Going where ?"
                                 android:dropDownAnchor="@id/llMapMainLayout"
@@ -1006,6 +879,7 @@
 
             </android.support.v7.widget.CardView>
             <View
+                android:visibility="invisible"
                 android:background="@color/search_results_color"
                 android:layout_alignParentBottom="true"
                 android:id="@+id/anchor"

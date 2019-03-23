@@ -54,6 +54,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -124,6 +125,9 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
     @BindView(R.id.tvNoTrips)
     TextView tvNoTrips;
 
+    @BindView(R.id.tvCarColor)
+    TextView tvCarColor;
+
     private PlacesTask placesTask;
     private ParserTask parserTask;
     private Geocoder mGeocoder;
@@ -161,12 +165,14 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
         inItAutoCompleteLocation();
         setAutoCompleteTextViewListners();
         callViewCollegeListApi();
+//        Toast.makeText(getContext(), "createView", Toast.LENGTH_SHORT).show();
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Toast.makeText(getContext(), "resumed", Toast.LENGTH_SHORT).show();
         if (isNotEnoughBalance) {
             callViewWalletBalanceApi();
         }
@@ -585,13 +591,15 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
         tvRiderName.setText(data.getDriver_details().getFirst_name() + " " + data.getDriver_details().getLast_name());
         tvCarModel.setText(data.getDriver_details().getCar_model());
         tvNoTrips.setText("No of trips: " + data.getDriver_details().getTotal_rides());
-        rating1.setRating(data.getDriver_details().getRatings());
+        rating1.setRating((int)data.getDriver_details().getRatings());
         tvRiderPhone.setText(data.getDriver_details().getPhone());
         tvDistance.setText(data.getDistance_to_drive_details().getDistance());
         tvCarNumber.setText(data.getDriver_details().getVehicle_no());
         tvEta.setText(data.getDistance_to_drive_details().getTime());
+        tvCarColor.setText(data.getDriver_details().getCar_colour());
         try {
             if (data.getDriver_details().getImage().length() > 3) {
+                Picasso.get().load(data.getDriver_details().getCar_image()).placeholder(R.mipmap.user_placeholder).error(R.drawable.avatar2).into(imgRiderImage);
                 Picasso.get().load(data.getDriver_details().getImage()).placeholder(R.mipmap.user_placeholder).error(R.mipmap.user_placeholder).into(imgRiderImage);
             }
         } catch (Exception e) {
@@ -675,7 +683,8 @@ public class MoovFragment extends LMTFragmentHelper implements NotificationActio
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
-                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.d("Error", "onResponse: "+ response.body().getMessage());
+//                                Toast.makeText(getContext(), "" + response.body().getMessage(), Toast.LENGTH_SHORT).show();
                             } else {
                                 tvAmount.setText(response.body().getData().getAmount() + "");
                                 if (Double.parseDouble(response.body().getData().getAmount() + "") > Double.parseDouble(appPrefes.getData(Constants.WALLET_BALANCE))) {

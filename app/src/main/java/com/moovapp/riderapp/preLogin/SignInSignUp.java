@@ -12,6 +12,7 @@ import com.moovapp.riderapp.R;
 import com.moovapp.riderapp.main.adapters.PagerAdapter;
 import com.moovapp.riderapp.utils.LMTBaseActivity;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -19,11 +20,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class SignInSignUp extends LMTBaseActivity {
 
     private String firstTab;
-    Map<String, String> registrationDetails;
+    Map<String, String> registrationDetails ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in_sign_up);
+        registrationDetails = new HashMap<>();
         TabLayout tabLayout = findViewById(R.id.tablayout);
         tabLayout.setBackgroundColor(getResources().getColor(R.color.white));
         if (TextUtils.equals(getIntent().getStringExtra("loginType"), "google") || TextUtils.equals(getIntent().getStringExtra("loginType"), "facebook")){

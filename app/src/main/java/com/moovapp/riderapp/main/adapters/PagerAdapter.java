@@ -38,6 +38,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
         }else{
             if (socialRegistrationDetails != null){
                 Bundle args = new Bundle();
+                args.putString("RegistrationType", "Social");
                 args.putString("loginType", socialRegistrationDetails.get("loginType") );
                 args.putString("email", socialRegistrationDetails.get("email"));
                 args.putString("name", socialRegistrationDetails.get("name"));

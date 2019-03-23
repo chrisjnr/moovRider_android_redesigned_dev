@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:name=".Application"
@@ -92,6 +93,9 @@
         <activity android:name=".preLogin.Login" />
         <activity android:name=".preLogin.SignInSignUp" />
         <activity android:name=".TestAutocomplete" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="6fec05db82847b9cf4522e662109ded89ccf47c9" />
     </application>
 
 </manifest>
