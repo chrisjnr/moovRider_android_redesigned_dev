@@ -16,15 +16,15 @@ repositories {
 
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'moov'
-            keyPassword 'sics123'
-//            storeFile file('C:/Users/sics/Desktop/New folder (4)/MoovAppRider/keystore.jks')
-            storeFile file('./keystore.jks')
-            storePassword 'sics123'
-        }
-    }
+//    signingConfigs {
+//        config {
+//            keyAlias 'moov'
+//            keyPassword 'sics123'
+////            storeFile file('C:/Users/sics/Desktop/New folder (4)/MoovAppRider/keystore.jks')
+//            storeFile file('./keystore.jks')
+//            storePassword 'sics123'
+//        }
+//    }
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.moovapp.riderapp"
@@ -40,7 +40,7 @@ android {
 //            debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
         }
     }
 }
