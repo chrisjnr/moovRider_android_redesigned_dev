@@ -70,6 +70,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ahmadrosid.lib.drawroutemap.DrawRouteMaps;
+import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -155,6 +158,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.fabric.sdk.android.Fabric;
 import retrofit2.Call;
 import retrofit2.Response;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -368,6 +372,9 @@ GoogleApiClient.ConnectionCallbacks,
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        Fabric.with(this, new Crashlytics());
+        Answers.getInstance().logCustom(new CustomEvent("App Started")
+                .putCustomAttribute("onCreate", "My String"));
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference otherDB_data = FirebaseDatabase
                 .getInstance("https://moovdriver-b06c6.firebaseio.com")
@@ -2042,7 +2049,7 @@ GoogleApiClient.ConnectionCallbacks,
                 driverOldLocation = new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt()));
                 MarkerOptions markerOptions = new MarkerOptions();
 //        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.ic_cab_icon)));
                 markerOptions.position(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
                 destinationLocationMarker = mMap.addMarker(markerOptions);
                 destinationLocationMarker.setFlat(true);
@@ -2077,7 +2084,7 @@ GoogleApiClient.ConnectionCallbacks,
 //                float rotationAngleX = bearingBetweenLocations(driverOldLocation, driverPosition);
 //                rotateMarker(destinationLocationMarker,rotationAngleX);
                 MarkerAnimation.animateMarkerToGB(destinationLocationMarker, driverPosition, new LatLngInterpolator.Spherical());
-                destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+                destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.ic_cab_icon)));
                 float rotationAngleX = getAngle(driverOldLocation, driverPosition);
                 destinationLocationMarker.setFlat(true);
                 destinationLocationMarker.setRotation(rotationAngleX);
@@ -2230,8 +2237,8 @@ GoogleApiClient.ConnectionCallbacks,
                 call.enqueue(new retrofit2.Callback<RideSearchResponseModel>() {
                     @Override
                     public void onResponse(Call<RideSearchResponseModel> call, Response<RideSearchResponseModel> response) {
-                        Log.d("response", "onResponse: "+response.raw());
-                        Log.d("response", "onResponse: "+response.body().getMessage());
+//                        Log.d("response", "onResponse: "+response.raw());
+//                        Log.d("response", "onResponse: "+response.body().getMessage());
                         myProgressDialog.dismissProgress();
                         try {
                             if (!response.body().isStatus()) {
@@ -2334,7 +2341,7 @@ GoogleApiClient.ConnectionCallbacks,
                     @Override
                     public void onResponse(Call<BookRideResponseModel> call, Response<BookRideResponseModel> response) {
                         myProgressDialog.dismissProgress();
-                        Log.e("response", "onResponse: "+ response.raw() );
+//                        Log.e("response", "onResponse: "+ response.raw() );
 //                        Log.e("response", "onResponse: "+ response.body().toString() );
 //                        Log.e("response", "onResponse: "+ response.body().isStatus() );
                         try {
@@ -2441,6 +2448,8 @@ GoogleApiClient.ConnectionCallbacks,
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                            Answers.getInstance().logCustom(new CustomEvent("Book Ride Exception")
+                            .putCustomAttribute("exception", e.getMessage()));
                             showServerErrorAlert(BOOK_RIDE_API);
                             currentStep = 7;
                         }
@@ -2451,6 +2460,8 @@ GoogleApiClient.ConnectionCallbacks,
                         Log.e("response", "onResponse: "+ t.getLocalizedMessage() );
                         myProgressDialog.dismissProgress();
                         System.out.println("t.toString : " + t.toString());
+                        Answers.getInstance().logCustom(new CustomEvent("onFailure")
+                                .putCustomAttribute("exception", t.getMessage()));
                         showServerErrorAlert(BOOK_RIDE_API);
                         currentStep = 7;
                     }
@@ -2459,11 +2470,15 @@ GoogleApiClient.ConnectionCallbacks,
                 e.printStackTrace();
                 myProgressDialog.dismissProgress();
                 showServerErrorAlert(BOOK_RIDE_API);
+                Answers.getInstance().logCustom(new CustomEvent("exception")
+                        .putCustomAttribute("exception", e.getMessage()));
                 currentStep = 7;
             }
         } else {
             showNoInternetAlert(BOOK_RIDE_API);
             currentStep = 7;
+            Answers.getInstance().logCustom(new CustomEvent("showNoInternetAlert")
+                    .putCustomAttribute("exception", "NoInternetAlert"));
         }
     }
 
@@ -2969,11 +2984,11 @@ GoogleApiClient.ConnectionCallbacks,
             MarkerOptions markerOptions = new MarkerOptions();
 //            markerOptions = new MarkerOptions();
 //        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.map_car_icon_new)));
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.ic_cab_icon)));
             markerOptions.position(latLng).flat(true);
 //            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             mCurrLocationMarker = mMap.addMarker(markerOptions);
-//            mCurrLocationMarker.setRotation(currentAzimuth);
+            mCurrLocationMarker.setRotation(currentAzimuth);
 //            mMap.animateCamera(CameraUpdateFactory.zoomBy(8));
         }else{
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
