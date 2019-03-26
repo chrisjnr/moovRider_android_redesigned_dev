@@ -12,17 +12,17 @@ public class BookRideResponseModel {
     private DataEntity data;
     private String message;
 
-    @Override
-    public String toString() {
-        return "BookRideResponseModel{" +
-                "status=" + status +
-                ", data=" + data.toString() +
-                ", message='" + message.toString() + '\'' +
-                ", links=" + links +
-                ", poly_lines=" + poly_lines +
-                ", poly_line='" + poly_line + '\'' +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "BookRideResponseModel{" +
+//                "status=" + status +
+//                ", data=" + data.toString() +
+//                ", message='" + message.toString() + '\'' +
+//                ", links=" + links +
+//                ", poly_lines=" + poly_lines +
+//                ", poly_line='" + poly_line + '\'' +
+//                '}';
+//    }
 
     private LinksEntity links;
     private PolyLinesEntity poly_lines;
@@ -121,15 +121,15 @@ public class BookRideResponseModel {
             this.ride_id = ride_id;
         }
 
-        @Override
-        public String toString() {
-            return "DataEntity{" +
-                    "driver_details=" + driver_details.toString() +
-                    ", distance_to_drive_details=" + distance_to_drive_details.toString() +
-                    ", trip_id=" + trip_id +
-                    ", ride_id=" + ride_id +
-                    '}';
-        }
+//        @Override
+//        public String toString() {
+//            return "DataEntity{" +
+//                    "driver_details=" + driver_details.toString() +
+//                    ", distance_to_drive_details=" + distance_to_drive_details.toString() +
+//                    ", trip_id=" + trip_id +
+//                    ", ride_id=" + ride_id +
+//                    '}';
+//        }
 
         public static class DriverDetailsEntity {
             /**
