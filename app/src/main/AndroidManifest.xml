@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!--120700495894-hgifk4rii1op97vvo972otberrdmj8c6.apps.googleusercontent.com-->
 
     <application
         android:name=".Application"

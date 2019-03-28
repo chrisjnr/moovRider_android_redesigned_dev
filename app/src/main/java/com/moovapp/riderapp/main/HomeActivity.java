@@ -1778,12 +1778,12 @@ GoogleApiClient.ConnectionCallbacks,
                     try {
 //                    long lat = dataSnapshot.getChildrenCount();
                         float angleX = dataSnapshot.child("angleX").getValue(float.class);
-                        Double lat = Double.valueOf(dataSnapshot.child("lat").getValue(String.class));
-                        Double longt = Double.valueOf(dataSnapshot.child("longt").getValue(String.class));
+                        Double lat = dataSnapshot.child("lat").getValue(double.class);
+                        Double longt = dataSnapshot.child("longt").getValue(double.class);
                         Driver driver = new Driver();
                         driver.setAngleX(angleX);
-                        driver.setLat(dataSnapshot.child("lat").getValue(String.class));
-                        driver.setLongt(dataSnapshot.child("longt").getValue(String.class));
+                        driver.setLat(String.valueOf(lat));
+                        driver.setLongt(String.valueOf(longt));
                         driver.setId(data.getDriverDetails().getDriverId());
 
 //                    Driver driver =(Driver) dataSnapshot.getValue(Driver.class);
@@ -1873,12 +1873,12 @@ GoogleApiClient.ConnectionCallbacks,
                     try {
 //                    long lat = dataSnapshot.getChildrenCount();
                         float angleX = dataSnapshot.child("angleX").getValue(float.class);
-                        Double lat = Double.valueOf(dataSnapshot.child("lat").getValue(String.class));
-                        Double longt = Double.valueOf(dataSnapshot.child("longt").getValue(String.class));
+                        Double lat = dataSnapshot.child("lat").getValue(double.class);
+                        Double longt = dataSnapshot.child("longt").getValue(double.class);
                         Driver driver = new Driver();
                         driver.setAngleX(angleX);
-                        driver.setLat(dataSnapshot.child("lat").getValue(String.class));
-                        driver.setLongt(dataSnapshot.child("longt").getValue(String.class));
+                        driver.setLat(String.valueOf(lat));
+                        driver.setLongt(String.valueOf(longt));
                         driver.setId(data.getDriverDetails().getDriverId());
 
 //                    Driver driver =(Driver) dataSnapshot.getValue(Driver.class);
@@ -2053,6 +2053,7 @@ GoogleApiClient.ConnectionCallbacks,
                 markerOptions.position(new LatLng(Double.parseDouble(driver.getLat()), Double.parseDouble(driver.getLongt())));
                 destinationLocationMarker = mMap.addMarker(markerOptions);
                 destinationLocationMarker.setFlat(true);
+                destinationLocationMarker.setRotation(driver.getAngleX());
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 if (onaTrip){
                     destinationLocationMarker.remove();
@@ -2087,7 +2088,7 @@ GoogleApiClient.ConnectionCallbacks,
                 destinationLocationMarker.setIcon(BitmapDescriptorFactory.fromBitmap(getBItmapFromDrawable(this, R.drawable.ic_cab_icon)));
                 float rotationAngleX = getAngle(driverOldLocation, driverPosition);
                 destinationLocationMarker.setFlat(true);
-                destinationLocationMarker.setRotation(rotationAngleX);
+                destinationLocationMarker.setRotation(driver.getAngleX());
 //                Toast.makeText(this, ""+rotationAngleX, Toast.LENGTH_SHORT).show();
                 Log.d("rotate", "showDriverOnMap: "+ rotationAngleX);
                 if (!onaTrip){
@@ -2470,7 +2471,7 @@ GoogleApiClient.ConnectionCallbacks,
                 e.printStackTrace();
                 myProgressDialog.dismissProgress();
                 showServerErrorAlert(BOOK_RIDE_API);
-                Answers.getInstance().logCustom(new CustomEvent("exception")
+                Answers.getInstance().logCustom(new CustomEvent("exception2")
                         .putCustomAttribute("exception", e.getMessage()));
                 currentStep = 7;
             }
@@ -2578,6 +2579,7 @@ GoogleApiClient.ConnectionCallbacks,
                                 layoutCurrentRider.setVisibility(View.GONE);
                                 isDraw1stPolyLine = false;
                                 mMap.clear();
+                                onaTrip = false;
                                 location.setVisibility(View.VISIBLE);
                                 hasFoundLocation = false;
                                 try {
